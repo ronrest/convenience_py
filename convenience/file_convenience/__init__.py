@@ -40,3 +40,69 @@ def cache_calc(filename, func, *args, **kwargs):
         with open(filename, mode="wb") as fileObj:
             pickle_dump(x, fileObj)
     return x
+
+
+
+# ==============================================================================
+#                                                                 LIST DIR ITEMS
+# ==============================================================================
+def list_dir_items(d, relative=True, root=""):
+    """
+    Takes a string of a directory. And returns two lists.
+    - dList =  List of all the child directories
+    - fList =  List of all the child files
+    :param d: (str)
+        The full path to the directory you want to search in.
+    :param relative: (optional)(boolean)
+        if True, then it returns the listed items as directories relative to
+        the direc directory.
+
+        IF False, then it returns the FULL paths.
+    :param root: (Optional)(str)
+        A directory path that we want to use as the root for relative paths.
+        If left blank, then it uses the directory set in d as the root directory.
+    """
+    # TODO: create a filter, so you can filter for certain types of files, or
+    #       directories, using something like regex, or file extensions, or
+    #       mime types
+    # --------------------------------------------------------------------------
+    #                                                                      Setup
+    # --------------------------------------------------------------------------
+    fList = []  # file List
+    dList = []  # Directory List
+    d = os.path.abspath(d)
+
+    # --------------------------------------------------------------------------
+    #       Set the ralative/absolute path to append to the output list of items
+    # --------------------------------------------------------------------------
+    if relative:
+        root = root.strip()
+        if  root == "":
+            root = d
+        outpath = os.path.relpath(d, root)
+    else:
+        outpath = d
+
+    # if the root path is d, then remove the "." from path.
+    if outpath == ".":
+        outpath = ""
+
+    # --------------------------------------------------------------------------
+    #          Sort each item in the directory into either a directory or a file
+    # --------------------------------------------------------------------------
+    for item in os.listdir(d):
+        full_item_path = os.path.join(d, item)      # Full path to the item
+        out_item_path = os.path.join(outpath, item) # Path used in output list
+
+        if os.path.isfile(full_item_path):
+            fList.append(out_item_path)
+        elif os.path.isdir(full_item_path):
+            dList.append(out_item_path)
+        else:
+            print "WARNING: directoryItems found an item that is neither a \n"\
+                  "         file, nor a directory"
+
+    # --------------------------------------------------------------------------
+    #                                                      Return the item lists
+    # --------------------------------------------------------------------------
+    return (dList, fList)
