@@ -48,16 +48,17 @@ def cache_calc(filename, func, *args, **kwargs):
 # ==============================================================================
 #                                                                 LIST DIR ITEMS
 # ==============================================================================
-def list_dir_items(d, relative=True, root=""):
+def list_dir_items(d, rel=True, root=""):
     """
     Takes a string of a directory. And returns two lists.
     - dList =  List of all the child directories
     - fList =  List of all the child files
+
     :param d: (str)
         The full path to the directory you want to search in.
-    :param relative: (optional)(boolean)
+    :param rel: (optional)(boolean)
         if True, then it returns the listed items as directories relative to
-        the direc directory.
+        the d directory.
 
         IF False, then it returns the FULL paths.
     :param root: (Optional)(str)
@@ -77,7 +78,7 @@ def list_dir_items(d, relative=True, root=""):
     # --------------------------------------------------------------------------
     #       Set the ralative/absolute path to append to the output list of items
     # --------------------------------------------------------------------------
-    if relative:
+    if rel:
         root = root.strip()
         if  root == "":
             root = d
