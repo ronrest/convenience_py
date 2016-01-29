@@ -5,6 +5,9 @@
 """
 __author__ = 'ronny'
 
-from split_rows import split_rows, row_splitter_array
-from normalise import normalise_columns, un_normalise_columns
+import numpy as np
+
+def normalise_columns(x, mean, sd):
+    return (np.array(x) - mean) / sd
+
 
