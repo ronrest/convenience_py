@@ -53,12 +53,13 @@ def dir_items(d, opt="all", rel=True, root="", filter=""):
     :param root: (Optional)(str)
         A directory path that we want to use as the root for relative paths.
         If left blank, then it uses the directory set in d as the root directory.
+    :param filter: (string)
+        Used to filter for items that contain this string in their name.
     """
     # ==========================================================================
 
-    # TODO: create a filter, so you can filter for certain types of files, or
-    #       directories, using something like regex, or file extensions, or
-    #       mime types
+    # TODO: Expand the filter, so you can filter using regex, file extensions,
+    #       or mime types
     # --------------------------------------------------------------------------
     #                                                                      Setup
     # --------------------------------------------------------------------------
