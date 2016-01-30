@@ -7,6 +7,7 @@
 
 
 from file2str import file2str
+from str2file import str2file
 from dir_items import dir_items
 from files_from_category_dirs import files_from_category_dirs
 from cache_calc import cache_calc
