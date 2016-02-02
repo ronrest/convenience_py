@@ -36,6 +36,8 @@ def file2tokenized_list(files, lower=True, encoding="utf-8"):
         returned)
     """
     # ==========================================================================
+    #TODO: add argument replacements, which is a dictionary of regex replacements.
+    #      whenever it encounters some pattern, replarce it with some other text.
     print("Generating a tokenised list from files")
     if isinstance(files, dict):
         return dict_file2tokenized_list(files, lower, encoding)
@@ -53,6 +55,7 @@ def file2tokenized_list(files, lower=True, encoding="utf-8"):
         tokenized_list[i] = tokenize(text)
     print("---Done!")
     return tokenized_list
+
 
 file2tokenised_list = file2tokenized_list           # Non-US English version
 
