@@ -1,6 +1,20 @@
 from pandas import DataFrame, Series, concat
 
+################################################################################
+#                                                                          VOCAB
+################################################################################
 class Vocab(object):
+    """
+    Vocabulary object, that stores frequency counts of words from some corpus,
+    along with methods for trimming down the vocabulary size based on max
+    number of items, and min frequency count.
+
+    Allows you to convert from token strings to word indices, and vice versa.
+    """
+    ############################################################################
+    # ==========================================================================
+    #                                                                   __INIT__
+    # ==========================================================================
     def __init__(self):
         self.vocab = DataFrame()
         self.w2i = Series() # word to index Series
