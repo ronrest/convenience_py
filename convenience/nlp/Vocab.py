@@ -21,7 +21,16 @@ class Vocab(object):
         self.i2w = Series() # index to word Series
         self.size = 0       # vocab size
 
+    # ==========================================================================
+    #                                                       FROM_TOKENIZED_LISTS
+    # ==========================================================================
     def from_tokenized_lists(self, toklist):
+        """
+        Takes a list of lists of word tokens, and generates the vocabulary based
+        on those words.
+
+        :param toklist: (list of lists of strings)
+        """
         print("Extracting the vocab from a tokenized list")
         self.vocab = dict()
         for sentence in toklist:
