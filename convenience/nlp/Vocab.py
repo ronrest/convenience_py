@@ -22,6 +22,8 @@ class Vocab(object):
         self.size = 0       # vocab size
 
     # ==========================================================================
+    def word2index(self, words):
+        return list(self.w2i[words].fillna(0, inplace=False).astype(int))
     #                                                       FROM_TOKENIZED_LISTS
     # ==========================================================================
     def from_tokenized_lists(self, toklist):
