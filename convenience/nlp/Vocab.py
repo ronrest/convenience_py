@@ -22,7 +22,15 @@ class Vocab(object):
         self.size = 0       # vocab size
 
     # ==========================================================================
+    #                                                                 WORD2INDEX
+    # ==========================================================================
     def word2index(self, words):
+        """
+        Takes a word, or list of word, and returns their indices.
+
+        :param words: (str, or list of strs)
+        :return: (list of ints)
+        """
         return list(self.w2i[words].fillna(0, inplace=False).astype(int))
     #                                                       FROM_TOKENIZED_LISTS
     # ==========================================================================
