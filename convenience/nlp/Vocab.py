@@ -32,6 +32,12 @@ class Vocab(object):
         :return: (list of ints)
         """
         return list(self.w2i[words].fillna(0, inplace=False).astype(int))
+
+    def index2word(self, indices):
+        if isinstance(indices, int):
+            indices = [indices]
+        return list(self.i2w[indices])
+
     #                                                       FROM_TOKENIZED_LISTS
     # ==========================================================================
     def from_tokenized_lists(self, toklist):
