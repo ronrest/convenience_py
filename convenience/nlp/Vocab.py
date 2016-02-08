@@ -73,3 +73,14 @@ class Vocab(object):
         self.i2w = self.vocab.index
         self.size = self.vocab.size
         print("---Done!")
+
+    def limit_size(self, n):
+        print("Triming the vocab size to: {} tokens".format(n))
+        rem = self.vocab[range(n, len(self.vocab))] # Items to be removed
+        rem_sum = rem.sum()                 # Sum of values for items removed
+        self.vocab["UNKNOWN"] += rem_sum    # Removed words become unknown words
+        self.vocab = self.vocab.head(n)     # items to keep
+        self.size = n                       # update the size of the vocab
+        self.i2w = self.i2w[:n]
+        self.w2i  = self.w2i.head(n)
+        print("--- Done!")
