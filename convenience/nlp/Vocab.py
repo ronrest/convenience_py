@@ -74,7 +74,19 @@ class Vocab(object):
         self.size = self.vocab.size
         print("---Done!")
 
+
+    # ==========================================================================
+    #                                                                 LIMIT_SIZE
+    # ==========================================================================
     def limit_size(self, n):
+        """
+        Limit the size of the vocabulary to n number of tokens. Any word counts
+        for words that get trimmed off will be summed and added to the "UNKNOWN"
+        token.
+
+        :param n: (int)
+            Max size of the vocabulary.
+        """
         print("Triming the vocab size to: {} tokens".format(n))
         rem = self.vocab[range(n, len(self.vocab))] # Items to be removed
         rem_sum = rem.sum()                 # Sum of values for items removed
