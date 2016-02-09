@@ -96,3 +96,17 @@ class Vocab(object):
         self.i2w = self.i2w[:n]
         self.w2i  = self.w2i.head(n)
         print("--- Done!")
+
+    def remove_rare(self, min):
+        print("Removing rare tokens with counts less than {}".format(min))
+        rem = self.vocab[self.vocab < min]     # Items to be removed
+        rem_sum = rem.sum()                    # Sum of values for items removed
+        self.vocab["UNKNOWN"] += rem_sum       # Removed words become UNKNOWN
+
+        keepers = self.vocab >= min
+        self.vocab = self.vocab[keepers]        # Items to keep
+
+        self.size = self.vocab.size             # update the size of the vocab
+        self.i2w = self.i2w[:self.size]
+        self.w2i = self.w2i.head(self.size)
+        print("--- Done!")
