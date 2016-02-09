@@ -97,7 +97,18 @@ class Vocab(object):
         self.w2i  = self.w2i.head(n)
         print("--- Done!")
 
+
+    # ==========================================================================
+    #                                                                REMOVE_RARE
+    # ==========================================================================
     def remove_rare(self, min):
+        """
+        Remove tokens that occur less than min number of times.
+
+        :param min: (int)
+            Min frequency count. Tokens with frequency counts less than this
+            are discarded (and treated as "UNKNOWN" words).
+        """
         print("Removing rare tokens with counts less than {}".format(min))
         rem = self.vocab[self.vocab < min]     # Items to be removed
         rem_sum = rem.sum()                    # Sum of values for items removed
@@ -110,3 +121,5 @@ class Vocab(object):
         self.i2w = self.i2w[:self.size]
         self.w2i = self.w2i.head(self.size)
         print("--- Done!")
+
+
