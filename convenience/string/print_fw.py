@@ -1,5 +1,17 @@
 
+# ==============================================================================
+#                                                              PRINT FIXED WIDTH
+# ==============================================================================
 def print_fw(s, width=80):
+    """
+    Prints some string out with a fixed maximum width. Is useful when viewing
+    long strings in the console window.
+
+    :param s: (string)
+    :param width: (int)
+    """
+    # ==========================================================================
+
     pre = ""
     post = s
 
