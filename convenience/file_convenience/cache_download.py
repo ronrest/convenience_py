@@ -40,6 +40,7 @@ def cache_download(url, out=("", "")):
         out = list(out)
         out[1] = os.path.basename(url)
 
+    # filepath of output file
     out_file = os.path.join(*out)
 
     # print("Output file:"+out_file)
@@ -49,6 +50,10 @@ def cache_download(url, out=("", "")):
     # --------------------------------------------------------------------------
     if os.path.exists(out_file):
         #TODO: check the local file is the correct file.
+        #TODO: check using sha256
+        #TODO: check using filesize
+        #TODO: add an overwrite option if the file already exists but you still
+        #      want to download it.
 
         # No need to download file again, so terminate here.
         print("File already exists, keeping cached copy")
