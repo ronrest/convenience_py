@@ -9,7 +9,7 @@ from urllib import urlretrieve
 def cache_download(url, out=("", "")):
     """
     Downloads a file if it is not already downloaded in the output path.
-    
+
     :param url: {string}
         url of the file to download
     :param out: {tuple of 2 Strings}
@@ -42,8 +42,8 @@ def cache_download(url, out=("", "")):
 
     out_file = os.path.join(*out)
 
-    print("Output file:"+out_file)
-    print("downloaing from:", url)
+    # print("Output file:"+out_file)
+    # print("downloaing from:", url)
     # --------------------------------------------------------------------------
     #                                                 Check if local file exists
     # --------------------------------------------------------------------------
