@@ -8,11 +8,22 @@ from urllib import urlretrieve
 #===============================================================================
 def cache_download(url, out=("", "")):
     """
-    Downloads a file if it is not already downloaded in the output path
+    Downloads a file if it is not already downloaded in the output path.
+    
     :param url: {string}
         url of the file to download
     :param out: {tuple of 2 Strings}
         Tuple with two string elements:
+
+        1. The first element is the directory you want to save the  file to.
+           if this is an empty string "", then it will save it automatically to
+           the current working directory.
+        2. The second element is the filename you want to save it as. If this is
+           an empty string "", then it automatically saves it as the same
+           as the remote file being downloaded.
+
+        Default is ("", "") which saves the file in the current working
+        directory without changing the filename.
     """
     # ==========================================================================
     #---------------------------------------------------------------------------
