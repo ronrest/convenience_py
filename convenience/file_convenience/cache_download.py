@@ -4,6 +4,11 @@ from urllib import urlretrieve
 
 
 def cache_download(url, out=("", "")):
+    # Use same filename as remote file if no local one specified.
+    if out[1] == "":
+        out = list(out)
+        out[1] = os.path.basename(url)
+
     out_file = os.path.join(*out)
 
     print("Output file:"+out_file)
