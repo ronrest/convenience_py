@@ -9,6 +9,16 @@ def cache_download(url, out=("", "")):
     print("Output file:"+out_file)
     print("downloaing from:", url)
     # --------------------------------------------------------------------------
+    #                                                 Check if local file exists
+    # --------------------------------------------------------------------------
+    if os.path.exists(out_file):
+        #TODO: check the local file is the correct file.
+
+        # No need to download file again, so terminate here.
+        print("File already exists, keeping cached copy")
+        return None
+
+    # --------------------------------------------------------------------------
     #                                                              Download File
     # --------------------------------------------------------------------------
     try:
