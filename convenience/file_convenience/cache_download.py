@@ -3,7 +3,18 @@ import os
 from urllib import urlretrieve
 
 
+#===============================================================================
+#                                                                 CACHE_DOWNLOAD
+#===============================================================================
 def cache_download(url, out=("", "")):
+    """
+    Downloads a file if it is not already downloaded in the output path
+    :param url: {string}
+        url of the file to download
+    :param out: {tuple of 2 Strings}
+        Tuple with two string elements:
+    """
+    # ==========================================================================
     #---------------------------------------------------------------------------
     #                                                     Extract local filepath
     # --------------------------------------------------------------------------
@@ -12,7 +23,7 @@ def cache_download(url, out=("", "")):
             and isinstance(out[0], str)
             and isinstance(out[1], str)):
         raise ValueError("out argument should be a tuple of 2 strings")
-    
+
     # Use same filename as remote file if no local one specified.
     if out[1] == "":
         out = list(out)
