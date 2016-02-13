@@ -4,6 +4,15 @@ from urllib import urlretrieve
 
 
 def cache_download(url, out=("", "")):
+    #---------------------------------------------------------------------------
+    #                                                     Extract local filepath
+    # --------------------------------------------------------------------------
+    check that out is a tuple with 2 string elements
+    if not (isinstance(out, (tuple, list))
+            and isinstance(out[0], str)
+            and isinstance(out[1], str)):
+        raise ValueError("out argument should be a tuple of 2 strings")
+    
     # Use same filename as remote file if no local one specified.
     if out[1] == "":
         out = list(out)
