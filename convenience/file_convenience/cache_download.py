@@ -64,6 +64,8 @@ def cache_download(url, out=("", "")):
     # --------------------------------------------------------------------------
     try:
         urlretrieve(url, out_file)
+        # TODO: verify the download through sha256
+        # TODO: alternatively verify the download using file size.
     except:
         raise Exception('failed to download from' + url)
 
