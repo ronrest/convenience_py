@@ -48,11 +48,18 @@ def cache_download(url, out=("", "")):
     # --------------------------------------------------------------------------
     #                                                 Check if local file exists
     # --------------------------------------------------------------------------
-    if os.path.exists(out_file):
-        #TODO: check the local file is the correct file.
-        #TODO: check using sha256
-        #TODO: check using filesize
-        #TODO: add an overwrite option if the file already exists but you still
+    file_exists = os.path.exists(out_file)
+    file_verified = False
+
+    if file_exists:
+        # TODO: perform verification process.
+        file_verified = True # Set to True for now so that it continues to work
+
+        # TODO: check using sha256
+        # TODO: check using filesize
+
+    if file_exists and file_verified:
+        # TODO: add an overwrite option if the file already exists but you still
         #      want to download it.
 
         # No need to download file again, so terminate here.
