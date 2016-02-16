@@ -29,7 +29,7 @@ def cache_download(url, out=("", "")):
     #---------------------------------------------------------------------------
     #                                                     Extract local filepath
     # --------------------------------------------------------------------------
-    check that out is a tuple with 2 string elements
+    #check that out is a tuple with 2 string elements
     if not (isinstance(out, (tuple, list))
             and isinstance(out[0], str)
             and isinstance(out[1], str)):
