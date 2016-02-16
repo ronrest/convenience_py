@@ -1,6 +1,7 @@
 import hashlib
 
 def file_verification(file, v_type, v_val):
+    # TODO: do dummy proofing for input values.
     v_types = {"md5": hashlib.md5,
                "sha1": hashlib.sha1,
                "sha256": hashlib.sha256,
