@@ -1,12 +1,12 @@
 from __future__ import print_function
 import os
 from urllib import urlretrieve
-
+from file_verification import file_verification
 
 #===============================================================================
 #                                                                 CACHE_DOWNLOAD
 #===============================================================================
-def cache_download(url, out=("", "")):
+def cache_download(url, out=("", ""), v_type=None, v_val=None):
     """
     Downloads a file if it is not already downloaded in the output path.
 
@@ -51,13 +51,15 @@ def cache_download(url, out=("", "")):
     file_exists = os.path.exists(out_file)
     file_verified = False
 
+    # ---------------------------------------------------------- Verify the file
     if file_exists:
-        # TODO: perform verification process.
-        file_verified = True # Set to True for now so that it continues to work
-
-        # TODO: check using sha256
+        if v_type is not None:
+            file_verified = file_verification(out_file, v_type=v_type, v_val=v_val)
+        else:
+            file_verified = True
         # TODO: check using filesize
 
+    # ------------------------------------- Skip download if correct file exists
     if file_exists and file_verified:
         # TODO: add an overwrite option if the file already exists but you still
         #      want to download it.
