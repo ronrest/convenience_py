@@ -15,4 +15,5 @@ from files_from_category_dirs import files_from_category_dirs
 from cache_calc import cache_calc
 from cache_download import cache_download
 from file_verification import file_verification
+from image2array import image2array
 
