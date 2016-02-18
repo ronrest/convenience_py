@@ -1,7 +1,44 @@
 import Image
 import numpy as np
 
+# ==============================================================================
+#                                                                 GRID_OF_IMAGES
+# ==============================================================================
 def grid_of_images(files, dims=(50,50), mode="RGB", save=None):
+    """
+    Takes a 2D array  of filepaths to images, and returns a single big image
+    with each of those individual images appearing in a grid.
+
+    eg, given the following array:
+            [["car.png", "flower.png", "ship.png"],
+             ["duck.png" , "horse.png", "house.png"]]
+
+    This will generate an image composed of a 2x3 grid of image cells.
+
+    You can specify how big you want the small image cells to be.
+
+    :param files: {2D array-like of strings}
+        A 2D array of filepaths to image files.
+    :param dims: {tuple of ints} {default = (50.50)}
+        (width, height) that you want each small image cell to be.
+
+    :param mode:{string} {default = "RGB"}
+        Color mode for the output image.
+        "RGB"  = (3x8-bits per pixel)
+        "RGBA" = (4x8-bits per pixel with transparency)
+        "GREY" = greyscale (8-bits per pixel, black and white)
+        "BW"   = pure black or white pixels (1-bit per pixel, black and white)
+
+    :param save: {None or string}{default=None}
+        If None, then it will simply return the image
+
+        If it is a string, then this string should be the filename to save the
+        image as.
+
+    :return: {image object, or None}
+        depending on the option you used for `save`.
+    """
+    # ==========================================================================
     files = np.array(files) # convert files to a numpy array
 
     # map for color modes accepted by this funciton to the modes accepted by
