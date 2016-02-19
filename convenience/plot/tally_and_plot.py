@@ -3,9 +3,40 @@ __author__ = 'Ronny Restrepo'
 import numpy as np
 from matplotlib import pyplot as plt
 
+# ==============================================================================
+#                                                                 TALLY_AND_PLOT
+# ==============================================================================
 def tally_and_plot(a, labels=None, prop=False,
                    title="", xlabel="", ylabel="",
                    color="#04BAE3", alpha=0.9):
+    """
+    takes a 1-Dimensional array like object, and plots a bar graph of the
+    tallies of the values in that array.
+
+    You can specify if you want the tally counts, or if you want the proportions
+    of each value (using the `prop` argument)
+
+    :param a: {1D array}
+    :param labels: {None, list, 1D array or dictionary}{default=None}
+        A way of mapping values to desired label names such that it conforms
+        to this kind of interface:
+
+            labels[a_value_from_a] = desired_label_name
+        This is used for the labels that appear in the x axis of the plot.
+
+        If None (default), then it just used the unique values from `a`
+
+    :param prop: {boolean} {default = False}
+        If True, then it plots the proportions of each value, instead of tally
+        counts
+
+    :param title: {string}{defualt=""}
+    :param xlabel:{string}{defualt=""}
+    :param ylabel: {string}{defualt=""}
+    :param color: {string"{default="#04BAE3"}
+    :param alpha: {float between 0 and 1}{default=0.9}
+    """
+    # ==========================================================================
     tally = np.array(np.unique(a, return_counts=True)).astype(float)
 
     # Replace tally counts with proportions of values if `prop` is set to True
