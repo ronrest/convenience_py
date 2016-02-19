@@ -24,5 +24,11 @@ def indices_of_all_classes(y):
         {3: array([1, 2]), 4: array([0, 3])}
     """
     # ==========================================================================
+    # Ensure that y is a 1D array
+    y = np.array(y)
+    dims = len(y.shape)
+    assert (dims  == 1), "Expected a 1D array, got a {}D array".format(dims)
+
+    # Create and return dictionary
     return {i: np.where(y == i)[0] for i in np.unique(y)}
 
