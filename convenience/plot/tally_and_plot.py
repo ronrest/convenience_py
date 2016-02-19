@@ -17,11 +17,13 @@ def tally_and_plot(a, labels=None, prop=False,
     of each value (using the `prop` argument)
 
     :param a: {1D array}
-    :param labels: {None, list, 1D array or dictionary}{default=None}
-        A way of mapping values to desired label names such that it conforms
-        to this kind of interface:
+    :param labels: {None or dictionary}{default=None}
+        A dictionary that maps values to desired label names.
+        eg:
+            labels = {1: "basketball",
+                      2: "soccer",
+                      4: "karate"}
 
-            labels[a_value_from_a] = desired_label_name
         This is used for the labels that appear in the x axis of the plot.
 
         If None (default), then it just used the unique values from `a`
@@ -46,6 +48,8 @@ def tally_and_plot(a, labels=None, prop=False,
     # Populate default values for labels if none provided
     if labels is None:
         labels = tally[0]
+    else:
+        labels = [labels[val] for val in tally[0]]
 
     plt.bar(range(len(tally[0])), tally[1],
             width=1, color=color, alpha=alpha)
