@@ -37,6 +37,13 @@ def tally_and_plot(a, labels=None, prop=False,
     :param ylabel: {string}{defualt=""}
     :param color: {string"{default="#04BAE3"}
     :param alpha: {float between 0 and 1}{default=0.9}
+
+    :example:
+        a = np.array([4, 2, 2, 1, 2, 2, 4])
+        tally_and_plot(a, labels={1: "basketball", 2: "soccer", 4: "karate"},
+                       prop=True, xlabel="Sport", ylabel="Proportion of people",
+                       title="Proportion of people playing each sport"
+                       )
     """
     # ==========================================================================
     tally = np.array(np.unique(a, return_counts=True)).astype(float)
@@ -64,5 +71,6 @@ def tally_and_plot(a, labels=None, prop=False,
     plt.grid(b=True, which='minor', axis="y", color='#999999', linestyle='-',
              alpha=0.6)
     plt.show()
+
 
 
