@@ -2,10 +2,11 @@ from matplotlib import pyplot as plt
 
 __author__ = 'ronny'
 
+
 # ==============================================================================
 #                                                                    ARRAY2IMAGE
 # ==============================================================================
-def array2image(x, cmap="gray", colorbar=False, save=None):
+def array2image(x, cmap="gray", colorbar=False, save=None, show=True):
     """
     Takes a 2D array and converts it to an image.
 
@@ -22,6 +23,8 @@ def array2image(x, cmap="gray", colorbar=False, save=None):
         Should it display a colorbar to interpret values of the image colors?
     :param save: {None or string} (default=None)
         Allows you to save the image to a file by specifying a filepath/filename
+    :param show: {boolean} (default=True)
+        Show the image in a window?
     """
     # ==========================================================================
     plt.figure()
@@ -35,6 +38,8 @@ def array2image(x, cmap="gray", colorbar=False, save=None):
     if save is not None:
         plt.savefig(save)
 
-    plt.show()
+    # show image if it is requested
+    if show:
+        plt.show()
 
 
