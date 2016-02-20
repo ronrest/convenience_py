@@ -5,7 +5,7 @@ __author__ = 'ronny'
 # ==============================================================================
 #                                                                    ARRAY2IMAGE
 # ==============================================================================
-def array2image(x, cmap="gray", colorbar=False):
+def array2image(x, cmap="gray", colorbar=False, save=None):
     """
     Takes a 2D array and converts it to an image.
 
@@ -20,6 +20,8 @@ def array2image(x, cmap="gray", colorbar=False):
             "hot"      = heatmap (black, red, yellow, white)
     :param colorbar: {boolean}(default=False)
         Should it display a colorbar to interpret values of the image colors?
+    :param save: {None or string} (default=None)
+        Allows you to save the image to a file by specifying a filepath/filename
     """
     # ==========================================================================
     plt.figure()
@@ -28,6 +30,10 @@ def array2image(x, cmap="gray", colorbar=False):
     # Show a colorbar if it was asked for.
     if colorbar:
         plt.colorbar()
+
+    # Save the image if requested
+    if save is not None:
+        plt.savefig(save)
 
     plt.show()
 
