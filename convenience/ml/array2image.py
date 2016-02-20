@@ -5,7 +5,7 @@ __author__ = 'ronny'
 # ==============================================================================
 #                                                                    ARRAY2IMAGE
 # ==============================================================================
-def array2image(x, cmap="gray"):
+def array2image(x, cmap="gray", colorbar=False):
     """
     Takes a 2D array and converts it to an image.
 
@@ -18,10 +18,16 @@ def array2image(x, cmap="gray"):
             "gray"     = grayscale (default)
             "spectral" = reverse rainbow heatmap from black to VIBGYOR to white
             "hot"      = heatmap (black, red, yellow, white)
+    :param colorbar: {boolean}(default=False)
+        Should it display a colorbar to interpret values of the image colors?
     """
     # ==========================================================================
     plt.figure()
     plt.imshow(x, cmap=cmap)
+
+    # Show a colorbar if it was asked for.
+    if colorbar:
+        plt.colorbar()
 
     plt.show()
 
