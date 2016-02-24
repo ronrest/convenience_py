@@ -32,7 +32,13 @@ def array2image(x, reshape=None, cmap="gray", colorbar=False, save=None,
         Show the image in a window?
     """
     # ==========================================================================
-    x = np.array(x).reshape(reshape)
+    if reshape is not None:
+        if isinstance(reshape, tuple) and len(reshape) == 2:
+            x = np.array(x).reshape(reshape)
+        else:
+            msg = "`reshape` argument should the a tuple of two integers"
+            raise ValueError(msg)
+
     plt.figure()
     plt.imshow(x, cmap=cmap)
 
