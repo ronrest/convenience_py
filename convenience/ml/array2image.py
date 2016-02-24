@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 
 __author__ = 'ronny'
 
@@ -6,12 +7,16 @@ __author__ = 'ronny'
 # ==============================================================================
 #                                                                    ARRAY2IMAGE
 # ==============================================================================
-def array2image(x, cmap="gray", colorbar=False, save=None, show=True):
+def array2image(x, reshape=None, cmap="gray", colorbar=False, save=None,
+                show=True):
     """
     Takes a 2D array and converts it to an image.
 
-    :param x: {2D array}
-        The 2D array to create an image from.
+    :param x: {numpy array}
+        The array to create an image from
+    :param reshape: {tuple of two integers} (default=None)
+        If the array `x` is not already a 2D array, then specify the desired
+        dimensions (num_rows, num_cols).
     :param cmap: {string} (default="gray")
         Colormap to use. This value is passed on to  matplotlib.pyplot.imshow()
         So whatever values are valid for that function can be used here.
@@ -27,6 +32,7 @@ def array2image(x, cmap="gray", colorbar=False, save=None, show=True):
         Show the image in a window?
     """
     # ==========================================================================
+    x = np.array(x).reshape(reshape)
     plt.figure()
     plt.imshow(x, cmap=cmap)
 
