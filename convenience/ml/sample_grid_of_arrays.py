@@ -3,7 +3,39 @@ import numpy as np
 __author__ = 'ronny'
 
 
+# ==============================================================================
+#                                                          SAMPLE_GRID_OF_ARRAYS
+# ==============================================================================
 def sample_grid_of_arrays(X, Y, num_per_class=5, seed=None):
+    """
+    Useful for image processing tasks.
+
+    Takes a 3D dataset X which can be thought of as a stack (or rows) of 2D
+    arrays. Also takes a 1D array Y which is the output class labels for each 2D
+    array. It then returns a big 2D array, which can be though of as a grid
+    of a bunch of the original 2D arrays.
+
+    Each row along this grid, represents each of the output classes.
+    Each column of the grid is a random sample for a specific class.
+    You can specify the number of samples (columns on the grid) from each class
+    using the `num_per_class` argument.
+
+    If the data in X is image data, then it can be though of as creating a grid
+    of images, with rows of images from each class.
+
+    :param X: {3D array}
+        Array to be thought of as a a stack of 2D arrays
+    :param Y: {1D array}
+        Output labels for each 2D array in X.
+    :param num_per_class: {int}
+        Number of samples (columns) for each class to randomly sample.
+    :param seed: {int}
+        Set the random seed.
+    :return: {2D array}
+        A 2D array that is to be thought of as a grid of the sampled 2D arrays
+        for each class.
+    """
+    # ==========================================================================
     # Set the random seed if needed
     if seed is not None:
         np.random.seed(seed=seed)
@@ -36,4 +68,5 @@ def sample_grid_of_arrays(X, Y, num_per_class=5, seed=None):
                        cell_width*j: cell_width*j+ cell_width] = X[sample_index]
 
     return grid_array
+
 
