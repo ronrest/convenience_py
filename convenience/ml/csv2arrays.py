@@ -6,13 +6,17 @@ __author__ = 'ronny'
 # ==============================================================================
 #                                                                     CSV2ARRAYS
 # ==============================================================================
-def csv2arrays(file, sep=",", skip_header=0, skip_footer=0,
+def csv2arrays(file, y_col=None, sep=",", skip_header=0, skip_footer=0,
                missing_values={"NA", "NAN", "N/A"}, filling_values=np.nan):
     """
-    Takes a csv file an d creates an array of the data.
+    Takes a csv file and creates a tuple of arrays containing the data.
+    (X, Y)
 
     :param file: {string}
         file path to the csv file
+    :param y_col: {int}(default=None)
+        The column in the data containing the output labels. If this file
+        doesnt contain any output labels, then use None.
     :param sep: {str}(default=",")
         delimiter used to separate columns.
     :param skip_header: {int}(default=0)
@@ -23,8 +27,10 @@ def csv2arrays(file, sep=",", skip_header=0, skip_footer=0,
         The set of characters to recognise as missing values
     :param filling_values: (default = np.nan)
         what to replace missing values with.
-    :return: {numpy array}
-        A numpy array
+    :return: {numpy arrays}
+        If y_col is not None, then it returns a tuple of numpy arrays
+            X, Y
+        If y_col is None, then it returns a single array
     """
     # ==============================================================================
     data = np.genfromtxt(file, delimiter=sep,
@@ -33,5 +39,13 @@ def csv2arrays(file, sep=",", skip_header=0, skip_footer=0,
                          missing_values=missing_values,
                          filling_values=filling_values
                         )
-    return data
+    # Split into input data and output labels if there is an output column.
+    if y_col is not None:
+        x_cols = range(data.shape[1])
+        x_cols.pop(y_col)
+        X_train = data[:, x_cols]
+        Y_train = data[:, y_col]
+        return X_train, Y_train
+    else:
+        return data
 
