@@ -6,9 +6,11 @@ __author__ = 'ronny'
 # ==============================================================================
 #                                                                     CSV2ARRAYS
 # ==============================================================================
-def csv2arrays(file, y_col=None, shuffle=False, sep=",", skip_header=0,
-               skip_footer=0,
-               missing_values={"NA", "NAN", "N/A"}, filling_values=np.nan):
+def csv2arrays(file, y_col=None, shuffle=False,
+               sep=",", skip_header=0, skip_footer=0,
+               missing_values={"NA", "NAN", "N/A"},
+               filling_values=np.nan,
+               seed=None):
     """
     Takes a csv file and creates a tuple of arrays containing the data.
     (X, Y)
@@ -30,6 +32,8 @@ def csv2arrays(file, y_col=None, shuffle=False, sep=",", skip_header=0,
         The set of characters to recognise as missing values
     :param filling_values: (default = np.nan)
         what to replace missing values with.
+    :param seed: {int or None}(default = None)
+        Set the random seed if you want reproducible results
     :return: {numpy arrays}
         If y_col is not None, then it returns a tuple of numpy arrays
             X, Y
@@ -43,7 +47,9 @@ def csv2arrays(file, y_col=None, shuffle=False, sep=",", skip_header=0,
                          filling_values=filling_values
                         )
 
-    #TODO: set seed
+    # Set random seed for reproducible results
+    if seed is not None:
+        np.random.seed(seed)
 
     # Get the indices that would shuffle the data
     row_indices = np.random.permutation(data.shape[0]) if shuffle \
@@ -58,4 +64,5 @@ def csv2arrays(file, y_col=None, shuffle=False, sep=",", skip_header=0,
         return X_train[row_indices,:], Y_train[row_indices]
     else:
         return data[row_indices,:]
+
 
