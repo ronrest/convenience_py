@@ -58,6 +58,7 @@ def tally_and_plot(a, labels=None, prop=False,
     else:
         labels = [labels[val] for val in tally[0]]
 
+    plt.figure()
     plt.bar(range(len(tally[0])), tally[1],
             width=1, color=color, alpha=alpha)
     plt.title(title)
