@@ -16,4 +16,5 @@ from array2image import array2image
 from sample_grid_of_arrays import sample_grid_of_arrays
 from csv2arrays import csv2arrays
 from csv2train_test import csv2train_test
+from plot_grid_array import plot_grid_array
 
