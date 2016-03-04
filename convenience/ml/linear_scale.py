@@ -1,7 +1,37 @@
 import numpy as np
 
 
+# ==============================================================================
+#                                                                   LINEAR_SCALE
+# ==============================================================================
 def linear_scale(x, new_range=(0.0, 1.0), old_range="auto"):
+    """
+    Takes an array x, and rescales the range of values to some new scale. By
+    default it rescales teh values to be floats between 0 and 1.
+
+    :param x: {array-like}
+        The array whose values you want to scale.
+    :param new_range: {tuple of two numbers} (default = (0.0, 1.0))
+        A tuple of two numbers you want the elements of x to be scaled to.
+        (min, max)
+        NOTE: the range is inclusive of min and max.
+    :param old_range: {tuple of two numbers, or "auto"} (default="auto")
+        if "auto", then it automatically sets the min and max range of values
+        based on the actual minimum and maximum values that occur in x.
+
+        If a tuple of two numbers is provided (new_min, new_max) then it scales
+        the values with the knowledge that the elements in x are values that
+        come from a known range of values.
+
+        NOTE: it is preferable to explicitly specify an old_range tuple. If
+              x is composed of values that *could* range from 0-100, and you
+              want to rescale to the range 0-1, then you might get unexpected
+              results if there are no actual elements with the value 0 or 100
+              in x.
+    :return: {array}
+        Returns a new array of same shape as x, which is rescaled.
+    """
+    # ==========================================================================
     if old_range is "auto":
         old_range = (x.min(), x.max())
 
@@ -16,5 +46,6 @@ def linear_scale(x, new_range=(0.0, 1.0), old_range="auto"):
 
     # Scale values to the new range of values
     return new_min + ratio*(np.array(x) - old_min)
+
 
 
