@@ -36,6 +36,8 @@ def sample_grid_of_arrays(X, Y, num_per_class=5, seed=None):
         for each class.
     """
     # ==========================================================================
+    # TODO: have a resize option to resize from a 2D array to a 3D array.
+
     # Set the random seed if needed
     if seed is not None:
         np.random.seed(seed=seed)
