@@ -1,5 +1,9 @@
 
 
+def wrap_slice_indices(array_len, start, slice_len):
+    return [index % array_len for index in range(start, start+slice_len)]
+
+
 
 # ==============================================================================
 #                                                                     WRAP_SLICE
