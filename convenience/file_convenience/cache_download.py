@@ -25,10 +25,6 @@ def cache_download(url, out=("", ""), v_type=None, v_val=None):
         Default is ("", "") which saves the file in the current working
         directory without changing the filename.
 
-
-    :param v_val: {string}{default=""}
-        The hash (or bytesize) value that the file is expected to be.
-
     :param v_type: {string}{default=None}
         Method of verification to use. This does
         two things:
@@ -46,6 +42,13 @@ def cache_download(url, out=("", ""), v_type=None, v_val=None):
             "sha512"
             "bytes"   = File size in bytes.
             None (default) = No verification to be performed,
+
+    :param v_val: {string or int}{default=""}
+        - Optional. only use if a value other than None is used for `v_type`
+        - If `v_val` is one of the hash types,then this should be a string with
+          the hash code that you expect the file to be.
+        - If `v_val` is "bytes" then this value should be an integer with the
+          filesize that you expect file to be.
     """
     # ==========================================================================
     #---------------------------------------------------------------------------
