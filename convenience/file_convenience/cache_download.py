@@ -25,18 +25,27 @@ def cache_download(url, out=("", ""), v_type=None, v_val=None):
         Default is ("", "") which saves the file in the current working
         directory without changing the filename.
 
-    :param v_type: {string or None} {default=None}
-        Method of verification to use.
-
-        "md5"
-        "sha1"
-        "sha256"
-        "sha512"
-        "bytes" # Not yet implemented
 
     :param v_val: {string}{default=""}
         The hash (or bytesize) value that the file is expected to be.
 
+    :param v_type: {string}{default=None}
+        Method of verification to use. This does
+        two things:
+
+        1. allows you to check that a local copy of the file is indeed the
+           version of file you want to use as the cached file, and that you can
+           safely skip downloading the file again.
+        2. Once the file is downloaded, you can verify that it has not been
+           corrupted during the download.
+
+        Acceptable values:
+            "md5"
+            "sha1"
+            "sha256"
+            "sha512"
+            "bytes"   = File size in bytes.
+            None (default) = No verification to be performed,
     """
     # ==========================================================================
     #---------------------------------------------------------------------------
