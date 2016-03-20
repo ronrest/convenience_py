@@ -1,6 +1,33 @@
 import numpy as np
 
+# ==============================================================================
+#                                                              CREATE_CBOW_BATCH
+# ==============================================================================
 def create_cbow_batch(size, window, ci, corpus):
+    """
+    Creates a batch of center words and window context words for training CBOW.
+
+    :param size: {int}
+        The batch size.
+    :param window: {int, or list of 2 ints}
+        If it is an integer, it interprets it as the size of the window on each
+        side symetrically (eg, 2 as a context window with 2 on the left, and 2
+        on the right.
+
+        If it is an list of two ints, then it interprets it as specifying
+        the left and right windows separately.
+
+    :param ci: {int}
+        Corpus index. Where abouts in the corpus are we starting this batch?
+    :param corpus: {Numpy array}
+        The corpus as an 1D array, either as word strings or word indices.
+    :return: {tuple}
+        Returns a tuple with the following two elements:
+        center  = A 1D array of the center words for the batch.
+        context = A 2D array, with each row being the context words for the
+                  batch.
+    """
+    # ==========================================================================
     # --------------------------------------------------------------------------
     #                                                Get the context window size
     # --------------------------------------------------------------------------
