@@ -26,6 +26,18 @@ def create_cbow_batch(size, window, ci, corpus):
         center  = A 1D array of the center words for the batch.
         context = A 2D array, with each row being the context words for the
                   batch.
+
+    :example:
+    >>> from __future__ import print_function
+    >>> s = np.array("once upon a time there was a bear".split(), dtype=object)
+    >>> center,context = create_cbow_batch(size=2, window=[2,2], ci=2, corpus=s)
+    >>> for i in range(len(center)):
+    >>>     print(i," Center: ", center[i])
+    >>>     print("   Context: ", context[i])
+    0  Center:  a
+       Context:  ['once' 'upon' 'time' 'there']
+    1  Center:  time
+       Context:  ['upon' 'a' 'there' 'was']
     """
     # ==========================================================================
     # --------------------------------------------------------------------------
@@ -62,4 +74,5 @@ def create_cbow_batch(size, window, ci, corpus):
         context[i] = [corpus[index] for index in context_i]
 
     return center, context
+
 
