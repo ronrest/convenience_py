@@ -59,8 +59,12 @@ def grouped_tally(df=None, x=None, group=None):
         group = "group" if group is not None else None
     # --------------------------------------------------------------------------
     #                                              A Dataframe has been provided
+    #                 and one of `x` or `group` select a column of the dataframe
     # --------------------------------------------------------------------------
-    if isinstance(df, pd.core.frame.DataFrame):
+    if isinstance(df, pd.core.frame.DataFrame)\
+            and ((x is None or isinstance(x, str))
+                 and
+                 (group is None or isinstance(group, str))):
         df2 = df.pivot_table(index=group,
                              columns=x,
                              aggfunc="size")
