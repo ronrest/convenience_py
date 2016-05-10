@@ -70,3 +70,11 @@ def grouped_tally(df=None, x=None, group=None):
                              aggfunc="size")
         return df2
 
+    else:
+        # ----------------------------------------------------------------------
+        #                                                    Something not right
+        # ----------------------------------------------------------------------
+        raise ValueError("\n    The values you used lead to nowhere... "\
+                         "\n    Please check the documentation carefully"\
+                         "\n    to make sure you are feeding the correct"\
+                         "\n    type of values in the right place.")
