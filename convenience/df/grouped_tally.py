@@ -27,15 +27,26 @@ def grouped_tally(df=None, x=None, group=None):
     :param df: {pandas dataframe}(optional)
         Dataframe that contains the columns of data you want to use.
     :param x: {String, or List-like object}
-        Either the name of the column whose values we want to tally up from `df`
-        OR
-        A list-like object that can be converted by pandas into a dataframe.
+        This will be the column whose values we want to tally up from `df`.
+
+        If you provided a dataframe for `df` then use a string to represent the
+        name of the column in `df`.
+
+        OTHERWISE
+
+        Provide the data itself as a list-like object that can be converted by
+        pandas into a dataframe.
         (It will accept a list, a 1D numpy array, or a Pandas Series)
     :param group: {String or List-like object}
-        Either the name of the column we want to group the values by
-        OR
-        Like `x` it will also accept a list-like object of the data itself for
-        this column.
+        The column of data we want to group the values by.
+
+        As with `x`, you specify the column name with a string if you provided
+        a dataframe for `df`.
+
+        OTHERWISE
+
+        Provide the data for this column.
+
     :return: {Pandas Dataframe}
         Returns the grouped tally table as a pandas dataframe
     """
@@ -78,3 +89,6 @@ def grouped_tally(df=None, x=None, group=None):
                          "\n    Please check the documentation carefully"\
                          "\n    to make sure you are feeding the correct"\
                          "\n    type of values in the right place.")
+
+
+
