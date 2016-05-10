@@ -1,6 +1,7 @@
 # TODO: consider using:
 #       from itertools import cycle, islice
-#       list(islice(array,start,start+slice_len))
+#       myList = cycle([1,2,3])
+#       list(islice(myList,start,start+slice_len))
 
 # ==============================================================================
 #                                                             WRAP_SLICE_INDICES
