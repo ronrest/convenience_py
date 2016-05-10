@@ -1,3 +1,5 @@
+import pandas as pd
+
 # ==============================================================================
 #                                                                  GROUPED_TALLY
 # ==============================================================================
@@ -17,17 +19,47 @@ def grouped_tally(df=None, x=None, group=None):
             2         97   87
             3        372  119
 
-    :param df: {pandas dataframe}
-    :param x: {String}
-        Name of the column whose values we want to tally up
-    :param group: {String}
-        Name of the colum we want to group the values by.
+
+    NOTE: You can either pass it a dataframe as argument `df`, and select the
+    `x`, and `group` columns by name. OR, you can leave `df` blank, and feed
+    the actual columns of data as arguments `x` and `group`.
+
+    :param df: {pandas dataframe}(optional)
+        Dataframe that contains the columns of data you want to use.
+    :param x: {String, or List-like object}
+        Either the name of the column whose values we want to tally up from `df`
+        OR
+        A list-like object that can be converted by pandas into a dataframe.
+        (It will accept a list, a 1D numpy array, or a Pandas Series)
+    :param group: {String or List-like object}
+        Either the name of the column we want to group the values by
+        OR
+        Like `x` it will also accept a list-like object of the data itself for
+        this column.
     :return: {Pandas Dataframe}
         Returns the grouped tally table as a pandas dataframe
     """
     # ==========================================================================
-    df2 = df.pivot_table(index=group,
-                         columns=x,
-                         aggfunc="size")
-    return df2
+    # --------------------------------------------------------------------------
+    #                                              Make sure Arguments are Valid
+    # --------------------------------------------------------------------------
+    if x is group is None:
+        msg = "\n    At least one of the arguments must be a data" \
+              "\n    that can be converted into a pandas dataframe"
+        raise ValueError(msg)
+    # --------------------------------------------------------------------------
+    #                                         Raw Column Data have been provided
+    # --------------------------------------------------------------------------
+    if df is None:
+        df = pd.DataFrame({"x": x, "group": group})
+        x = "x" if x is not None else None
+        group = "group" if group is not None else None
+    # --------------------------------------------------------------------------
+    #                                              A Dataframe has been provided
+    # --------------------------------------------------------------------------
+    if isinstance(df, pd.core.frame.DataFrame):
+        df2 = df.pivot_table(index=group,
+                             columns=x,
+                             aggfunc="size")
+        return df2
 
