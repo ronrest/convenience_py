@@ -1,9 +1,10 @@
 import pandas as pd
 
+
 # ==============================================================================
 #                                                                  GROUPED_TALLY
 # ==============================================================================
-def grouped_tally(df=None, x=None, group=None):
+def grouped_tally(df=None, x=None, group=None, normalize=False):
     """
     Given two columns of discrete data (one which you want to tally up, and
     another you want to group by), it returns a dataframe where each row is the
@@ -47,6 +48,9 @@ def grouped_tally(df=None, x=None, group=None):
 
         Provide the data for this column.
 
+    :param normalize: {Boolean} (default=False)
+        Do you want the values to be ratios that add up to 1 across each group?
+
     :return: {Pandas Dataframe}
         Returns the grouped tally table as a pandas dataframe
     """
@@ -79,6 +83,11 @@ def grouped_tally(df=None, x=None, group=None):
         df2 = df.pivot_table(index=group,
                              columns=x,
                              aggfunc="size")
+
+        # If Requested, Normalize so values for a group add up to 1
+        if normalize:
+            df2 = df2.div(df2.sum(axis=1), axis=0)
+
         return df2
 
     else:
@@ -89,6 +98,5 @@ def grouped_tally(df=None, x=None, group=None):
                          "\n    Please check the documentation carefully"\
                          "\n    to make sure you are feeding the correct"\
                          "\n    type of values in the right place.")
-
 
 
