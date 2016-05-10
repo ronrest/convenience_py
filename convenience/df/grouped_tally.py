@@ -44,9 +44,12 @@ def grouped_tally(df=None, x=None, group=None):
     #                                              Make sure Arguments are Valid
     # --------------------------------------------------------------------------
     if x is group is None:
-        msg = "\n    At least one of the arguments must be a data" \
-              "\n    that can be converted into a pandas dataframe"
-        raise ValueError(msg)
+        msg = "\n    Cannot perform any grouping or tallying. " \
+              "\n    Make sure that at least one of the " \
+              "\n    arguments picks out a column of data" \
+              "\n    that can be converted into a pandas " \
+              "\n    dataframe"
+        raise AssertionError(msg)
     # --------------------------------------------------------------------------
     #                                         Raw Column Data have been provided
     # --------------------------------------------------------------------------
