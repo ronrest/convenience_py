@@ -18,6 +18,11 @@ def sentence_2_freq_vec(s, vocab_list):
     :return:(list of integers)
         The frequency counts
 
+    :example:
+        >>> vocab = ['the', 'a', 'is', 'it', 'best', 'good', 'bad']
+        >>> s = "it is the best it is".split()
+        >>> sentence_2_freq_vec(s, vocab_list=vocab)
+        [1, 0, 2, 2, 1, 0, 0]
     """
     # ==========================================================================
     # TODO: compare the perfomrance of different methods of achieving this
