@@ -16,4 +16,5 @@ from cache_calc import cache_calc
 from cache_download import cache_download
 from file_verification import file_verification
 from uncompress import uncompress
+from img2pdf import img2pdf
 
