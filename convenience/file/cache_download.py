@@ -103,4 +103,55 @@ def cache_download(url, out=("", ""), v_type=None, v_val=None):
     except:
         raise Exception('failed to download from' + url)
 
+    #TODO: have an overwrite option, to overwrite local file
+
+
+
+
+
+# url = "http://vignette2.wikia.nocookie.net/jurassicpark/images/1/12/Velociraptor-detail-header.png/revision/latest?cb=20150420213742"
+# cache_download(url, out=("/tmp/test", "rapt.png"))
+
+
+# def cache_download(url, out=("", ""), sha256=None, bytes=None, overwrite=False):
+    """
+    Downloads a file if it is not already downloaded in the output path
+    :param url:
+    :param out: {tuple of 2 Strings}
+        Tuple with two string elements:
+
+        1. The first element is the directory you want to save the  file to.
+           if this is an empty string "", then it will save it automatically to
+           the current working directory.
+        2. The second element is the filename you want to save it as. If this is
+           an empty string "", then it automatically saves it as the same
+           as the remote file being downloaded.
+
+        Default is ("", "") which saves the file in the current working
+        directory without changing the filename.
+
+    :param v_method:
+        Verification method.
+    :param v_value:
+        Expected verfication value
+
+    :param sha256: {string, or None}
+        Use this to enter the SHA256 code (as a string) for the file. This does
+        two things:
+
+        1. allows you to check that a local copy of the file is indeed the
+           version of file you want to use as the cached file, and that you can
+           safely skip downloading the file again.
+        2. Once the file is downloaded, you can verify that it has not been
+           corrupted during the download.
+    :param bytes: {int, or None}
+        The expected size of the file in bytes. This serves the same two
+        purposes as sha256, and is ignored if sha256 is used.
+    :param overwrite: {boolean}
+        Should it forcefully overwrite an existing file? TODO
+    """
+
+
+
+
 
