@@ -60,6 +60,9 @@ def dir_items(d, opt="all", rel=True, root="", filter=""):
 
     # TODO: Expand the filter, so you can filter using regex, file extensions,
     #       or mime types
+    # TODO: sort!!! perform sorting (NOTE: that using list.sort() is a bad idea,
+    #       because it sorts by ascii order not alphabetical order.
+
     # --------------------------------------------------------------------------
     #                                                                      Setup
     # --------------------------------------------------------------------------
