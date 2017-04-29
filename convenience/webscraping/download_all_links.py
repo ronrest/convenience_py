@@ -5,8 +5,40 @@ import re
 import urllib
 import os
 
+# ==============================================================================
+#                                                       DOWNLOAD_LINKS_FROM_PAGE
+# ==============================================================================
 def download_links_from_page(page, extension="", output_dir="", ltf=False,
                              base_url=""):
+    """
+    Downloads files from some html page. you can specify that you only want
+    files with a particular extension, and where to save them.
+
+    NOTE: Currently it does not support downloading of files that are listed
+    as relative links.
+
+    :param page:
+        either a url, or the contents of an html page.
+
+    :param extension:
+        extension of file you want to download, eg "pdf".
+        If left blank, it will download ALL links on the page.
+    :param output_dir:
+        what directory to save files to
+    :param ltf:
+        Link Text as Filename
+
+        If True Use the link text as the file name. Replacing any spaces with
+        underscores.
+
+        If false, it uses the original remote file name.
+    :param base_url:
+        This is only used if `page` is not a url.
+
+        If page is a string containing the HTML content, then it is a good idea
+        to specify the base directory that the page come from. Without it, any
+        relative file paths to files in links will fail to download.
+    """
     # Creates the directory if it does not already exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
