@@ -5,6 +5,8 @@ import re
 import urllib
 import os
 
+# TODO: take into account relative URLS.
+
 # ==============================================================================
 #                                                       DOWNLOAD_LINKS_FROM_PAGE
 # ==============================================================================
