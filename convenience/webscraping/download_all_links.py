@@ -63,9 +63,9 @@ def download_links_from_page(page, extension="", output_dir="", ltf=False,
     else:
         links = soup.findAll('a')
 
-    # ------------------------------------------------------------------------------
-    #                                                   DOWNLOAD EACH FILE AT A TIME
-    # ------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
+    #                                               DOWNLOAD EACH FILE AT A TIME
+    # --------------------------------------------------------------------------
     unprocessed_links = []  # keep a list of files that could not be downloaded
     for link in links:
         link_url = link["href"]
@@ -76,18 +76,18 @@ def download_links_from_page(page, extension="", output_dir="", ltf=False,
         # Use base_url to convert to a full path if link_url is a relative path
         link_url = link_url if full_url else os.path.join(base_url, link_url)
 
-        # --------------------------------------------------------------------------
-        # Extract the link test to use as the file name, otherwise use the remote
-        # filename
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        # Extract the link test to use as the file name, otherwise use the
+        # remote filename
+        # ----------------------------------------------------------------------
         if ltf:
             filename = (link.contents[0]).replace(" ", "_") + "." + extension
         else:
             filename = os.path.split(link_url)[1]
 
-        # --------------------------------------------------------------------------
-        #                                                          Download the file
-        # --------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        #                                                      Download the file
+        # ----------------------------------------------------------------------
         try:
             print("Downloading " + link_url)
             urllib.urlretrieve(link_url, os.path.join(output_dir, filename))
