@@ -6,18 +6,24 @@ from pickle import dump as pickle_dump
 #                                                             CACHE CALCULATIONS
 # ==============================================================================
 def cache_calc(filename, func, *args, **kwargs):
-    """
-    Cache calculations, so that the first call to this function performs the
-    calculations, and caches them to a file. And future calls to this function
-    simply load up the data from the cached file.
+    """ Cache calculations, so that the first call to this function performs the
+        calculations, and caches them to a file. Future calls to this function
+        simply load up the data from the cached file.
 
-    :param filename:(str) the file path you want to save the cached file as
-    :param func: The function to call to calculate the
-    :param *args: ordered arguments to be passed on to func()
-    :param **kwargs: keyword arguments to be passed on to func()
-    :return: whatever func() returns.
+    Args:
+        filename:(str)
+            the file path you want to save the cached file as
+        func: (callable)
+            The function to call to calculate the
+        *args:
+            ordered arguments to be passed on to func()
+        **kwargs:
+            keyword arguments to be passed on to func()
 
-    :examples:
+    Returns:
+        Returns whatever func() returns.
+    
+    Examples:
         cache_calc("myCachedFile", myFunc)
     """
     # ==========================================================================
