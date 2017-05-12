@@ -4,60 +4,64 @@ import os
 #                                                                      DIR ITEMS
 # ==============================================================================
 def dir_items(d, opt="all", rel=True, root="", filter=""):
-    """
-    Takes a directory path (as a string). And returns the paths/names of the
-    items that are contained in that directory.
+    """ Takes a directory path (as a string). And returns the paths/names of
+        the items that are contained in that directory.
+    
+        ALL ITEMS, DIRECTORIES, OR JUST FILES
+        ----------------------------
+        Depending on the options you use, you can return:
+         - a list of ALL the items (opt="all")
+         - just the subdirectories (opt="dirs")
+         - only files (opt="files")
+         - directories and files as tuple of two separate lists (opt="grouped")
+    
+        RELATIVE OR ABSOLUTE PATHS
+        ----------------------------
+        The items can be returned as:
+         - just the filenames of the items (rel=True)
+         - the absolute path to the items (rel=False)
+         - the path to the items relative to any directory whatsoever in the
+           entire system filestructure (rel=True, root="some/dir/")
+    
+        STRING FILTERS
+        ----------------------------
+        You can also specify to only return items where the filename contains
+        some specified text, eg, only return items containing ".jpg"
+    
+    
+        NOTE
+        ----------------------------
+        The items are not returned in any particular order.
+    
+    Args:
+        d: (str)
+            The full path to the directory you want to search in.
+        opt: (str or None) {default = "all"}
+            The option to use:
+    
+            "dirs" : return just the subdirectories
+            "files": return just the files
+            "all"  : return all items
+            "grouped" : returns a tuple of two lists. ([directories], [files])
+    
+        rel: (optional)(boolean)
+            if True, then it returns the listed items as directories relative
+            to the d directory.
+    
+            IF False, then it returns the FULL paths.
+        
+        root: (Optional)(str)
+            A directory path that we want to use as the root for relative paths.
+            If left blank, then it uses the directory set in d as the root
+            directory.
+        
+        filter: (string)
+            Used to filter for items that contain this string in their name.
 
-    ALL ITEMS, DIRECTORIES, OR JUST FILES
-    ----------------------------
-    Depending on the options you use, you can return:
-     - a list of ALL the items (opt="all")
-     - just the subdirectories (opt="dirs")
-     - only files (opt="files")
-     - directories and files as a tuple of two separate lists (opt="grouped")
-
-    RELATIVE OR ABSOLUTE PATHS
-    ----------------------------
-    The items can be returned as:
-     - just the filenames of the items (rel=True)
-     - the absolute path to the items (rel=False)
-     - the path to the items relative to any directory whatsoever in the entire
-       system filestructure (rel=True, root="some/dir/")
-
-    STRING FILTERS
-    ----------------------------
-    You can also specify to only return items where the filename contains some
-    specified text, eg, only return items containing ".jpg"
-
-
-    NOTE
-    ----------------------------
-    The items are not returned in any particular order.
-
-
-    :param d: (str)
-        The full path to the directory you want to search in.
-    :param opt: (str or None) {default = "all"}
-        The option to use:
-
-        "dirs" : return just the subdirectories
-        "files": return just the files
-        "all"  : return all items
-        "grouped" : returns a tuple of two lists. ([directories], [files])
-
-    :param rel: (optional)(boolean)
-        if True, then it returns the listed items as directories relative to
-        the d directory.
-
-        IF False, then it returns the FULL paths.
-    :param root: (Optional)(str)
-        A directory path that we want to use as the root for relative paths.
-        If left blank, then it uses the directory set in d as the root directory.
-    :param filter: (string)
-        Used to filter for items that contain this string in their name.
+    Returns:
+        See notes in description.
     """
     # ==========================================================================
-
     # TODO: Expand the filter, so you can filter using regex, file extensions,
     #       or mime types
     # TODO: sort!!! perform sorting (NOTE: that using list.sort() is a bad idea,
