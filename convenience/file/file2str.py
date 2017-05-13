@@ -2,12 +2,13 @@
 #                                                                       FILE2STR
 # ==============================================================================
 def file2str(file):
-    """
-    Takes a file path and returns the contents of that file as a tring object.
+    """ Takes a file path and returns the contents of that file as a string.
 
-    :param file: (string)
-        The path to the file.
-    :return:
+    Args:
+        file: (string)
+            The path to the file.
+
+    Returns: (string)
     """
     # ==========================================================================
     with open(file, "r") as textFile:
