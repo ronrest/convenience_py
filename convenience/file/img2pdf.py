@@ -2,26 +2,26 @@
 #                                                                      IMG 2 PDF
 # ==============================================================================
 def img2pdf(images, output, orientation="P", units="cm", size=(10, 15)):
-    """
-    Takes a list of images (as file paths), and creates a pdf document with
-    an image per page.
+    """ Takes a list of images (as file paths), and creates a pdf document with
+        an image per page.
 
-    NOTE: Requires fpdf to be installed
+        NOTE: Requires fpdf to be installed
 
-    :param images: (list of strings)
-        List of file paths to images to use.
-    :param output:
-        Path to output file
-    :param orientation: (string) (default="P")
-        "P" = Protrait
-        "L" =  Landscape
-    :param units: (string) (default="cm")
-        Units of measurement to pass on to FPDF
-        "cm" = Centimeters
-        "mm" = Milimeters
-    :param size: (tuple)
-        dimensions of the page (in the specified units)
-        (width, height)
+    Args:
+        images: (list of strings)
+            List of file paths to images to use.
+        output:
+            Path to output file
+        orientation: (string) (default="P")
+            "P" = Protrait
+            "L" =  Landscape
+        units: (string) (default="cm")
+            Units of measurement to pass on to FPDF
+            "cm" = Centimeters
+            "mm" = Milimeters
+        size: (tuple)
+            dimensions of the page (in the specified units)
+            (width, height)
     """
     # ==========================================================================
     from fpdf import FPDF
