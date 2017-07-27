@@ -1,7 +1,15 @@
 from datetime import datetime, timedelta
 
 # ==============================================================================
+#                                                             NUM_WITH_EXTENSION
+# ==============================================================================
 def num_with_extension(n):
+    """ Given a number, it returns a string of the number
+        with its rank extension.
+
+        eg: 1  -> "1st"
+            23 -> "23rd"
+    """
     if 10 <= n % 100 <= 20:  # special case of 11-13
         ext = "th"
     elif n % 10 == 1:
