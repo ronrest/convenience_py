@@ -24,6 +24,18 @@ def num_with_extension(n):
 
 
 # ==============================================================================
+def date_str(date, mode="ymd"):
+    map = {"ymd": "%Y_%m_%d",
+           "dmy": "%d_%m_%Y",
+            "formal": "{} %B %Y".format(num_with_extension(date.day))}
+    if mode in map.keys():
+        format = map[mode]
+    else:
+        format = mode
+    return date.strftime(format)
+
+
+# ==============================================================================
 #                                                                     N_DAYS_AGO
 # ==============================================================================
 def n_days_ago(n):
