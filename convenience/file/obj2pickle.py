@@ -33,4 +33,3 @@ def obj2pickle(obj, file, protocol=2):
     with open(file, mode="wb") as fileObj:
         pickle.dump(obj, fileObj, protocol=protocol)
     print("---Done!")
-
