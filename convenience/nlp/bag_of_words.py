@@ -33,3 +33,6 @@ def bow_vector(doc, word_to_id, unknown_id=0, dtype=np.int32):
         vec[word_to_id.get(word, unknown_id)] += 1
     return vec
 
+
+# bow_vector("sea is not good nutty guty".split(), word_to_id)
+
