@@ -33,3 +33,28 @@ def obj2pickle(obj, file, protocol=2):
     with open(file, mode="wb") as fileObj:
         pickle.dump(obj, fileObj, protocol=protocol)
     print("---Done!")
+
+
+# ==============================================================================
+#                                                                     PICKLE2OBJ
+# ==============================================================================
+def pickle2obj(file):
+    """
+    Takes a filepath to a picke object, and returns a python object specified
+    by that pickle file.
+
+    Args:
+        file: (str) File path to a pickle file.
+
+    Returns: (object)
+        A python object specified by the pickle file.
+
+    Examples:
+        myObject = pickle2obj("/tmp/myPickle.pkl")
+    """
+    # ==========================================================================
+    # NOTE: if you get a "UnicodeDecodeError: 'ascii' codec can't decode" try
+    #       obj = pickle.load(fileObj, encoding="latin1")
+    with open(file, mode = "rb") as fileObj:
+        obj = pickle.load(fileObj)
+    return obj
