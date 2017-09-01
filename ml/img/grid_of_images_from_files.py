@@ -4,7 +4,7 @@ import numpy as np
 # ==============================================================================
 #                                                                 GRID_OF_IMAGES
 # ==============================================================================
-def grid_of_images(files, dims=(50,50), mode="RGB", save=None):
+def grid_of_images_from_files(files, dims=(50,50), mode="RGB", save=None):
     """
     Takes a 2D array  of filepaths to images, and returns a single big image
     with each of those individual images appearing in a grid.
@@ -72,4 +72,3 @@ def grid_of_images(files, dims=(50,50), mode="RGB", save=None):
         return grid_image
     else:
         grid_image.save(save)
-
