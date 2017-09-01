@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # ==============================================================================
 #                                          GRID_OF_SAMPLE_IMAGES_FROM_EACH_CLASS
 # ==============================================================================
@@ -35,6 +36,7 @@ def grid_of_sample_images_from_each_class(X, Y, num_per_class=5, seed=None):
     """
     # TODO: have a resize option to rescale the individual sample images
     # Set the random seed if needed
+    assert len(X) == len(Y), "X, and Y should have same number of samples"
     if seed is not None:
         np.random.seed(seed=seed)
 
@@ -54,9 +56,18 @@ def grid_of_sample_images_from_each_class(X, Y, num_per_class=5, seed=None):
 
     # For each class, sample num_per_class images and place them in grid
     for class_i in range(n_classes):
-        sample_indices = np.random.choice(np.argwhere(np.squeeze(Y) == class_i).squeeze(), size=num_per_class, replace=False)
+        available_pool = np.argwhere(np.squeeze(Y) == class_i).flatten()
+        if len(available_pool) > 0:
+            sample_indices = np.random.choice(available_pool, size=min(num_per_class, len(available_pool)), replace=False)
+        else:
+            # No samples available for this class
+            continue
+
         # Append to corresponding position on grid
         for j, sample_index in enumerate(sample_indices):
+            # Skip column if there is not enough samples from for this class
+            if j >= len(available_pool):
+                break
             row = im_height*class_i
             col = im_width*j
 
