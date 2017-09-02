@@ -12,3 +12,11 @@ def maybe_make_dir(path):
         os.makedirs(path)
 
 
+# ==============================================================================
+#                                                                     GET_PARDIR
+# ==============================================================================
+def get_pardir(file):
+    """ Given a file path, it returns the parent directory of that file. """
+    return os.path.dirname(file)
+
+
