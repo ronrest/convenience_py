@@ -30,5 +30,5 @@ def maybe_make_pardir(file):
     """
     pardir = os.path.dirname(file)
     if pardir.strip() != "": # ensure pardir is not an empty string
-        if not os.path.exists(path):
-            os.makedirs(path)
+        if not os.path.exists(pardir):
+            os.makedirs(pardir)
