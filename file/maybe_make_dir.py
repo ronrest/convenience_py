@@ -20,3 +20,15 @@ def get_pardir(file):
     return os.path.dirname(file)
 
 
+# ==============================================================================
+#                                                              MAYBE_MAKE_PARDIR
+# ==============================================================================
+def maybe_make_pardir(file):
+    """ Takes a path to a file, and creates the necessary directory structure
+        on the system to ensure that the parent directory exists (if it does
+        not already exist)
+    """
+    pardir = os.path.dirname(file)
+    if pardir.strip() != "": # ensure pardir is not an empty string
+        if not os.path.exists(path):
+            os.makedirs(path)
