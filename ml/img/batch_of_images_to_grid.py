@@ -4,7 +4,7 @@ import numpy as np
 # ==============================================================================
 #                                                GRID_OF_IMAGES_FROM_BATCH_ARRAY
 # ==============================================================================
-def grid_of_images_from_batch_array(X, rowcol=(3,2), seed=None):
+def batch_of_images_to_grid(X, rowcol=(3,2), seed=None):
     """
     Given a batch of images (stored as a numpy array), it creates a grid
     of images arranged in `rowcol=(n_rows, n_cols)` images.
