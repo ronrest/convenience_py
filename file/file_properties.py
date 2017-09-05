@@ -1,3 +1,5 @@
+import os
+
 # ==============================================================================
 #                                                       HUMAN_FRIENDLY_FILESIZES
 # ==============================================================================
@@ -24,5 +26,14 @@ def human_friendly_filesizes(size):
     else:
         s = "{} B".format(size)
     return s
+
+
+# ==============================================================================
+#                                                                PRETTY_FILESIZE
+# ==============================================================================
+def pretty_filesize(f):
+    """ Given a filepath, it returns that files filesize as a human friendly
+        string """
+    return human_friendly_filesizes(os.stat(f).st_size)
 
 
