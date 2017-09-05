@@ -37,3 +37,30 @@ def pretty_filesize(f):
     return human_friendly_filesizes(os.stat(f).st_size)
 
 
+# ==============================================================================
+#                                                                PRETTY_FILEDATE
+# ==============================================================================
+import datetime
+def pretty_filedate(f, type="m", pattern="%Y-%m-%d  %H:%M:%S):
+    """ Given a filepath, and the type of date you want, it returns
+        a pretty formatted date and time string based on the pattern
+        you provided.
+
+    Args:
+        type: (str)(default="m")
+            one of the following
+            "c" = file created
+            "m" = file Modified (Default)
+            "a" = file accessed
+    """
+    file_info = os.stat(f)
+    if type.lower()="m":
+        timestamp = os.stat(f).st_mtime
+    elif type.lower()="c":
+        timestamp = os.stat(f).st_ctime
+    if type.lower()="a":
+        timestamp = os.stat(f).st_atime
+    else:
+        assert True, '`type` argument must be one of "m", "c" or "a"'
+
+    datetime.datetime.fromtimestamp(t).strftime(pattern)
