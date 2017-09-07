@@ -4,6 +4,7 @@ import pickle
 # ==============================================================================
 #                                                                     OBJ2PICKLE
 # ==============================================================================
+import os
 def obj2pickle(obj, file, protocol=2):
     """ Saves an object as a binary pickle file to the desired file path.
 
@@ -30,6 +31,13 @@ def obj2pickle(obj, file, protocol=2):
     """
     # ==========================================================================
     print("pickling object to {} ".format(file))
+
+    # Ensure parent directory and necesary file structure exists
+    pardir = os.path.dirname(file)
+    if pardir.strip() != "": # ensure pardir is not an empty string
+        if not os.path.exists(pardir):
+            os.makedirs(pardir)
+
     with open(file, mode="wb") as fileObj:
         pickle.dump(obj, fileObj, protocol=protocol)
     print("---Done!")
