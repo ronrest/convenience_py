@@ -71,7 +71,10 @@ echo 'INSTALLING PLOTTING LIBRARIES'
 pip install seaborn
 
 echo 'INSTALL JUPYTER'
-pip install jupyter
+# Jupyter is upgraded and forced to reinstall on the virtualenv to
+# ensure that the command `jupyter kernelspec list` will recognize
+# the virtualenv as containing a viable python kernel to run
+pip install -U --force-reinstall jupyter
 
 echo 'INSTALLING DATA LOADING LIBRARIES'
 pip install h5py
@@ -80,7 +83,9 @@ pip install h5py
 echo "==========================================================="
 echo "                                         INSTALL TENSORFLOW"
 echo "==========================================================="
-pip install --upgrade ${TF}
+# Ensure this version of tensorflow is separate from anything that
+# might already be installed on the system
+pip install --upgrade --force-reinstall ${TF}
 
 
 echo "==========================================================="

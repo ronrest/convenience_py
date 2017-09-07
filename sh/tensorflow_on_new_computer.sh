@@ -86,7 +86,10 @@ echo 'INSTALLING ADITIONAL USEFUL PYTHON LIBRARIES'
 pip install h5py
 
 echo 'INSTALL JUPYTER'
-pip install jupyter
+# Jupyter is upgraded and forced to reinstall on the virtualenv to
+# ensure that the command `jupyter kernelspec list` will recognize
+# the virtualenv as containing a viable python kernel to run
+pip install -U --force-reinstall jupyter
 
 
 echo "==========================================================="
