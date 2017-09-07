@@ -1,6 +1,7 @@
 # ==============================================================================
 #                                                                       STR2FILE
 # ==============================================================================
+import os
 def str2file(s, file, append=True, sep="\n"):
     """
     Takes a string object and a path to a file, and saves the contents of the
@@ -31,6 +32,11 @@ def str2file(s, file, append=True, sep="\n"):
     if append and (sep != ""):
         s = sep + s                  # Appended text separated by desired string
 
+    # Ensure parent directory and necesary file structure exists
+    pardir = os.path.dirname(file)
+    if pardir.strip() != "": # ensure pardir is not an empty string
+        if not os.path.exists(pardir):
+            os.makedirs(pardir)
+
     with open(file, mode=mode) as textFile:
         textFile.write(s)
-
