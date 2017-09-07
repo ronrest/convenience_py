@@ -12,3 +12,11 @@ def mpl_show_img(a, figsize=(15,10)):
     plt.show()
 
 
+# ==============================================================================
+#                                                                       SHOW_IMG
+# ==============================================================================
+import PIL
+def show_img(a):
+    """Given a numpy array representing an image, view it (using PIL)"""
+    img = PIL.Image.fromarray(a)
+    img.show()
