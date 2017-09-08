@@ -22,18 +22,24 @@ def batch_of_images_to_grid(imgs, rows, cols):
         The grid of images as one large image of shape:
             - [n_classes*im_cols, num_per_class*im_rows, n_channels]
     """
-    # TODO: handle case where images have no color chanels (greyscale)
-
     # TODO: have a resize option to rescale the individual sample images
-    # Set the random seed if needed
-
     # TODO: Have a random shuffle option
+    # TODO: Set the random seed if needed
     # if seed is not None:
     #     np.random.seed(seed=seed)
 
     # Only use the number of images needed to fill grid
+    assert rows>0 and cols>0, "rows and cols must be positive integers"
     n_cells = (rows*cols)
     imgs = imgs[:n_cells]
+
+    # Image dimensions
+    n_dims = imgs.ndim
+    assert n_dims==3 or n_dims==4, "Incorrect # of dimensions for input array"
+
+    # Deal with images that have no color channel
+    if n_dims == 3:
+        imgs = np.expand_dims(imgs, axis=3)
 
     n_batch, img_height, img_width, n_channels = imgs.shape
 
@@ -44,5 +50,9 @@ def batch_of_images_to_grid(imgs, rows, cols):
     # Reshape into grid
     grid = imgs.reshape(rows,cols,img_height,img_width,n_channels).swapaxes(1,2)
     grid = grid.reshape(rows*img_height,cols*img_width,n_channels)
+
+    # If input was flat images with no color channels, then flatten the output
+    if n_dims == 3:
+        grid = grid.squeeze(axis=2) # axis 2 because batch dim has been removed
 
     return grid
