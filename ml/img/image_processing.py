@@ -150,3 +150,11 @@ def random_contrast(im, sd=0.5, min=0, max=10):
     return enhancer.enhance(contrast)
 
 
+def random_blur(im, min=0, max=5):
+    blur_radius = randint(min, max+1)
+    if blur_radius == 0:
+        return im
+    else:
+        return im.filter(ImageFilter.GaussianBlur(radius=blur_radius))
+
+
