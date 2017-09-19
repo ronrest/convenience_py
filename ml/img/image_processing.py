@@ -150,7 +150,23 @@ def random_contrast(im, sd=0.5, min=0, max=10):
     return enhancer.enhance(contrast)
 
 
+# ==============================================================================
+#                                                                    RANDOM_BLUR
+# ==============================================================================
 def random_blur(im, min=0, max=5):
+    """ Creates a new image which applies a random amount of Gaussian Blur, with
+        a blur radius that is randomly chosen to be in the range [min, max]
+        inclusive.
+
+    Args:
+        im:   PIL image
+        min:  (int) Min amount of blur desired.
+        max:  (int) Max amount of blur desired.
+
+
+    Returns:
+        PIL image with random amount of blur applied.
+    """
     blur_radius = randint(min, max+1)
     if blur_radius == 0:
         return im
