@@ -75,7 +75,16 @@ def crop_and_preserve_size(im, crop_dims, offset, resample=PIL.Image.NEAREST):
     return im2
 
 
+# ==============================================================================
+#                                                                   RANDOM_SHIFT
+# ==============================================================================
 def random_shift(im, max=(5,5)):
+    """ Randomly shifts an image.
+
+    Args:
+        im: (pil image)
+        max: (tuple of two ints) max amount in each x y direction.
+    """
     x_offset = np.random.randint(0, max[0])
     y_offset = np.random.randint(0, max[1])
     return ImageChops.offset(im, xoffset=x_offset, yoffset=y_offset)
