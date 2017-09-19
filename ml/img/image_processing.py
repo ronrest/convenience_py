@@ -174,7 +174,25 @@ def random_blur(im, min=0, max=5):
         return im.filter(ImageFilter.GaussianBlur(radius=blur_radius))
 
 
+# ==============================================================================
+#                                                                   RANDOM_NOISE
+# ==============================================================================
 def random_noise(im, sd=5):
+    """Creates a new image which has random noise.
+       The intensity of the noise is determined by first randomly choosing the
+       standard deviation of the noise as a value between 0 to `sd`.
+       This value is then used as the standard deviation for randomly sampling
+       individual pixel noise from a normal distribution.
+       This random noise is added to the original image pixel values, and
+       clipped to keep all values between 0-255.
+
+    Args:
+        im:   PIL image
+        sd:   (int) Max Standard Deviation to select from.
+
+    Returns:
+        PIL image with random noise added.
+    """
     mode = im.mode
     noise_sd = np.random.randint(0, sd)
     if noise_sd > 0:
