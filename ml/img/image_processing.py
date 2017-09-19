@@ -203,7 +203,21 @@ def random_noise(im, sd=5):
         return im
 
 
+# ==============================================================================
+#                                                                RANDOM_ROTATION
+# ==============================================================================
 def random_rotation(im, max=10, expand=True):
+    """ Creates a new image which is rotated by a random amount between
+        [-max, +max] inclusive.
+
+    Args:
+        im:     PIL image
+        max:    (int) Max angle (in either direction).
+        expand: (bool) expand image to prevent rotated edges being visible.
+
+    Returns:
+        PIL image with random rotation applied.
+    """
     angle = randint(-max, max+1)
     if angle == 0:
         return im
