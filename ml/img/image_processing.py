@@ -127,3 +127,9 @@ def random_brightness(im, sd=0.5, min=0, max=20):
     return enhancer.enhance(brightness)
 
 
+def random_contrast(im, sd=0.5, min=0, max=10):
+    contrast = np.clip(np.random.normal(loc=1, scale=sd), min, max)
+    enhancer = ImageEnhance.Contrast(im)
+    return enhancer.enhance(contrast)
+
+
