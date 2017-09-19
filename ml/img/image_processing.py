@@ -225,3 +225,34 @@ def random_rotation(im, max=10, expand=True):
         return im.rotate(angle, resample=Image.BILINEAR, expand=expand)
 
 
+def random_transformations_for_segmentation_data(X, Y, brightness=True, contrast=True, blur=3, crop=0.5, noise=10):
+    images = np.zeros_like(X)
+    labels = np.zeros_like(Y)
+    n_images = len(images)
+    for i in range(n_images):
+        image = array2pil(X[i], mode="RGB")
+        label = array2pil(Y[i], mode="L")
+
+        if brightness:
+            image = random_brightness(image, sd=0.5, min=0.2, max=4)
+        if contrast:
+            image = random_contrast(image, sd=0.5, min=0.2, max=5)
+        if crop is not None:
+            min_scale = crop
+            width, height = np.array(np.shape(image)[:2])
+            crop_width = np.random.randint(width*min_scale, width)
+            crop_height = np.random.randint(height*min_scale, height)
+            x_offset = np.random.randint(0, width - crop_width + 1)
+            y_offset = np.random.randint(0, height - crop_height + 1)
+            image = crop_and_preserve_size(image, crop_dims=[crop_width, crop_height], offset=[x_offset, y_offset])
+            label = crop_and_preserve_size(label, crop_dims=[crop_width, crop_height], offset=[x_offset, y_offset])
+        if blur is not None:
+            image = random_blur(image, 0, blur)
+
+        if noise is not None:
+            image = random_noise(image, sd=noise)
+
+        # Put into array
+        images[i] = pil2array(image)
+        labels[i] = pil2array(label)
+    return images, labels
