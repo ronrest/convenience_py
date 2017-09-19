@@ -174,3 +174,14 @@ def random_blur(im, min=0, max=5):
         return im.filter(ImageFilter.GaussianBlur(radius=blur_radius))
 
 
+def random_noise(im, sd=5):
+    mode = im.mode
+    noise_sd = np.random.randint(0, sd)
+    if noise_sd > 0:
+        noise = np.random.normal(loc=0, scale=noise_sd, size=np.shape(im))
+        im2 = np.clip(im + noise, 0, 255).astype(np.uint8)
+        return array2pil(im2, mode=mode)
+    else:
+        return im
+
+
