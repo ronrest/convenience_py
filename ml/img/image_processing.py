@@ -22,7 +22,20 @@ def array2pil(a, mode="RGB"):
     return Image.fromarray(a, mode=mode)
 
 
+# ==============================================================================
+#                                                                    RANDOM_CROP
+# ==============================================================================
 def random_crop(im, min_scale=0.5, preserve_size=False, resample=PIL.Image.NEAREST):
+    """
+    Args:
+        im:             (PIL image)
+        min_scale:      (float) minimum ratio along each dimension to crop from.
+        preserve_size:  (bool) Should it resize to original image dimensions?
+        resample:       Resampling method during rescale.
+
+    Returns:
+        PIL image randomly cropped from `im`.
+    """
     if min_scale == 0:
         return im
     else:
