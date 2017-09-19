@@ -52,3 +52,13 @@ def random_crop(im, min_scale=0.5, preserve_size=False, resample=PIL.Image.NEARE
         return im2
 
 
+def crop_and_preserve_size(im, crop_dims, offset, resample=PIL.Image.NEAREST):
+    crop_width, crop_height = crop_dims
+    x_offset, y_offset = offset
+    im2 = im.crop((x_offset, y_offset,
+                   x_offset + crop_width,
+                   y_offset + crop_height))
+    im2 = im2.resize(im.size, resample=resample)
+    return im2
+
+
