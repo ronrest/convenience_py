@@ -203,3 +203,11 @@ def random_noise(im, sd=5):
         return im
 
 
+def random_rotation(im, max=10, expand=True):
+    angle = randint(-max, max+1)
+    if angle == 0:
+        return im
+    else:
+        return im.rotate(angle, resample=Image.BILINEAR, expand=expand)
+
+
