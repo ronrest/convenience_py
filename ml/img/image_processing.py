@@ -52,7 +52,20 @@ def random_crop(im, min_scale=0.5, preserve_size=False, resample=PIL.Image.NEARE
         return im2
 
 
+# ==============================================================================
+#                                                         CROP_AND_PRESERVE_SIZE
+# ==============================================================================
 def crop_and_preserve_size(im, crop_dims, offset, resample=PIL.Image.NEAREST):
+    """ Given a PIL image, the dimensions of the crop, and the offset of
+        the crop, it crops the image, and resizes it back to the original
+        dimensions.
+
+    Args:
+        im:         (PIL image)
+        crop_dims:  Dimensions of the crop region [width, height]
+        offset:     Position of the crop box from Top Left corner [x, y]
+        resample:   resamplimg method
+    """
     crop_width, crop_height = crop_dims
     x_offset, y_offset = offset
     im2 = im.crop((x_offset, y_offset,
