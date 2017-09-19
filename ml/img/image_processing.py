@@ -225,7 +225,37 @@ def random_rotation(im, max=10, expand=True):
         return im.rotate(angle, resample=Image.BILINEAR, expand=expand)
 
 
+# ==============================================================================
+#                                   RANDOM_TRANSFORMATIONS_FOR_SEGMENTATION_DATA
+# ==============================================================================
 def random_transformations_for_segmentation_data(X, Y, brightness=True, contrast=True, blur=3, crop=0.5, noise=10):
+    """ Takes a batch of input images `X`, segmentation labels `Y` as arrays,
+        and does random image transormations on them.
+
+        Ensures that any tansformations that shift or scale the input images
+        also have the same transormations applied to the label images.
+
+    NOTE:  Assumes the pixels for input images are in the range of 0-255.
+
+    Args:
+        X:          (numpy array) batch of imput images
+        Y:          (numpy array) batch of segmentation labels
+        brightness: (bool)(default=True)
+                    Apply random brightness?
+        contrast:   (bool)(default=True)
+                    Apply random contrast?
+        blur:       (int or None)(default=3)
+                    Amount of gaussian blur to apply (in pixels).
+        crop:       (float or None)(default=0.5)
+                    Smallest crop to take as a ratio of the dimensions of the
+                    original image.
+                    Eg, `crop=0.5` could crop a region of the image ranging
+                    anywhere from 50x50 - 100x100 for an input image of 100x100.
+        noise:      (int or None)(default=10)
+                    Standard deviation (as a pixel intensity value) to use
+                    for random normal noise to apply to each pixel.
+                    (gets clipped to keep pixel values between 0-255)
+    """
     images = np.zeros_like(X)
     labels = np.zeros_like(Y)
     n_images = len(images)
