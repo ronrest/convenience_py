@@ -90,3 +90,7 @@ def random_shift(im, max=(5,5)):
     return ImageChops.offset(im, xoffset=x_offset, yoffset=y_offset)
 
 
+def shift_image(im, shift):
+    return ImageChops.offset(im, xoffset=shift[0], yoffset=shift[1])
+
+
