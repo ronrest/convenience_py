@@ -127,7 +127,24 @@ def random_brightness(im, sd=0.5, min=0, max=20):
     return enhancer.enhance(brightness)
 
 
+# ==============================================================================
+#                                                                RANDOM_CONTRAST
+# ==============================================================================
 def random_contrast(im, sd=0.5, min=0, max=10):
+    """Creates a new image which randomly adjusts the contrast of `im` by
+       randomly sampling a contrast value centered at 1, with a standard
+       deviation of `sd` from a normal distribution. Clips values to a
+       desired min and max range.
+
+    Args:
+        im:   PIL image
+        sd:   (float) Standard deviation used for sampling contrast value.
+        min:  (int or float) Clip contrast value to be no lower than this.
+        max:  (int or float) Clip contrast value to be no higher than this.
+
+    Returns:
+        PIL image with contrast randomly adjusted.
+    """
     contrast = np.clip(np.random.normal(loc=1, scale=sd), min, max)
     enhancer = ImageEnhance.Contrast(im)
     return enhancer.enhance(contrast)
