@@ -103,3 +103,9 @@ def shift_image(im, shift):
     return ImageChops.offset(im, xoffset=shift[0], yoffset=shift[1])
 
 
+def random_brightness(im, sd=0.5, min=0, max=20):
+    brightness = np.clip(np.random.normal(loc=1, scale=sd), min, max)
+    enhancer = ImageEnhance.Brightness(im)
+    return enhancer.enhance(brightness)
+
+
