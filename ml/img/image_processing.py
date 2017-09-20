@@ -3,6 +3,12 @@ from PIL import ImageEnhance, Image, ImageFilter, ImageChops
 import numpy as np
 randint = np.random.randint
 
+__author__ = "Ronny Restrepo"
+__copyright__ = "Copyright 2017, Ronny Restrepo"
+__credits__ = ["Ronny Restrepo"]
+__license__ = "Apache License"
+__version__ = "2.0"
+
 
 # ==============================================================================
 #                                                                      PIL2ARRAY
