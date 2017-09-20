@@ -255,7 +255,36 @@ def random_noise(im, sd=5):
         return im
 
 
+# ==============================================================================
+#                                                                  RANDOM_SHADOW
+# ==============================================================================
 def random_shadow(im, shadow, intensity=(0.0, 0.7), crop_range=(0.02, 0.25)):
+    """ Given an image of the scene, and an image of a shadow pattern,
+        It will take random crops from the shadow pattern, and perform
+        random rotations and flips of that crop, before overlaying the
+        shadow on the scene image.
+
+        The intensity of the shadow is randomly chosen from zero
+        intensity to a max of `max_intensity`.
+
+        NOTE: This was designed to make use of shadow images being
+        black and white in color (but same colorspace mode as scene image).
+
+    Args:
+        im:             (PIL image) Image of scene
+        shadow:         (PIL image)
+                        Image of shaddow pattern to take a crop from
+        intensity:      (tuple of two floats)(default = (0.0, 0.7))
+                        Min and max values (between 0 to 1) specifying how
+                        strong to make the shadows.
+        crop_range:     (tuple of two floats)(default=(0.02, 0.25))
+                        Min and Max scale for random crop sizes from
+                        the shadow image.
+    Examples:
+        shadow = PIL.Image.open("shadow_aug.png")
+        image = PIL.Image.open("scene.jpg")
+        random_shadow(image, shadow=shadow, max_intensity=0.7, crop_range=(0.02, 0.4))
+    """
     width, height = im.size
     mode = im.mode
     assert im.mode == shadow.mode, "Scene image and shadow image must be same colorspace mode"
