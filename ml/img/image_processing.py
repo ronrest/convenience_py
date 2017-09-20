@@ -255,6 +255,34 @@ def random_noise(im, sd=5):
         return im
 
 
+def random_shadow(im, shadow, intensity=(0.0, 0.7), crop_range=(0.02, 0.25)):
+    width, height = im.size
+    mode = im.mode
+    assert im.mode == shadow.mode, "Scene image and shadow image must be same colorspace mode"
+
+    # Take random crop from shadow image
+    min_crop_scale, max_crop_scale = crop_range
+    shadow = random_crop(shadow, min_scale=min_crop_scale, max_scale=max_crop_scale, preserve_size=False)
+    shadow = shadow.resize((width, height), resample=PIL.Image.BILINEAR)
+
+    # random flips, rotations, and color inversion
+    shadow = random_tb_flip(random_lr_flip(random_90_rotation(shadow)))
+    shadow = random_invert(shadow)
+    # Ensure same shape as scene image after flips and rotations
+    shadow = shadow.resize((width, height), resample=PIL.Image.BILINEAR)
+
+    # Scale the shadow into proportional intensities (0-1)
+    intensity_value = np.random.rand(1)
+    min, max = intensity
+    intensity_value = (intensity_value*(max - min))+min # remapped to min,max range
+    shadow = np.divide(shadow, 255)
+    shadow = np.multiply(intensity_value, shadow)
+
+    # Overlay the shadow
+    overlay = (np.multiply(im, 1-shadow)).astype(np.uint8)
+    return PIL.Image.fromarray(overlay, mode="RGB")
+
+
 # ==============================================================================
 #                                                                RANDOM_ROTATION
 # ==============================================================================
