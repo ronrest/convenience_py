@@ -146,11 +146,10 @@ def random_shift(im, max=(5,5)):
 #                                                                    SHIFT_IMAGE
 # ==============================================================================
 def shift_image(im, shift):
-    """ Shifts an image.
-
+    """ Returns a shifted copy of a PIL image.
     Args:
-        im
-        shift:  [x,y]
+        im:     (PIL image) 
+        shift:  (tuple of two ints) How much to shift along each axis (x, y)
     """
     return ImageChops.offset(im, xoffset=shift[0], yoffset=shift[1])
 
