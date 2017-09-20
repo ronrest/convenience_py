@@ -103,6 +103,17 @@ def random_lr_flip(im):
 
 
 # ==============================================================================
+#                                                                 RANDOM_TB_FLIP
+# ==============================================================================
+def random_tb_flip(im):
+    """ Randomly flips the image top-bottom with 0.5 probablility """
+    if np.random.choice([0,1]) == 1:
+        return im.transpose(method=PIL.Image.FLIP_TOP_BOTTOM)
+    else:
+        return im
+
+
+# ==============================================================================
 #                                                                   RANDOM_SHIFT
 # ==============================================================================
 def random_shift(im, max=(5,5)):
