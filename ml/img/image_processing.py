@@ -337,45 +337,57 @@ def random_rotation(im, max=10, expand=True):
 # ==============================================================================
 #                                   RANDOM_TRANSFORMATIONS_FOR_SEGMENTATION_DATA
 # ==============================================================================
-def random_transformations_for_segmentation_data(X, Y, brightness=True, contrast=True, blur=3, crop=0.5, noise=10):
+def random_transformations_for_segmentation_data(
+    X,
+    Y,
+    shadow=(0.0, 0.7),
+    shadow_file="shadow_pattern.jpg",
+    shadow_crop_range=(0.02, 0.25),
+    brightness=(0.5, 0.2, 4),
+    contrast=(0.5, 0.2, 5),
+    blur=3,
+    crop=0.5,
+    noise=10):
     """ Takes a batch of input images `X`, segmentation labels `Y` as arrays,
         and does random image transormations on them.
 
         Ensures that any tansformations that shift or scale the input images
         also have the same transormations applied to the label images.
 
-    NOTE:  Assumes the pixels for input images are in the range of 0-255.
+        NOTE:  Assumes the pixels for input images are in the range of 0-255.
 
     Args:
         X:          (numpy array) batch of imput images
         Y:          (numpy array) batch of segmentation labels
-        brightness: (bool)(default=True)
-                    Apply random brightness?
-        contrast:   (bool)(default=True)
-                    Apply random contrast?
-        blur:       (int or None)(default=3)
-                    Amount of gaussian blur to apply (in pixels).
-        crop:       (float or None)(default=0.5)
-                    Smallest crop to take as a ratio of the dimensions of the
-                    original image.
-                    Eg, `crop=0.5` could crop a region of the image ranging
-                    anywhere from 50x50 - 100x100 for an input image of 100x100.
-        noise:      (int or None)(default=10)
-                    Standard deviation (as a pixel intensity value) to use
-                    for random normal noise to apply to each pixel.
-                    (gets clipped to keep pixel values between 0-255)
+        shadow:             (tuple of two floats) (min, max) shadow intensity
+        shadow_file:        (str) Path fo image file containing shadow pattern
+        shadow_crop_range:  (tuple of two floats) min and max proportion of
+                            shadow image to take crop from.
+        shadow_crop_range: ()(default=(0.02, 0.25))
+        brightness:        ()(default=) (std, min, max)
+        contrast:          ()(default=) (std, min, max)
+        blur:              ()(default=3)
+        crop:              ()(default=0.5)
+        noise:             ()(default=10)
     """
     images = np.zeros_like(X)
     labels = np.zeros_like(Y)
     n_images = len(images)
+
+    if shadow is not None:
+        assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
+        shadow_image = PIL.Image.open(shadow_file)
+
     for i in range(n_images):
         image = array2pil(X[i], mode="RGB")
         label = array2pil(Y[i], mode="L")
 
-        if brightness:
-            image = random_brightness(image, sd=0.5, min=0.2, max=4)
-        if contrast:
-            image = random_contrast(image, sd=0.5, min=0.2, max=5)
+        if shadow is not None:
+            image = random_shadow(image, shadow=shadow_image, intensity=shadow, crop_range=shadow_crop_range)
+        if brightness is not None:
+            image = random_brightness(image, sd=brightness[0], min=brightness[1], max=brightness[2])
+        if contrast is not None:
+            image = random_contrast(image, sd=contrast[0], min=contrast[1], max=contrast[2])
         if crop is not None:
             min_scale = crop
             width, height = np.array(np.shape(image)[:2])
