@@ -114,6 +114,19 @@ def random_tb_flip(im):
 
 
 # ==============================================================================
+#                                                                  RANDOM_INVERT
+# ==============================================================================
+def random_invert(im):
+    """ With a 0.5 probability, it inverts the colors
+        NOTE: This does not work on RGBA images yet. """
+    assert im.mode != "RGBA", "Does random_invert not support RGBA images"
+    if np.random.choice([0,1]) == 1:
+        return PIL.ImageOps.invert(im)
+    else:
+        return im
+
+
+# ==============================================================================
 #                                                                   RANDOM_SHIFT
 # ==============================================================================
 def random_shift(im, max=(5,5)):
