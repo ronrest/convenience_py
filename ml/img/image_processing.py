@@ -92,6 +92,17 @@ def random_90_rotation(im):
 
 
 # ==============================================================================
+#                                                                 RANDOM_LR_FLIP
+# ==============================================================================
+def random_lr_flip(im):
+    """ Randomly flips the image left-right with 0.5 probablility """
+    if np.random.choice([0,1]) == 1:
+        return im.transpose(method=PIL.Image.FLIP_LEFT_RIGHT)
+    else:
+        return im
+
+
+# ==============================================================================
 #                                                                   RANDOM_SHIFT
 # ==============================================================================
 def random_shift(im, max=(5,5)):
