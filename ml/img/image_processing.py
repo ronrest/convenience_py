@@ -81,6 +81,17 @@ def crop_and_preserve_size(im, crop_dims, offset, resample=PIL.Image.NEAREST):
 
 
 # ==============================================================================
+#                                                             RANDOM_90_ROTATION
+# ==============================================================================
+def random_90_rotation(im):
+    """ Randomly rotates image in 90 degree increments
+        (90, -90, or 180 degrees) """
+    methods = [PIL.Image.ROTATE_90, PIL.Image.ROTATE_180, PIL.Image.ROTATE_270]
+    method = np.random.choice(methods)
+    return im.transpose(method=method)
+
+
+# ==============================================================================
 #                                                                   RANDOM_SHIFT
 # ==============================================================================
 def random_shift(im, max=(5,5)):
