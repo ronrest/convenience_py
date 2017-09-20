@@ -1,5 +1,6 @@
 import PIL
 from PIL import ImageEnhance, Image, ImageFilter, ImageChops
+import PIL.ImageOps
 import numpy as np
 randint = np.random.randint
 
