@@ -370,6 +370,9 @@ def random_transformations_for_segmentation_data(
         crop:              ()(default=0.5)
         noise:             ()(default=10)
     """
+    # TODO: Random flips
+    # TODO: Random rotations
+    # TODO: Random warping
     images = np.zeros_like(X)
     labels = np.zeros_like(Y)
     n_images = len(images)
