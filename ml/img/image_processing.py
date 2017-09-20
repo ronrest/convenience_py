@@ -248,7 +248,8 @@ def random_noise(im, sd=5):
     noise_sd = np.random.randint(0, sd)
     if noise_sd > 0:
         noise = np.random.normal(loc=0, scale=noise_sd, size=np.shape(im))
-        im2 = np.clip(im + noise, 0, 255).astype(np.uint8)
+        im2 = np.asarray(im, dtype=np.float32) # prevent overflow
+        im2 = np.clip(im2 + noise, 0, 255).astype(np.uint8)
         return array2pil(im2, mode=mode)
     else:
         return im
