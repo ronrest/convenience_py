@@ -31,31 +31,30 @@ def array2pil(a, mode="RGB"):
 # ==============================================================================
 #                                                                    RANDOM_CROP
 # ==============================================================================
-def random_crop(im, min_scale=0.5, preserve_size=False, resample=PIL.Image.NEAREST):
+def random_crop(im, min_scale=0.5, max_scale=1.0, preserve_size=False, resample=PIL.Image.NEAREST):
     """
     Args:
-        im:             (PIL image)
-        min_scale:      (float) minimum ratio along each dimension to crop from.
-        preserve_size:  (bool) Should it resize to original image dimensions?
-        resample:       Resampling method during rescale.
+        im:         PIL image
+        min_scale:   (float) minimum ratio along each dimension to crop from.
+        max_scale:   (float) maximum ratio along each dimension to crop from.
+        preserve_size: (bool) Should it resize back to original dims?
+        resample:       resampling method during rescale.
 
     Returns:
-        PIL image randomly cropped from `im`.
+        PIL image of size crop_size, randomly cropped from `im`.
     """
-    if min_scale == 0:
-        return im
-    else:
-        width, height = np.array(np.shape(im)[:2])
-        crop_width = np.random.randint(width*min_scale, width)
-        crop_height = np.random.randint(height*min_scale, height)
-        x_offset = np.random.randint(0, width - crop_width + 1)
-        y_offset = np.random.randint(0, height - crop_height + 1)
-        im2 = im.crop((x_offset, y_offset,
-                       x_offset + crop_width,
-                       y_offset + crop_height))
-        if preserve_size:
-            im2 = im2.resize(im.size, resample=resample)
-        return im2
+    assert (min_scale < max_scale), "min_scale MUST be smaller than max_scale"
+    width, height = im.size
+    crop_width = np.random.randint(width*min_scale, width*max_scale)
+    crop_height = np.random.randint(height*min_scale, height*max_scale)
+    x_offset = np.random.randint(0, width - crop_width + 1)
+    y_offset = np.random.randint(0, height - crop_height + 1)
+    im2 = im.crop((x_offset, y_offset,
+                   x_offset + crop_width,
+                   y_offset + crop_height))
+    if preserve_size:
+        im2 = im2.resize(im.size, resample=resample)
+    return im2
 
 
 # ==============================================================================
