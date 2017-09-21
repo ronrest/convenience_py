@@ -1,4 +1,4 @@
-""" Bare minimum workflow to test an classifier architecture """
+""" Bare minimum workflow to test a classifier architecture """
 from __future__ import print_function, division
 import numpy as np
 import tensorflow as tf
@@ -14,35 +14,41 @@ with graph.as_default():
     relu = tf.nn.relu
 
     # Placeholders
-    tf_X = tf.placeholder(dtype=tf.float32, shape=[None, input_rows, input_cols, n_channels], name="X")
-    tf_Y = tf.placeholder(dtype=tf.int32, shape=None, name="Y")
-    tf_alpha = tf.placeholder_with_default(0.001, shape=None, name="alpha")
-    tf_is_training = tf.placeholder_with_default(False, shape=None)
+    with tf.variable_scope('inputs') as scope:
+        tf_X = tf.placeholder(dtype=tf.float32, shape=[None, input_rows, input_cols, n_channels], name="X")
+        tf_Y = tf.placeholder(dtype=tf.int32, shape=None, name="Y")
+        tf_alpha = tf.placeholder_with_default(0.001, shape=None, name="alpha")
+        tf_is_training = tf.placeholder_with_default(False, shape=None, name="is_training")
 
     # BODY
-    x = tf.div(tf_X, 255., name="normalized_input") # Normalize input
+    with tf.variable_scope('preprocess') as scope:
+        x = tf.div(tf_X, 255., name="scaled_input")
 
     # Conv layers
-    x = tf.layers.conv2d(x, filters=8, kernel_size=3,  strides=2, kernel_initializer=he_init, activation=relu)
+    with tf.variable_scope('c1') as scope:
+        x = tf.layers.conv2d(x, filters=8, kernel_size=3,  strides=2, kernel_initializer=he_init, activation=relu, name="conv")
 
     ##################
     # INSERT MORE HERE
     ##################
 
     # Fully connected layers
-    x = tf.contrib.layers.flatten(x)
-    tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init)
+    with tf.variable_scope('f1') as scope:
+        x = tf.contrib.layers.flatten(x, name="flatten")
+        tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="fc")
 
     # LOSS
-    unrolled_logits = tf.reshape(tf_logits, (-1, n_classes))
-    unrolled_labels = tf.reshape(tf_Y, (-1,))
-    tf_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unrolled_logits, labels=unrolled_labels, name="loss"))
+    with tf.variable_scope('loss') as scope:
+        unrolled_logits = tf.reshape(tf_logits, (-1, n_classes))
+        unrolled_labels = tf.reshape(tf_Y, (-1,))
+        tf_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unrolled_logits, labels=unrolled_labels, name="loss"))
 
     # TRAIN STEP
-    tf_optimizer = tf.train.AdamOptimizer(tf_alpha)
-    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # allow batchnorm
-    with tf.control_dependencies(update_ops):
-        tf_train_op = tf_optimizer.minimize(tf_loss)
+    with tf.variable_scope('opt') as scope:
+        tf_optimizer = tf.train.AdamOptimizer(tf_alpha, name="optimizer")
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # allow batchnorm
+        with tf.control_dependencies(update_ops):
+            tf_train_op = tf_optimizer.minimize(tf_loss, name="train_op")
 
 
 with tf.Session(graph=graph) as sess:
@@ -53,8 +59,8 @@ with tf.Session(graph=graph) as sess:
     n_samples = len(data["X_train"])               # Num training samples
     n_batches = int(np.ceil(n_samples/batch_size)) # Num batches per epoch
 
-    sess.run(tf.initialize_all_variables())
-    # sess.run(tf.global_variables_initializer())
+    # sess.run(tf.initialize_all_variables())
+    sess.run(tf.global_variables_initializer())
 
     for epoch in range(1, n_epochs+1):
         print("="*70, "\nEPOCH {}/{})".format(epoch, n_epochs),"\n"+("="*70))
