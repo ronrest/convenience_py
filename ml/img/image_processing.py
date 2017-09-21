@@ -371,14 +371,15 @@ def random_transformations_for_segmentation_data(
         NOTE:  Assumes the pixels for input images are in the range of 0-255.
 
     Args:
-        X:          (numpy array) batch of imput images
-        Y:          (numpy array) batch of segmentation labels
+        X:                  (numpy array) batch of imput images
+        Y:                  (numpy array) batch of segmentation labels
         shadow:             (tuple of two floats) (min, max) shadow intensity
         shadow_file:        (str) Path fo image file containing shadow pattern
         shadow_crop_range:  (tuple of two floats) min and max proportion of
                             shadow image to take crop from.
         shadow_crop_range:  ()(default=(0.02, 0.25))
-        rotate:             (int)(default=180) max angle to rotate in each direction
+        rotate:             (int)(default=180)
+                            Max angle to rotate in each direction
         crop:               (float)(default=0.5)
         lr_flip:            (bool)(default=True)
         tb_flip:            (bool)(default=True)
