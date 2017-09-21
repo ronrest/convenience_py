@@ -1,5 +1,6 @@
 """
-Useful functions for the image segmentation task
+Useful functions for the image segmentation task, where there is only a single
+class to be labelled. 
 """
 __author__ = "Ronny Restrepo"
 __copyright__ = "Copyright 2017, Ronny Restrepo"
