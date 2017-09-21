@@ -9,11 +9,11 @@ __version__ = "2.0"
 
 
 # ==============================================================================
-#                                          OVERLAYED_SINGLE_CATEGORY_LABEL_IMAGE
+#                                                                OVERLAYED_LABEL
 # ==============================================================================
 import PIL
 import numpy as np
-def overlayed_single_category_label_image(X, Y):
+def overlayed_label(X, Y):
     """ For the task of classifying a single class.
         Given an image of the scene, and an image of the label,
         where the class of interest is labelled as a 1 on a 2d
