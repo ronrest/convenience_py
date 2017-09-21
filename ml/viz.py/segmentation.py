@@ -40,12 +40,31 @@ def overlayed_single_category_label_image(X, Y):
     return overlay
 
 
+# ==============================================================================
+#                                                 OVERLAYED_LABEL_AND_PREDICTION
+# ==============================================================================
 import PIL
 from PIL import Image, ImageChops
 from data import maybe_make_pardir
 import numpy as np
 # Depends on: maybe_make_pardir
 def overlayed_label_and_prediction(img, label, pred, saveto=None):
+    """ For segmentation task with a single label (label 1 in a flat 2D image).
+        Given an input image, the ground truth labels for the pixels, and
+        the predictions, It returns an image that overlays the ground
+        truth and predictions on top of the original image color coded as:
+
+        blue    = ground truth label
+        red     = prediction
+        magenta = where ground truth overlaps with prediction
+
+    Args:
+        img:    (numpy array) of shape [height, width, 3] of int vals 0-255
+        label:  (numpy array) of shape [height, width] of int vals 0-n_classes
+        pred:   (numpy array) of shape [height, width] of int vals 0-n_classes
+
+    Returns: (PIL image)
+    """
     # pred = np.argmax(pred, axis=2)          # get the most likely class id for each pixel
     assert 2 == label.ndim == pred.ndim, \
         "Label and Prediction MUST be of shape 2D arrays with no color channel or batch axis"
