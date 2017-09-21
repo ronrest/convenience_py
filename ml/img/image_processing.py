@@ -315,23 +315,33 @@ def random_shadow(im, shadow, intensity=(0.0, 0.7), crop_range=(0.02, 0.25)):
 # ==============================================================================
 #                                                                RANDOM_ROTATION
 # ==============================================================================
-def random_rotation(im, max=10, expand=True):
+def random_rotation(im, max=10, include_corners=True, resample=PIL.Image.NEAREST):
     """ Creates a new image which is rotated by a random amount between
         [-max, +max] inclusive.
 
     Args:
-        im:     PIL image
-        max:    (int) Max angle (in either direction).
-        expand: (bool) expand image to prevent rotated edges being visible.
+        im:              (PIL image)
+        max:             (int) Max angle (in degrees in either direction).
+        include_corners: (bool)
+                If True, then the image canvas is expanded at first to
+                fit the rotated corners, and then rescaled back to
+                original image size.
 
+                If False, then the original image canvas remains intact,
+                and the corners of the rotated image that fall outside
+                this box are clipped off.
     Returns:
         PIL image with random rotation applied.
     """
+    original_dims = im.size
     angle = randint(-max, max+1)
     if angle == 0:
         return im
     else:
-        return im.rotate(angle, resample=Image.BILINEAR, expand=expand)
+        im2 = im.rotate(angle, resample=resample, expand=include_corners)
+        if include_corners:
+            im2 = im2.resize(original_dims, resample=resample)
+        return im2
 
 
 # ==============================================================================
