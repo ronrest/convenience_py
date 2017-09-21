@@ -38,3 +38,39 @@ def overlayed_single_category_label_image(X, Y):
     # Overlay the input image with the label and prediction
     overlay = PIL.ImageChops.add(img, road, scale=1.5)
     return overlay
+
+
+import PIL
+from PIL import Image, ImageChops
+from data import maybe_make_pardir
+import numpy as np
+# Depends on: maybe_make_pardir
+def overlayed_label_and_prediction(img, label, pred, saveto=None):
+    # pred = np.argmax(pred, axis=2)          # get the most likely class id for each pixel
+    assert 2 == label.ndim == pred.ndim, \
+        "Label and Prediction MUST be of shape 2D arrays with no color channel or batch axis"
+    assert (img.ndim == 3) and (img.shape[-1] == 3), \
+        "Input image should be of shape [n_rows, n_cols, 3]"
+    assert img.shape[:2] == pred.shape == label.shape, \
+        "Image height and width for img, label, and pred must all match up"
+
+    # Convert chanel axis to one hot encodings (max of three classes for 3 chanels)
+    pred = np.eye(3, dtype=np.uint8)[pred]
+    label = np.eye(3, dtype=np.uint)[label]
+
+    # Extract JUST the road class (class 1)
+    # Red for prediction, Blue for label
+    road = np.zeros_like(pred)
+    road[:,:,0] = pred[:,:,1]*255
+    road[:,:,2] = label[:,:,1]*255
+
+    # Overlay the input image with the label and prediction
+    img = PIL.Image.fromarray(img)
+    road = PIL.Image.fromarray(road)
+    overlay = PIL.ImageChops.add(img, road, scale=1.5)
+
+    if saveto is not None:
+        maybe_make_pardir(saveto)
+        overlay.save(saveto, "JPEG")
+
+    return overlay
