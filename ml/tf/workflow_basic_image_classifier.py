@@ -36,6 +36,7 @@ with tf_graph.as_default():
     with tf.variable_scope('out') as scope:
         x = tf.contrib.layers.flatten(x, scope="flatten")
         tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="fc")
+        tf_preds = tf.argmax(tf_logits, axis=1, name="preds")
 
     # LOSS
     with tf.variable_scope('loss') as scope:
