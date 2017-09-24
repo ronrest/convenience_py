@@ -4,8 +4,8 @@ import numpy as np
 import tensorflow as tf
 
 
-graph = tf.Graph()
-with graph.as_default():
+tf_graph = tf.Graph()
+with tf_graph.as_default():
     n_classes = 2
     input_rows,input_cols = [128,128]
     n_channels = 3
@@ -33,15 +33,15 @@ with graph.as_default():
     ##################
 
     # Fully connected layers
-    with tf.variable_scope('f1') as scope:
-        x = tf.contrib.layers.flatten(x, name="flatten")
+    with tf.variable_scope('out') as scope:
+        x = tf.contrib.layers.flatten(x, scope="flatten")
         tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="fc")
 
     # LOSS
     with tf.variable_scope('loss') as scope:
         unrolled_logits = tf.reshape(tf_logits, (-1, n_classes))
         unrolled_labels = tf.reshape(tf_Y, (-1,))
-        tf_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unrolled_logits, labels=unrolled_labels, name="loss"))
+        tf_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unrolled_logits, labels=unrolled_labels), name="loss")
 
     # TRAIN STEP
     with tf.variable_scope('opt') as scope:
@@ -51,7 +51,7 @@ with graph.as_default():
             tf_train_op = tf_optimizer.minimize(tf_loss, name="train_op")
 
 
-with tf.Session(graph=graph) as sess:
+with tf.Session(graph=tf_graph) as sess:
     n_epochs = 20
     batch_size = 32
     alpha = 0.001
