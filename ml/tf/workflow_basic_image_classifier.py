@@ -32,10 +32,10 @@ with tf_graph.as_default():
     # INSERT MORE HERE
     ##################
 
-    # Fully connected layers
-    with tf.variable_scope('out') as scope:
+    # HEAD LAYERS
+    with tf.variable_scope('head') as scope:
         x = tf.contrib.layers.flatten(x, scope="flatten")
-        tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="fc")
+        tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="logits")
         tf_preds = tf.argmax(tf_logits, axis=1, name="preds")
 
     # LOSS - Pools and sums all losses even Regularization losses automatically
