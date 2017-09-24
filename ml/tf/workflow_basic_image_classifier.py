@@ -38,13 +38,16 @@ with tf_graph.as_default():
         tf_logits = tf.layers.dense(x, units=n_classes, activation=None, kernel_initializer=he_init, name="fc")
         tf_preds = tf.argmax(tf_logits, axis=1, name="preds")
 
-    # LOSS
+    # LOSS - Pools and sums all losses even Regularization losses automatically
     with tf.variable_scope('loss') as scope:
         unrolled_logits = tf.reshape(tf_logits, (-1, n_classes))
         unrolled_labels = tf.reshape(tf_Y, (-1,))
-        tf_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=unrolled_logits, labels=unrolled_labels), name="loss")
+        # Add logit losses to `LOSSES` collection
+        tf.losses.sparse_softmax_cross_entropy(labels=unrolled_labels, logits=unrolled_logits, reduction="weighted_sum_by_nonzero_weights")
+        # Sum of losses from `LOSSES` and `REGULARIZATION_LOSSES` collections
+        tf_loss = tf.losses.get_total_loss(name="loss")
 
-    # TRAIN STEP
+    # OPTIMIZATION - Automatically updates batchnorm operations automatically
     with tf.variable_scope('opt') as scope:
         tf_optimizer = tf.train.AdamOptimizer(tf_alpha, name="optimizer")
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS) # allow batchnorm
