@@ -23,3 +23,30 @@ def load_image_as_array(f, rescale=None):
     return img
 
 
+# ==============================================================================
+#                                                           LOAD_BATCH_OF_IMAGES
+# ==============================================================================
+def load_batch_of_images(file_list, img_shape):
+    """ Given a list of file images to load, it loads them as an array.
+    Args:
+        file_list:
+        img_shape: (tuple of two ints)(width,height)
+    Return:
+        Numpy array of shape [n_images, img_shape[1], img_shape[0], n_channels]
+    """
+    n_channels = 3      # Number of channels to use
+    n_samples = len(file_list)
+    width, height = img_shape
+    images = np.zeros([n_samples, height, width, n_channels], dtype=np.uint8)
+
+    # Populate each image at a time into the dataset
+    for i, img_file in enumerate(file_list):
+        img = scipy.misc.imread(img_file)
+
+        # PROCESS THE IMAGES
+        img = scipy.misc.imresize(img, img_shape) # resize
+
+        # Add the processed image to the array
+        images[i] = img
+
+    return images
