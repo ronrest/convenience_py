@@ -354,6 +354,7 @@ class ClassifierModel(object):
 
                 if verbose and (i+1)%print_every == 0:
                     percent += percent_interval
+                    print("- {} %".format(percent))
         return preds
 
     def evaluate(self, X, Y, batch_size=32, best=False):
