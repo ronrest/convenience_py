@@ -345,9 +345,9 @@ def random_rotation(im, max=10, include_corners=True, resample=PIL.Image.NEAREST
 
 
 # ==============================================================================
-#                                   RANDOM_TRANSFORMATIONS_FOR_SEGMENTATION_DATA
+#                                        RANDOM_TRANSFORMATIONS_FOR_SEGMENTATION
 # ==============================================================================
-def random_transformations_for_segmentation_data(
+def random_transformations_for_segmentation(
     X,
     Y,
     shadow=(0.6, 0.9),
