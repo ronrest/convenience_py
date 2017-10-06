@@ -54,3 +54,23 @@ def viz_segmentation_label(label, colormap=None, saveto=None):
         label_viz.save(saveto, "JPEG")
 
     return label_viz
+
+
+# ==============================================================================
+#                                                                      ARRAY2PIL
+# ==============================================================================
+def array2pil(x):
+    """ Given a numpy array containing image information returns a PIL image.
+        Automatically handles mode, and even handles greyscale images with a
+        channels axis
+    """
+    if x.ndim == 2:
+        mode = "L"
+    elif x.ndim == 3 and x.shape[2] == 1:
+        mode = "L"
+        x = x.squeeze()
+    elif x.ndim == 3:
+        mode = "RGB"
+    return PIL.Image.fromarray(x, mode=mode)
+
+
