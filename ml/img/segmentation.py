@@ -1,12 +1,11 @@
-
-
-# ==============================================================================
-#                                                         VIZ_SEGMENTATION_LABEL
-# ==============================================================================
 import PIL
 import PIL.Image
 import numpy as np
 import os
+
+# ==============================================================================
+#                                                         VIZ_SEGMENTATION_LABEL
+# ==============================================================================
 def viz_segmentation_label(label, colormap=None, saveto=None):
     """ Given a 2D numpy array representing a segmentation label, with
         the pixel value representing the class of the object, then
