@@ -31,13 +31,10 @@ def viz_segmentation_label(label, colormap=None, saveto=None):
     Returns:
         PIL image
     """
+    # Default colormap
     if colormap is None:
-        # Default color mapper
-        colormap = [[0,0,0],
-                        [255,79,64],
-                        [115,173,33],
-                        [48,126,199],
-                        ]
+        colormap = [[0,0,0], [255,79,64], [115,173,33],[48,126,199]]
+
     # Map each pixel label to a color
     label_viz = np.zeros((label.shape[0],label.shape[1],3), dtype=np.uint8)
     uids = np.unique(label)
@@ -47,6 +44,7 @@ def viz_segmentation_label(label, colormap=None, saveto=None):
     # Convert to PIL image
     label_viz = PIL.Image.fromarray(label_viz)
 
+    # Optionally save image
     if saveto is not None:
         # Create necessary file structure
         pardir = os.path.dirname(saveto)
