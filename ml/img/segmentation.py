@@ -1,5 +1,6 @@
 import PIL
 import PIL.Image
+import PIL.ImageChops
 import numpy as np
 import os
 
@@ -74,3 +75,28 @@ def array2pil(x):
     return PIL.Image.fromarray(x, mode=mode)
 
 
+def viz_overlayed_segmentation_label(img, label, colormap=None, alpha=0.5, saveto=None):
+    # Load the image
+    img = array2pil(img)
+    img = img.convert("RGB")
+
+    # Default colormap
+    if colormap is None:
+        colormap = [[127,127,127],[255,0,0],[0,255,0],[0,0,255]]
+    label = viz_segmentation_label(label, colormap=colormap)
+
+    # Overlay the input image with the label
+    overlay = PIL.ImageChops.blend(img, label, alpha=alpha)
+    # overlay = PIL.ImageChops.add(img, label, scale=1.0)
+    # overlay = PIL.ImageChops.screen(img, label)
+
+    # Optionally save image
+    if saveto is not None:
+        # Create necessary file structure
+        pardir = os.path.dirname(saveto)
+        if pardir.strip() != "": # ensure pardir is not an empty string
+            if not os.path.exists(pardir):
+                os.makedirs(pardir)
+        overlay.save(saveto, "JPEG")
+
+    return overlay
