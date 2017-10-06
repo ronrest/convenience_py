@@ -1,4 +1,23 @@
+
+# ==============================================================================
+#                                                                        HEX2RGB
+# ==============================================================================
 def hex2rgb(s):
+    """ Given a color coded in hex code, eg `"#FF00FF"`, it returns
+        the RGB pixel intensity representation of those values,
+        scaled between 0-255
+    Examples:
+        >>> hex2rgb("#FF44AA")  # with hash notation
+        (255, 68, 170)
+        >>> hex2rgb("FF44AA")   # RGB
+        (255, 68, 170)
+        >>> hex2rgb("F4A")      # RGB compressed
+        (255, 68, 170)
+        >>> hex2rgb("FF44AAFF") # RGBA
+        (255, 68, 170, 255)
+        >>> hex2rgb("F4AF")      # RGBA compressed
+        (255, 68, 170, 255)
+    """
     if s.startswith("#"):
         s = s[1:]
 
