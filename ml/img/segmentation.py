@@ -75,7 +75,35 @@ def array2pil(x):
     return PIL.Image.fromarray(x, mode=mode)
 
 
+# ==============================================================================
+#                                               VIZ_OVERLAYED_SEGMENTATION_LABEL
+# ==============================================================================
 def viz_overlayed_segmentation_label(img, label, colormap=None, alpha=0.5, saveto=None):
+    """ Given a base image, and the segmentation label image as numpy arrays,
+        It overlays the segmentation labels on top of the base image, color
+        coded for each separate class.
+
+    Args:
+        img:        (np array) numpy array containing base image (uint8 0-255)
+        label:      (np array) numpy array containing segmentation labels,
+                    with each pixel value representing the class label.
+        colormap:   (None or list of 3-tuples) For each class label, specify
+                    the RGB values to color code those pixels. Eg: red would
+                    be `(255,0,0)`.
+                    If `None`, then it supports up to 4 classes in a default
+                    colormap:
+
+                        0 = black
+                        1 = red
+                        2 = green
+                        3 = blue
+
+        alpha:      (float) Alpha value for overlayed segmentation labels
+        saveto:     (None or str) Optional filepath to save this
+                    visualization as a jpeg image.
+    Returns:
+        (PIL Image) PIL image of the visualization.
+    """
     # Load the image
     img = array2pil(img)
     img = img.convert("RGB")
