@@ -12,18 +12,20 @@ def viz_segmentation_label(label, colormap=None, saveto=None):
         it creates an RGB PIL image that color codes each label.
 
     Args:
-        label:          (numpy array) 2D flat image where the pixel value
-                        represents the class label.
-        colormap:   (list of lists of 3 ints)
-                        A list where each index represents the RGB value
-                        for the corresponding class id.
-                        Eg: to map class_0 to black and class_1 to red:
-                            [[0,0,0], [255,0,0]]
-                        By default, it creates a map that supports 4 classes:
+        label:      (numpy array) 2D flat image where the pixel value
+                    represents the class label.
+        colormap:   (list of 3-tuples of ints)
+                    A list where each index represents the RGB value
+                    for the corresponding class id.
+                    Eg: to map class_0 to black and class_1 to red:
+                        [(0,0,0), (255,0,0)]
+                    By default, it creates a map that supports 4 classes:
+
                         0. black
                         1. guava red
                         2. nice green
                         3. nice blue
+
         saveto:         (str or None)(default=None)(Optional)
                         File path to save the image to (as a jpg image)
     Returns:
