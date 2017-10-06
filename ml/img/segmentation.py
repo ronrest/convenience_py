@@ -22,9 +22,9 @@ def viz_segmentation_label(label, color_mapper=None, saveto=None):
                             [[0,0,0], [255,0,0]]
                         By default, it creates a map that supports 4 classes:
                         0. black
-                        1. nice blue
+                        1. guava red
                         2. nice green
-                        3. guava red
+                        3. nice blue
         saveto:         (str or None)(default=None)(Optional)
                         File path to save the image to (as a jpg image)
     Returns:
@@ -33,9 +33,9 @@ def viz_segmentation_label(label, color_mapper=None, saveto=None):
     if color_mapper is None:
         # Default color mapper
         color_mapper = [[0,0,0],
-                        [48,126,199],
-                        [115,173,33],
                         [255,79,64],
+                        [115,173,33],
+                        [48,126,199],
                         ]
     # Map each pixel label to a color
     label_viz = np.zeros((label.shape[0],label.shape[1],3), dtype=np.uint8)
