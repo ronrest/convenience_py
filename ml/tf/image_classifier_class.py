@@ -81,6 +81,7 @@ class ClassifierModel(object):
         with self.graph.as_default():
             self.create_input_ops()
             self.create_body_ops()
+            self.create_preds_op()
             self.create_loss_ops()
             self.create_optimization_ops()
             self.create_saver_ops()
@@ -132,8 +133,12 @@ class ClassifierModel(object):
         # print(self.X.name, self.X.shape.as_list())
         x = tf.contrib.layers.flatten(X)
         self.logits = tf.contrib.layers.fully_connected(x, self.n_classes, activation_fn=None, name="logits")
-        self.preds = tf.argmax(self.logits, axis=1, name="preds")
 
+    def create_preds_op(self):
+        # PREDUCTIONS - get a class value (chanels axis is ohv)
+        with tf.name_scope("preds") as scope:
+            self.preds = tf.to_int32(tf.argmax(self.logits, axis=-1), name=scope)
+            # self.preds = tf.argmax(self.logits, axis=1, name="preds")
 
     def create_loss_ops(self):
         # LOSS - Sums all losses even Regularization losses automatically
