@@ -87,6 +87,31 @@ class ClassifierModel(object):
             self.create_saver_ops()
             self.create_tensorboard_ops()
 
+    def create_graph_from_logits_func(self, logits_func):
+        """ Given a logits function with the following API:
+
+                `logits_func(X, Y, alpha, dropout, l2, is_training)`
+                Returning: `logits`
+
+                NOTE: that the argument names are what is important, not the
+                ordering.
+                NOTE: Each of the arguments passed to the logits_func is a
+                placeholder.
+
+        Then it creates the full graph for the model.
+        """
+        self.graph = tf.Graph()
+        with self.graph.as_default():
+            self.create_input_ops()
+            self.logits = logits_func(X=self.X, Y=self.Y, alpha=self.alpha, dropout=self.dropout, l2=self.l2_scale, is_training=self.is_training)
+            self.create_preds_op()
+            self.create_loss_ops()
+            self.create_optimization_ops()
+            self.create_evaluation_metric_ops()
+            self.create_saver_ops()
+            self.create_tensorboard_ops()
+
+
     def create_input_ops(self):
         # TODO: This handling of L2 is ugly, fix it.
         if self.l2 is None:
