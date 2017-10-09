@@ -75,7 +75,6 @@ class ClassifierModel(object):
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.dynamic = dynamic
-        self.create_graph()
 
     def create_graph(self):
         self.graph = tf.Graph()
