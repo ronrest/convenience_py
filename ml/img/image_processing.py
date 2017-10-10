@@ -47,6 +47,7 @@ def array2pil(x):
         Automatically handles mode, and even handles greyscale images with a
         channels axis
     """
+    x = x.squeeze()
     return PIL.Image.fromarray(x, mode=get_array_color_mode(x))
 
 
