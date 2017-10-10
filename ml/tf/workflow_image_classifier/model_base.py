@@ -10,11 +10,18 @@ import shutil
 import time
 import pickle
 
-# DEPENDS ON train_curves, random_transformations, ....
 from viz import train_curves
-from image_processing import random_transformations
-from dynamic_data import load_batch_of_images, maybe_make_pardir, pickle2obj, obj2pickle
-from dynamic_data import str2file
+from data_processing import maybe_make_pardir, pickle2obj, obj2pickle, str2file, load_batch_of_images
+
+__author__ = "Ronny Restrepo"
+__copyright__ = "Copyright 2017, Ronny Restrepo"
+__credits__ = ["Ronny Restrepo"]
+__license__ = "Apache License"
+__version__ = "2.0"
+
+
+# TODO: URGENT:  load_batch_of_images has not been implemented
+
 
 # ==============================================================================
 #                                                                    PRETTY_TIME
@@ -28,9 +35,8 @@ def pretty_time(t):
 
 
 # ##############################################################################
-#                                                          CLASSIFIER MODEL BASE
+#                                                     IMAGE CLASSIFICATION MODEL
 # ##############################################################################
-# Depends on load_batch_of_images()
 class ImageClassificationModel(object):
     """
     Examples:
