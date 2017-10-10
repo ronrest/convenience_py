@@ -47,17 +47,7 @@ def array2pil(x):
         Automatically handles mode, and even handles greyscale images with a
         channels axis
     """
-    x = x.squeeze()
-    if x.ndim == 2:
-        mode = "L"
-    elif x.ndim == 3 and x.shape[2] == 1:
-        mode = "L"
-        x = x.squeeze()
-    elif x.ndim == 3:
-        mode = "RGB"
-    else:
-        assert False, "Incapable of interpreting array as an image"
-    return PIL.Image.fromarray(x, mode=mode)
+    return PIL.Image.fromarray(x, mode=get_array_color_mode(x))
 
 
 # ==============================================================================
