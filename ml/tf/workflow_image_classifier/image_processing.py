@@ -52,6 +52,57 @@ def array2pil(x):
 
 
 # ==============================================================================
+#                                                                  BATCH_PROCESS
+# ==============================================================================
+def batch_process(X, shape=None, mode=None):
+    """ Given a batch of images as a numpy array, it does batch processing steps
+        like resizing and color mode conversion.
+
+        shape should be a 2-tuple (width, height) of the new desired
+        dimensions.
+
+        mode should be one of {"RGB", "L"}
+    """
+    assert X.dtype == np.uint8, "X should be 8 bit unsigned integers"
+    if shape:
+        width, height = shape
+    else:
+        width, height = X.shape[2], X.shape[1]
+
+    n_samples = X.shape[0]
+
+    # INITIALIZE NEW_BATCH ARRAY - By determining appropriate dimensions first
+    if mode == "RGB" and X.ndim in {3,4}:
+        n_channels = 3
+        new_batch = np.zeros([n_samples, height, width, n_channels], dtype=np.uint8)
+    elif mode == "L" and X.ndim in {3,4}:
+        n_channels = 1
+        new_batch = np.zeros([n_samples, height, width, n_channels], dtype=np.uint8)
+    elif X.ndim == 4:
+        n_channels = X.shape[3]
+        new_batch = np.zeros([n_samples, height, width, n_channels], dtype=np.uint8)
+    elif X.ndim == 3:
+        n_channels = None
+        new_batch = np.zeros([n_samples, height, width], dtype=np.uint8)
+    else:
+        assert False, "Cannot interpret X as a batch of images, check the dimensions"
+
+    # PREPROCESS EACH IMAGE
+    for i in range(n_samples):
+        if shape:
+            img = array2pil(X[i]).resize(shape, PIL.Image.BICUBIC)
+        if mode in {"RGB", "L"}:
+            img = img.convert(mode)
+
+        if n_channels==1:
+            img = np.asarray(img, dtype=np.uint8)
+            new_batch[i] = np.expand_dims(img, axis=2)
+        else:
+            new_batch[i] = np.asarray(img, dtype=np.uint8)
+    return new_batch
+
+
+# ==============================================================================
 #                                                                    RANDOM_CROP
 # ==============================================================================
 def random_crop(im, min_scale=0.5, max_scale=1.0, preserve_size=False, resample=PIL.Image.NEAREST):
