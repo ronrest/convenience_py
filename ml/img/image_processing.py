@@ -370,7 +370,6 @@ def random_rotation(im, max=10, include_corners=True, resample=PIL.Image.NEAREST
 # ==============================================================================
 def random_transformations(
     X,
-    Y,
     shadow=(0.6, 0.9),
     shadow_file="shadow_pattern.jpg",
     shadow_crop_range=(0.02, 0.5),
