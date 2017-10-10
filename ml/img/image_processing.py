@@ -11,6 +11,21 @@ __license__ = "Apache License"
 __version__ = "2.0"
 
 
+def get_array_color_mode(x):
+    x = x.squeeze()
+    if x.ndim == 2:
+        mode = "L"
+    elif x.ndim == 3 and x.shape[2] == 1:
+        mode = "L"
+        x = x.squeeze()
+    elif x.ndim == 3:
+        mode = "RGB"
+    else:
+        assert False, "Incapable of interpreting array as an image"
+
+    return mode
+
+
 # ==============================================================================
 #                                                                      PIL2ARRAY
 # ==============================================================================
