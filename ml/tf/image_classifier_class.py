@@ -300,6 +300,14 @@ class ClassifierModel(object):
     def update_status_file(self, status):
         str2file(status, file=self.train_status_file)
 
+    def update_evals_dict(self, **kwargs):
+        """ Appends a new value to the specified key/s in the evals dictionary
+            eg: update_evals_dict(valid_acc=0.95, valid_loss=0.341)
+            will append the value 0.95 to the end of self.evals["valid_acc"]
+            and 0.341 to the end of self.evals["valid_loss"] """
+        for key in kwargs:
+            self.evals[key].append(kwargs[key])
+
     def train(self, data, n_epochs, alpha=0.001, batch_size=32, print_every=10, l2=None, augmentation_func=None):
         """Trains the model, for n_epochs given a dictionary of data"""
         n_samples = len(data["X_train"])               # Num training samples
@@ -338,10 +346,7 @@ class ClassifierModel(object):
                     # Evaluate on full train and validation sets after each epoch
                     train_acc, train_loss = self.evaluate_in_session(data["X_train"][:1000], data["Y_train"][:1000], sess)
                     valid_acc, valid_loss = self.evaluate_in_session(data["X_valid"], data["Y_valid"], sess)
-                    self.evals["train_acc"].append(train_acc)
-                    self.evals["train_loss"].append(train_loss)
-                    self.evals["valid_acc"].append(valid_acc)
-                    self.evals["valid_loss"].append(valid_loss)
+                    self.update_evals_dict(train_acc=train_acc, train_loss=train_loss, valid_acc=valid_acc, valid_loss=valid_loss)
                     self.save_evals_dict()
 
                     # If its the best model so far, save best snapshot
