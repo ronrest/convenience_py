@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 from model_base import ImageClassificationModel
+from model_base import PretrainedImageClassificationModel
 from data_processing import prepare_data
 
 __author__ = "Ronny Restrepo"
@@ -49,6 +50,36 @@ class MyModel(ImageClassificationModel):
 
 
 # ##############################################################################
+#                                                PRETRAINED INCEPTION CLASSIFIER
+# ##############################################################################
+class PretrainedInceptionClassifier(PretrainedImageClassificationModel):
+    # Lists of scopes of weights to include/exclude from pretrained snapshot
+    pretrained_include = ["InceptionV3"]
+    pretrained_exclude = ["InceptionV3/AuxLogits", "InceptionV3/Logits", "upsampling"]
+
+    # Lists of scopes of weights to include/exclude from main snapshot
+    main_include = None # None includes all variables
+    main_exclude = None
+
+    def __init__(self, name, pretrained_snapshot, img_shape=299, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
+        super().__init__(name=name, pretrained_snapshot=pretrained_snapshot, img_shape=img_shape, n_channels=n_channels, n_classes=n_classes, dynamic=dynamic, l2=l2, best_evals_metric=best_evals_metric)
+
+    def create_body_ops(self):
+        """ """
+        with tf.name_scope("preprocess") as scope:
+            x = tf.div(self.X, 255, name="rescaled_inputs")
+
+        # INCEPTION
+        arg_scope = tf.contrib.slim.nets.inception.inception_v3_arg_scope()
+        with tf.contrib.framework.arg_scope(arg_scope):
+            self.logits, end_points = tf.contrib.slim.nets.inception.inception_v3(
+                x,
+                num_classes=self.n_classes,
+                is_training=self.is_training,
+                dropout_keep_prob=0.8)
+
+
+# ##############################################################################
 #                                                                   AUGMENTATION
 # ##############################################################################
 from image_processing import create_augmentation_func
@@ -85,3 +116,9 @@ if __name__ == '__main__':
     model = MyModel("delete2", img_shape=[28,28], n_channels=1, n_classes=10)
     model.create_graph()
     model.train(data, n_epochs=5, print_every=300, dropout=0.2, aug_func=aug_func)
+
+    # # Pretrained Inception v3 Model
+    # pretrained_snapshot = "/path/to/inception_v3.ckpt"
+    # model = PretrainedInceptionClassifier("deleteIV3", pretrained_snapshot=pretrained_snapshot, img_shape=[299, 299], n_channels=3, n_classes=10, dynamic=True)
+    # model.create_graph()
+    # model.train(data, n_epochs=2, print_every=300, batch_size=4, aug_func=aug_func)
