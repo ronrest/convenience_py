@@ -457,7 +457,7 @@ def random_transformations_for_segmentation(
         if blur is not None:
             image = random_blur(image, 0, blur)
 
-        if noise is not None:
+        if noise:
             image = random_noise(image, sd=noise)
 
         # Put into array
