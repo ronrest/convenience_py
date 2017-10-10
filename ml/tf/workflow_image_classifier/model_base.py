@@ -4,6 +4,7 @@ boilerplate code necessary to Create a tensorlfow graph, and training
 operations.
 """
 import tensorflow as tf
+import tensorflow.contrib.slim.nets
 import numpy as np
 import os
 import shutil
@@ -339,11 +340,11 @@ class ImageClassificationModel(object):
         session = tf.Session(graph=self.graph)
         return session
 
-    def train(self, data, n_epochs, alpha=0.001, dropout=0.0, batch_size=32, print_every=10, l2=None, augmentation_func=None, viz_every=10):
+    def train(self, data, n_epochs, alpha=0.001, dropout=0.0, batch_size=32, print_every=10, l2=None, aug_func=None, viz_every=10):
         """Trains the model, for n_epochs given a dictionary of data"""
         n_samples = len(data["X_train"])               # Num training samples
         n_batches = int(np.ceil(n_samples/batch_size)) # Num batches per epoch
-        print("DEBUG - ", "using aug func" if augmentation_func is not None else "NOT using aug func")
+        print("DEBUG - ", "using aug func" if aug_func is not None else "NOT using aug func")
         with tf.Session(graph=self.graph) as sess:
             self.initialize_vars(sess)
             t0 = time.time()
@@ -361,8 +362,8 @@ class ImageClassificationModel(object):
                     # Iterate through each mini-batch
                     for i in range(n_batches):
                         X_batch, Y_batch = self.get_batch(i, X=data["X_train"], Y=data["Y_train"], batch_size=batch_size)
-                        if augmentation_func is not None:
-                            X_batch = augmentation_func(X_batch)
+                        if aug_func is not None:
+                            X_batch = aug_func(X_batch)
 
                         # TRAIN
                         feed_dict = {self.X:X_batch, self.Y:Y_batch, self.alpha:alpha, self.is_training:True, self.dropout: dropout}

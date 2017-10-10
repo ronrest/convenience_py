@@ -81,6 +81,7 @@ if __name__ == '__main__':
     data_file = "/path/to/data.pickle"
 
     data = prepare_data(data_file, valid_from_train=True, n_valid=n_valid, max_data=None)
+
     model = MyModel("delete2", img_shape=[28,28], n_channels=1, n_classes=10)
     model.create_graph()
-    model.train(data, n_epochs=5, print_every=300, dropout=0.2)
+    model.train(data, n_epochs=5, print_every=300, dropout=0.2, aug_func=aug_func)
