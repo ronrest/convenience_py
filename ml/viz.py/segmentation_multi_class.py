@@ -128,3 +128,114 @@ def viz_overlayed_segmentation_label(img, label, colormap=None, alpha=0.5, savet
         overlay.save(saveto, "JPEG")
 
     return overlay
+
+
+# ==============================================================================
+#                                                                   BATCH 2 GRID
+# ==============================================================================
+def batch2grid(imgs, rows, cols):
+    """
+    Given a batch of images stored as a numpy array of shape:
+
+           [n_batch, img_height, img_width]
+        or [n_batch, img_height, img_width, n_channels]
+
+    it creates a grid of those images of shape described in `rows` and `cols`.
+
+    Args:
+        imgs: (numpy array)
+            Shape should be either:
+                - [n_batch, im_rows, im_cols]
+                - [n_batch, im_rows, im_cols, n_channels]
+
+        rows: (int) How many rows of images to use
+        cols: (int) How many cols of images to use
+
+    Returns: (numpy array)
+        The grid of images as one large image of either shape:
+            - [n_classes*im_cols, num_per_class*im_rows]
+            - [n_classes*im_cols, num_per_class*im_rows, n_channels]
+    """
+    # TODO: have a resize option to rescale the individual sample images
+    # TODO: Have a random shuffle option
+    # TODO: Set the random seed if needed
+    # if seed is not None:
+    #     np.random.seed(seed=seed)
+
+    # Only use the number of images needed to fill grid
+    assert rows>0 and cols>0, "rows and cols must be positive integers"
+    n_cells = (rows*cols)
+    imgs = imgs[:n_cells]
+
+    # Image dimensions
+    n_dims = imgs.ndim
+    assert n_dims==3 or n_dims==4, "Incorrect # of dimensions for input array"
+
+    # Deal with images that have no color channel
+    if n_dims == 3:
+        imgs = np.expand_dims(imgs, axis=3)
+
+    n_batch, img_height, img_width, n_channels = imgs.shape
+
+    # Handle case where there is not enough images in batch to fill grid
+    n_gap = n_cells - n_batch
+    imgs = np.pad(imgs, pad_width=[(0,n_gap),(0,0), (0,0), (0,0)], mode="constant", constant_values=0)
+
+    # Reshape into grid
+    grid = imgs.reshape(rows,cols,img_height,img_width,n_channels).swapaxes(1,2)
+    grid = grid.reshape(rows*img_height,cols*img_width,n_channels)
+
+    # If input was flat images with no color channels, then flatten the output
+    if n_dims == 3:
+        grid = grid.squeeze(axis=2) # axis 2 because batch dim has been removed
+
+    return grid
+
+
+# ==============================================================================
+#                                                   VIZ_SAMPLE_SEG_AUGMENTATIONS
+# ==============================================================================
+def viz_sample_seg_augmentations(X, Y, aug_func, n_images=5, n_per_image=5, saveto=None):
+    """ Given a batch of data X, and Y,  it takes n_images samples, and performs
+        `n_per_image` random transformations for segmentation data on each of
+        those images. It then puts them in a grid to visualize. Grid size is:
+            n_images wide x n_per_image high
+
+    Args:
+        X:          (np array) batch of images
+        Y:          (np array) batch of labels images
+        aug_func:   (func) function with API `aug_func(X, Y)` that performs
+                    random transformations on the images for segmentation
+                    purposes.
+        n_images:   (int)
+        n_per_image:(int)
+        saveto:     (str or None)
+
+    Returns: (None, or PIL image)
+        If saveto is provided, then it saves teh image and returns None.
+        Else, it returns the PIL image.
+    Examples:
+        samples = viz_sample_seg_augmentations(data["X_train"], data["Y_train"],
+            aug_func=aug_func, n_images=5, n_per_image=5, saveto=None)
+        samples.show()
+    """
+    X = X[:n_images]
+    Y = Y[:n_images]
+    gx = []
+    gy = []
+
+    # Perform Augmentations
+    for col in range(n_per_image):
+        x, y = aug_func(X, Y)
+        gx.append(x)
+        gy.append(y)
+
+    # Put into a grid
+    _, height, width, n_channels = X.shape
+    gx = np.array(gx, dtype=np.uint8).reshape(n_images*n_per_image, height, width, n_channels)
+    gy = np.array(gy, dtype=np.uint8).reshape(n_images*n_per_image, height, width)
+    gx = batch2grid(gx, n_images, n_per_image)
+    gy = batch2grid(gy, n_images, n_per_image)
+
+    # Overlay labels on top of image
+    return viz_overlayed_segmentation_label(img=gx, label=gy, saveto=saveto)
