@@ -52,6 +52,39 @@ def array2pil(x):
 
 
 # ==============================================================================
+#                                                                   BATCH_RESIZE
+# ==============================================================================
+def batch_resize(X, shape):
+    """ Given a batch of images as a numpy array, it resizes them.
+        shape should be a 2-tuple (width, height) of the new desired
+        dimensions.
+    """
+    assert X.dtype == np.uint8, "X should be 8 bit unsigned integers"
+    width, height = shape
+    n_samples = X.shape[0]
+
+    # INITIALIZE NEW_BATCH ARRAY - By determining appropriate dimensions first
+    if X.ndim == 4:
+        n_channels = X.shape[3]
+        new_batch = np.zeros([n_samples, height, width, n_channels], dtype=np.uint8)
+    elif X.ndim == 3:
+        n_channels = None
+        new_batch = np.zeros([n_samples, height, width], dtype=np.uint8)
+    else:
+        assert False, "Cannot interpret X as a batch of images, check the dimensions"
+
+    # RESIZE EACH IMAGE
+    for i in range(n_samples):
+        img = array2pil(X[i]).resize(shape, PIL.Image.BICUBIC)
+        if n_channels==1:
+            img = np.asarray(img, dtype=np.uint8)
+            new_batch[i] = np.expand_dims(img, axis=2)
+        else:
+            new_batch[i] = np.asarray(img, dtype=np.uint8)
+    return new_batch
+
+
+# ==============================================================================
 #                                                                    RANDOM_CROP
 # ==============================================================================
 def random_crop(im, min_scale=0.5, max_scale=1.0, preserve_size=False, resample=PIL.Image.NEAREST):
