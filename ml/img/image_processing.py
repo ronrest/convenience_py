@@ -356,6 +356,105 @@ def random_rotation(im, max=10, include_corners=True, resample=PIL.Image.NEAREST
 
 
 # ==============================================================================
+#                                                         RANDOM_TRANSFORMATIONS
+# ==============================================================================
+def random_transformations(
+    X,
+    Y,
+    shadow=(0.6, 0.9),
+    shadow_file="shadow_pattern.jpg",
+    shadow_crop_range=(0.02, 0.5),
+    rotate=180,
+    crop=0.5,
+    lr_flip=True,
+    tb_flip=True,
+    brightness=(0.5, 0.4, 4),
+    contrast=(0.5, 0.3, 5),
+    blur=3,
+    noise=10
+    ):
+    """ Takes a batch of input images `X` as a numpy array, and does random
+        image transormations on them.
+
+        NOTE:  Assumes the pixels for input images are in the range of 0-255.
+
+    Args:
+        X:                  (numpy array) batch of imput images
+        Y:                  (numpy array) batch of segmentation labels
+        shadow:             (tuple of two floats) (min, max) shadow intensity
+        shadow_file:        (str) Path fo image file containing shadow pattern
+        shadow_crop_range:  (tuple of two floats) min and max proportion of
+                            shadow image to take crop from.
+        shadow_crop_range:  ()(default=(0.02, 0.25))
+        rotate:             (int)(default=180)
+                            Max angle to rotate in each direction
+        crop:               (float)(default=0.5)
+        lr_flip:            (bool)(default=True)
+        tb_flip:            (bool)(default=True)
+        brightness:         ()(default=) (std, min, max)
+        contrast:           ()(default=) (std, min, max)
+        blur:               ()(default=3)
+        noise:              ()(default=10)
+    """
+    # TODO: Random warping
+    img_shape = X[0].shape
+    images = np.zeros_like(X)
+    n_images = len(images)
+
+    if shadow is not None:
+        assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
+        shadow_image = PIL.Image.open(shadow_file)
+
+    for i in range(n_images):
+        image = array2pil(X[i])
+        original_dims = image.size
+
+        if shadow is not None:
+            image = random_shadow(image, shadow=shadow_image, intensity=shadow, crop_range=shadow_crop_range)
+
+        if rotate:
+            angle = randint(-rotate, rotate+1)
+            image = image.rotate(angle, resample=PIL.Image.BICUBIC, expand=True)
+            # No resizing is done yet to make the random crop high quality
+
+        if crop is not None:
+            # Crop dimensions
+            min_scale = crop
+            width, height = np.array(image.size)
+            crop_width = np.random.randint(width*min_scale, width)
+            crop_height = np.random.randint(height*min_scale, height)
+            x_offset = np.random.randint(0, width - crop_width + 1)
+            y_offset = np.random.randint(0, height - crop_height + 1)
+
+            # Perform Crop
+            image = image.crop((x_offset, y_offset, x_offset + crop_width, y_offset + crop_height))
+
+        # Scale back after crop and rotate are done
+        if rotate or crop:
+            image = image.resize(original_dims, resample=PIL.Image.BICUBIC)
+
+        if lr_flip and np.random.choice([True, False]):
+            image = image.transpose(method=PIL.Image.FLIP_LEFT_RIGHT)
+
+        if tb_flip and np.random.choice([True, False]):
+            image=  image.transpose(method=PIL.Image.FLIP_TOP_BOTTOM)
+
+        if brightness is not None:
+            image = random_brightness(image, sd=brightness[0], min=brightness[1], max=brightness[2])
+        if contrast is not None:
+            image = random_contrast(image, sd=contrast[0], min=contrast[1], max=contrast[2])
+        if blur is not None:
+            image = random_blur(image, 0, blur)
+
+        if noise:
+            image = random_noise(image, sd=noise)
+
+        # Put into array
+        images[i] = np.asarray(image, dtype=np.uint8).reshape(img_shape)
+    return images
+
+
+# ==============================================================================
 #                                        RANDOM_TRANSFORMATIONS_FOR_SEGMENTATION
 # ==============================================================================
 def random_transformations_for_segmentation(
