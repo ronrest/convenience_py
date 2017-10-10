@@ -265,7 +265,6 @@ class ClassifierModel(object):
                       "See the full printout and traceback above  if  this  did  not\n"\
                       "resolve the issue."
                 raise ValueError(str(e) + "\n\n\n" + msg)
-
         else:
             print("Initializing to new parameter values")
             session.run(tf.global_variables_initializer())
@@ -298,6 +297,9 @@ class ClassifierModel(object):
         else:
             return X_batch
 
+    def update_status_file(self, status):
+        str2file(status, file=self.train_status_file)
+
     def train(self, data, n_epochs, alpha=0.001, batch_size=32, print_every=10, l2=None, augmentation_func=None):
         """Trains the model, for n_epochs given a dictionary of data"""
         n_samples = len(data["X_train"])               # Num training samples
@@ -308,7 +310,7 @@ class ClassifierModel(object):
             t0 = time.time()
 
             try:
-                str2file("training", file=self.train_status_file)
+                self.update_status_file("training")
                 # TODO: Use global epoch
                 for epoch in range(1, n_epochs+1):
                     self.global_epoch += 1
@@ -358,15 +360,15 @@ class ClassifierModel(object):
                     # TODO: Visialize predictions.
 
                     str2file(str(max(self.evals[self.best_evals_metric])), file=self.best_score_file)
-                str2file("done", file=self.train_status_file)
+                self.update_status_file("done")
 
             except KeyboardInterrupt as e:
                 print("Keyboard Interupt detected")
                 # TODO: Finish up gracefully. Maybe create recovery snapshots of model
-                str2file("interupted", file=self.train_status_file)
+                self.update_status_file("interupted")
                 raise e
             except:
-                str2file("crashed", file=self.train_status_file)
+                self.update_status_file("crashed")
                 raise
 
     def prediction(self, X, batch_size=32, verbose=True, best=True):
