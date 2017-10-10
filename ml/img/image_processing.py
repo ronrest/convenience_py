@@ -11,7 +11,12 @@ __license__ = "Apache License"
 __version__ = "2.0"
 
 
+# ==============================================================================
+#                                                           GET_ARRAY_COLOR_MODE
+# ==============================================================================
 def get_array_color_mode(x):
+    """ Given a numpy array representing a single image, it returns the
+        PIL color mode that will most likely work with it """
     x = x.squeeze()
     if x.ndim == 2:
         mode = "L"
