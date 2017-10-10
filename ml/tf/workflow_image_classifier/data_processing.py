@@ -2,6 +2,8 @@ import os
 import pickle
 import os
 
+from image_processing import batch_preprocess
+
 __author__ = "Ronny Restrepo"
 __copyright__ = "Copyright 2017, Ronny Restrepo"
 __credits__ = ["Ronny Restrepo"]
@@ -134,6 +136,6 @@ def prepare_data(data_file, valid_from_train=False, n_valid=1024, max_data=None,
 # ==============================================================================
 #                                                           LOAD_BATCH_OF_IMAGES
 # ==============================================================================
-def load_batch_of_images(X_batch, img_shape=299):
-    assert False, "NOT IMPLEMENTED: load_batch_of_images"
-    return None
+def load_batch_of_images(X_batch, img_shape=[299, 299]):
+    batch = batch_preprocess(X_batch, shape=img_shape, mode="RGB")
+    return batch
