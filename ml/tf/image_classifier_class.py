@@ -46,6 +46,8 @@ class ClassifierModel(object):
             from this one that overides `self.body()`
         """
         # MODEL SETTINGS
+        # TODO: Save the best evals metric to evals dict, and use that as the
+        #       default to load up if none is passed in argument.
         self.batch_size = 4
         self.best_evals_metric = best_evals_metric
         self.l2 = l2
