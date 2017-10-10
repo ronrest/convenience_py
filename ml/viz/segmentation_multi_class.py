@@ -234,8 +234,8 @@ def viz_sample_seg_augmentations(X, Y, aug_func, n_images=5, n_per_image=5, save
     _, height, width, n_channels = X.shape
     gx = np.array(gx, dtype=np.uint8).reshape(n_images*n_per_image, height, width, n_channels)
     gy = np.array(gy, dtype=np.uint8).reshape(n_images*n_per_image, height, width)
-    gx = batch2grid(gx, n_images, n_per_image)
-    gy = batch2grid(gy, n_images, n_per_image)
+    gx = batch2grid(gx, n_per_image, n_images)
+    gy = batch2grid(gy, n_per_image, n_images)
 
     # Overlay labels on top of image
     return viz_overlayed_segmentation_label(img=gx, label=gy, saveto=saveto)
