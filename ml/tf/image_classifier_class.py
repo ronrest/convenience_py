@@ -387,31 +387,37 @@ class ClassifierModel(object):
                 self.update_status_file("crashed")
                 raise
 
-    def prediction(self, X, batch_size=32, verbose=True, best=True):
+    def predict(self, X, batch_size=32, verbose=True, best=True, session=None):
+        if session is None:
+            with tf.Session(graph=self.graph) as sess:
+                self.initialize_vars(sess, best=best)
+                return self.predict_in_session(X, session=sess, batch_size=batch_size, verbose=verbose, best=best)
+        else:
+            return self.predict_in_session(X, session=session, batch_size=batch_size, verbose=verbose)
+
+    def predict_in_session(self, X, session, batch_size=32, verbose=True):
         """Given input X make a forward pass of the model to get predictions"""
         # Dimensions
         n_samples = X.shape[0]
         n_batches = int(np.ceil(n_samples/batch_size))
-        preds = np.zeros(n_samples, dtype=np.int32)
+        preds = np.zeros([n_samples, self.img_height, self.img_width], dtype=np.uint8)
         if verbose:
             print("MAKING PREDICTIONS")
             percent_interval=10
             print_every = n_batches/percent_interval
             percent = 0
 
-        with tf.Session(graph=self.graph) as sess:
-            self.initialize_vars(sess, best=best)
+        # MAKE PREDICTIONS ON MINI BATCHES
+        for i in range(n_batches):
+            X_batch = self.get_batch(i, batch_size=batch_size, X=X)
+            feed_dict = {self.X:X_batch, self.is_training:False}
+            batch_preds = session.run(self.preds, feed_dict=feed_dict)
+            preds[batch_size*i: batch_size*(i+1)] = batch_preds.squeeze()
 
-            # Make Predictions on mini batches
-            for i in range(n_batches):
-                X_batch = self.get_batch(i, batch_size=batch_size, X=X)
-                feed_dict = {self.X:X_batch, self.is_training:False}
-                batch_preds = sess.run(self.preds, feed_dict=feed_dict)
-                preds[batch_size*i: batch_size*(i+1)] = batch_preds.squeeze()
+            if verbose and (i+1)%print_every == 0:
+                percent += percent_interval
+                print("- {} %".format(percent))
 
-                if verbose and (i+1)%print_every == 0:
-                    percent += percent_interval
-                    print("- {} %".format(percent))
         return preds
 
     def evaluate(self, X, Y, batch_size=32, best=False):
