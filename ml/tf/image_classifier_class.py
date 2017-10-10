@@ -158,22 +158,24 @@ class ImageClassificationModel(object):
                self.l2
                self.n_classes
         """
-        # TODO: This handling of L2 is ugly, fix it.
-        if self.l2 is None:
-            l2_scale = 0.0
-        else:
-            l2_scale = l2
+        # default body graph. Override this in your inherited class
+        with tf.name_scope("preprocess") as scope:
+            x = tf.div(self.X, 255, name="rescaled_inputs")
 
-        # TODO: Use arg_scopes instead of having to use these if then statements for regularization
-        if self.l2_scale > 0.0:
-            self.regularizer = tf.contrib.layers.l2_regularizer(scale=self.l2_scale)
-        else:
-            self.regularizer = None
-
-        # default body graph. Override this.
-        # print(self.X.name, self.X.shape.as_list())
-        x = tf.contrib.layers.flatten(X)
-        self.logits = tf.contrib.layers.fully_connected(x, self.n_classes, activation_fn=None, name="logits")
+        with tf.contrib.framework.arg_scope(
+            [tf.contrib.layers.conv2d, tf.contrib.layers.fully_connected],
+            activation_fn=tf.nn.relu,
+            normalizer_fn=tf.contrib.layers.batch_norm,
+            normalizer_params={"is_training": self.is_training}
+            ):
+            x = tf.contrib.layers.conv2d(x, num_outputs=8, kernel_size=3, stride=2)
+            x = tf.layers.dropout(x, rate=self.dropout)
+            x = tf.contrib.layers.conv2d(x, num_outputs=16, kernel_size=3, stride=2)
+            x = tf.layers.dropout(x, rate=self.dropout)
+            x = tf.contrib.layers.conv2d(x, num_outputs=32, kernel_size=3, stride=2)
+            x = tf.layers.dropout(x, rate=self.dropout)
+            x = tf.contrib.layers.flatten(x)
+            self.logits = tf.contrib.layers.fully_connected(x, num_outputs=self.n_classes, normalizer_fn=None, activation_fn=None, scope="logits")
 
     def create_preds_op(self):
         # PREDUCTIONS - get a class value (chanels axis is ohv)
