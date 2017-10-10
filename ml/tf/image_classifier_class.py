@@ -178,10 +178,10 @@ class ImageClassificationModel(object):
             self.logits = tf.contrib.layers.fully_connected(x, num_outputs=self.n_classes, normalizer_fn=None, activation_fn=None, scope="logits")
 
     def create_preds_op(self):
-        # PREDUCTIONS - get a class value (chanels axis is ohv)
+        # PREDUCTIONS - get a class value for each sample
         with tf.name_scope("preds") as scope:
             self.preds = tf.to_int32(tf.argmax(self.logits, axis=-1), name=scope)
-            # self.preds = tf.argmax(self.logits, axis=1, name="preds")
+            # self.preds = tf.to_int32(tf.argmax(self.logits, axis=1), name=scope)
 
     def create_evaluation_metric_ops(self):
         # EVALUATION METRIC
