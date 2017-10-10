@@ -308,6 +308,17 @@ class ClassifierModel(object):
         for key in kwargs:
             self.evals[key].append(kwargs[key])
 
+    def create_session(self):
+        """ Creates and returns a session. Be careful to close it
+            Ideally use it as follows:
+
+            with model.create_session() as session:
+                # Do something with the session here
+                ...
+        """
+        session = tf.Session(graph=self.graph)
+        return session
+
     def train(self, data, n_epochs, alpha=0.001, batch_size=32, print_every=10, l2=None, augmentation_func=None):
         """Trains the model, for n_epochs given a dictionary of data"""
         n_samples = len(data["X_train"])               # Num training samples
