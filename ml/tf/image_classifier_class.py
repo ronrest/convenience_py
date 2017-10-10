@@ -32,6 +32,18 @@ def pretty_time(t):
 # ##############################################################################
 # Depends on load_batch_of_images()
 class ImageClassificationModel(object):
+    """
+    Examples:
+        # Creating a Model that inherits from this class:
+
+        class MyModel(ImageClassificationModel):
+            def __init__(self, name, img_shape, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
+                super().__init__(name=name, img_shape=img_shape, n_channels=n_channels, n_classes=n_classes, dynamic=dynamic, l2=l2, best_evals_metric=best_evals_metric)
+
+            def create_body_ops(self):
+                ...
+                self.logits = ...
+    """
     evals_dict_keys = ["train_acc", "valid_acc", "train_loss", "valid_loss", "global_epoch"]
 
     def __init__(self, name, img_shape, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
