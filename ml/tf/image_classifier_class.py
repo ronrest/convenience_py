@@ -31,7 +31,7 @@ def pretty_time(t):
 #                                                          CLASSIFIER MODEL BASE
 # ##############################################################################
 # Depends on load_batch_of_images()
-class ClassifierModel(object):
+class ImageClassificationModel(object):
     evals_dict_keys = ["train_acc", "valid_acc", "train_loss", "valid_loss", "global_epoch"]
 
     def __init__(self, name, img_shape, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
