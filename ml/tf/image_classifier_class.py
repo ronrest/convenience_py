@@ -45,22 +45,27 @@ class ClassifierModel(object):
             If logits_func is None, then you should create a new class that inherits
             from this one that overides `self.body()`
         """
-        self.n_classes = n_classes
+        # MODEL SETTINGS
         self.batch_size = 4
-        self.global_epoch = 0
         self.best_evals_metric = best_evals_metric
         self.l2 = l2
+        self.img_shape = img_shape
+        self.img_width, self.img_height = img_shape
+        self.n_channels = n_channels
+        self.n_classes = n_classes
+        self.dynamic = dynamic
+        self.global_epoch = 0
 
+        # IMPORTANT FILES
         self.model_dir = os.path.join("models", name)
         self.snapshot_file = os.path.join(self.model_dir, "snapshots", "snapshot.chk")
         self.best_snapshot_file = os.path.join(self.model_dir, "snapshots_best", "snapshot.chk")
         self.evals_file = os.path.join(self.model_dir, "evals.pickle")
         self.best_score_file = os.path.join(self.model_dir, "best_score.txt")
         self.train_status_file = os.path.join(self.model_dir, "train_status.txt")
-
         self.tensorboard_dir = os.path.join(self.model_dir, "tensorboard")
 
-        # directories to create
+        # DIRECTORIES TO CREATE
         self.dir_structure = [
             self.model_dir,
             os.path.join(self.model_dir, "snapshots"),
@@ -72,12 +77,6 @@ class ClassifierModel(object):
         # EVALS DICTIONARY
         self.initialize_evals_dict(self.evals_dict_keys)
         self.global_epoch = self.evals["global_epoch"]
-
-        self.img_shape = img_shape
-        self.img_width, self.img_height = img_shape
-        self.n_channels = n_channels
-        self.n_classes = n_classes
-        self.dynamic = dynamic
 
     def create_graph(self):
         self.graph = tf.Graph()
@@ -121,16 +120,15 @@ class ClassifierModel(object):
         if self.l2 is None:
             l2_scale = 0.0
         else:
-            l2_scale = l2
+            l2_scale = self.l2
 
         with tf.variable_scope("inputs"):
             self.X = tf.placeholder(tf.float32, shape=(None, self.img_height, self.img_width, self.n_channels), name="X") # [batch, rows, cols, chanels]
-            self.Y = tf.placeholder(tf.int32, shape=[None], name="Y") # [batch]
+            self.Y = tf.placeholder(tf.int32, shape=[None], name="Y")   # [batch]
             self.alpha = tf.placeholder_with_default(0.001, shape=None, name="alpha")
             self.is_training = tf.placeholder_with_default(False, shape=(), name="is_training")
             self.l2_scale = tf.placeholder_with_default(l2_scale, shape=(), name="l2_scale")
             self.dropout = tf.placeholder_with_default(0.0, shape=None, name="dropout")
-
 
     def create_body_ops(self):
         """Override this method in child classes.
