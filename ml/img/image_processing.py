@@ -420,7 +420,7 @@ def random_transformations_for_segmentation(
 
         if rotate:
             angle = randint(-rotate, rotate+1)
-            image = image.rotate(angle, resample=PIL.Image.NEAREST, expand=True)
+            image = image.rotate(angle, resample=PIL.Image.BICUBIC, expand=True)
             label = label.rotate(angle, resample=PIL.Image.NEAREST, expand=True)
             # No resizing is done yet to make the random crop high quality
 
@@ -439,7 +439,7 @@ def random_transformations_for_segmentation(
 
         # Scale back after crop and rotate are done
         if rotate or crop:
-            image = image.resize(original_dims, resample=PIL.Image.NEAREST)
+            image = image.resize(original_dims, resample=PIL.Image.BICUBIC)
             label = label.resize(original_dims, resample=PIL.Image.NEAREST)
 
         if lr_flip and np.random.choice([True, False]):
