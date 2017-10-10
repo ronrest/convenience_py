@@ -427,26 +427,28 @@ class ClassifierModel(object):
             return self.evaluate_in_session(X,Y, sess, batch_size=batch_size)
 
     def evaluate_in_session(self, X, Y, session, batch_size=32):
-        """ Given input X, and Labels Y, and already open tensorflow session,
-            evaluate the accuracy of the model
+        """Evaluate the model on some data (does it in batches).
+           Returns a tuple (score, avg_loss)
         """
-        # Dimensions
-        preds = np.zeros(Y.shape[0], dtype=np.int32)
-        loss = 0.0
-        n_samples = Y.shape[0]
-        n_batches = int(np.ceil(n_samples/batch_size))
+        # Iterate through each mini-batch
+        total_loss = 0
+        n_samples = len(Y)
+        n_batches = int(np.ceil(n_samples/batch_size)) # Num batches needed
 
-        # Make Predictions on mini batches
+        # Reset the running variables for evaluation metric
+        session.run(self.reset_evaluation_vars)
+
         for i in range(n_batches):
             X_batch, Y_batch = self.get_batch(i, batch_size=batch_size, X=X, Y=Y)
             feed_dict = {self.X:X_batch, self.Y:Y_batch, self.is_training:False}
-            batch_preds, batch_loss = session.run([self.preds, self.loss], feed_dict=feed_dict)
-            preds[batch_size*i: batch_size*(i+1)] = batch_preds.squeeze()
-            loss += batch_loss
 
-        accuracy = (preds.squeeze() == Y.squeeze()).mean()*100
-        loss = loss / n_samples
-        return accuracy, loss
+            loss, preds, confusion_mtx = session.run([self.loss, self.preds, self.update_evaluation_vars], feed_dict=feed_dict)
+            total_loss += loss
+
+        score = session.run(self.evaluation)
+        avg_loss = total_loss/float(n_samples)
+        return score, avg_loss
+
 
 # ==============================================================================
 #                                                       GRAPH_FROM_GRAPHDEF_FILE
