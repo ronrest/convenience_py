@@ -415,7 +415,7 @@ def random_transformations(
         assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
         shadow_image = PIL.Image.open(shadow_file)
         # Ensure shadow is same color mode as input images
-        shadow_image.convert(get_array_color_mode(X[0]))
+        shadow_image = shadow_image.convert(get_array_color_mode(X[0]))
 
     for i in range(n_images):
         image = array2pil(X[i])
