@@ -331,7 +331,7 @@ def random_shadow(im, shadow, intensity=(0.0, 0.7), crop_range=(0.02, 0.25)):
 
     # Overlay the shadow
     overlay = (np.multiply(im, 1-shadow)).astype(np.uint8)
-    return PIL.Image.fromarray(overlay, mode="RGB")
+    return PIL.Image.fromarray(overlay, mode=mode)
 
 
 # ==============================================================================
