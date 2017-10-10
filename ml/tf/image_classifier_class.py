@@ -333,11 +333,11 @@ class ImageClassificationModel(object):
         session = tf.Session(graph=self.graph)
         return session
 
-    def train(self, data, n_epochs, alpha=0.001, batch_size=32, print_every=10, l2=None, augmentation_func=None):
+    def train(self, data, n_epochs, alpha=0.001, dropout=0.0, batch_size=32, print_every=10, l2=None, augmentation_func=None, viz_every=10):
         """Trains the model, for n_epochs given a dictionary of data"""
         n_samples = len(data["X_train"])               # Num training samples
         n_batches = int(np.ceil(n_samples/batch_size)) # Num batches per epoch
-
+        print("DEBUG - ", "using aug func" if augmentation_func is not None else "NOT using aug func")
         with tf.Session(graph=self.graph) as sess:
             self.initialize_vars(sess)
             t0 = time.time()
@@ -358,12 +358,13 @@ class ImageClassificationModel(object):
                         if augmentation_func is not None:
                             X_batch = augmentation_func(X_batch)
 
-                        feed_dict = {self.X:X_batch, self.Y:Y_batch, self.alpha:alpha, self.is_training:True}
+                        # TRAIN
+                        feed_dict = {self.X:X_batch, self.Y:Y_batch, self.alpha:alpha, self.is_training:True, self.dropout: dropout}
                         loss, _ = sess.run([self.loss, self.train_op], feed_dict=feed_dict)
 
                         # Print feedback every so often
                         if print_every is not None and (i+1)%print_every==0:
-                            print("{}    Batch_loss: {}".format(pretty_time(time.time()-t0), loss))
+                            print("{} {: 5d} Batch_loss: {}".format(pretty_time(time.time()-t0), i, loss))
 
                     # Save parameters after each epoch
                     self.save_snapshot_in_session(sess, self.snapshot_file)
