@@ -208,15 +208,9 @@ class ClassifierModel(object):
     def create_saver_ops(self):
         """ Create operations to save/restore model weights """
         with tf.device('/cpu:0'): # prevent more than one thread doing file I/O
-            # # Inception Saver
-            #  excluded_weights = ["InceptionV3/AuxLogits", "InceptionV3/Logits"]
-            # trunk_vars = tf.contrib.framework.get_variables_to_restore(include=["InceptionV3"], exclude=excluded_weights)
-            # self.trunk_saver = tf.train.Saver(trunk_vars, name="trunk_saver")
-
             # Main Saver
             main_vars = tf.contrib.framework.get_variables_to_restore(exclude=None)
             self.saver = tf.train.Saver(main_vars, name="saver")
-            # best_snapshot_file
 
     def create_directory_structure(self):
         """ Ensure the necessary directory structure exists for saving this model """
