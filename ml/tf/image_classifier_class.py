@@ -388,7 +388,8 @@ class ImageClassificationModel(object):
                     train_curves(train=self.evals["train_acc"], valid=self.evals["valid_acc"], saveto=os.path.join(self.model_dir, "accuracy.png"), title="Accuracy over time", ylab="Accuracy", legend_pos="lower right")
                     train_curves(train=self.evals["train_loss"], valid=self.evals["valid_loss"], saveto=os.path.join(self.model_dir, "loss.png"), title="Loss over time", ylab="loss", legend_pos="upper right")
 
-                    # TODO: Visialize predictions.
+                    # VISUALIZE PREDICTIONS - once every so many epochs
+                    # TODO: Add prediction visualizations
 
                     str2file(str(max(self.evals[self.best_evals_metric])), file=self.best_score_file)
                 self.update_status_file("done")
