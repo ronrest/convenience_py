@@ -294,7 +294,7 @@ def random_shadow(im, shadow, intensity=(0.0, 0.7), crop_range=(0.02, 0.25)):
     Args:
         im:             (PIL image) Image of scene
         shadow:         (PIL image)
-                        Image of shaddow pattern to take a crop from
+                        Image of shadow pattern to take a crop from
         intensity:      (tuple of two floats)(default = (0.0, 0.7))
                         Min and max values (between 0 to 1) specifying how
                         strong to make the shadows.
@@ -414,7 +414,7 @@ def random_transformations(
         assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
         shadow_image = PIL.Image.open(shadow_file)
         # Ensure shadow is same color mode as input images
-        shaddow_image.convert(get_array_color_mode(X[0]))
+        shadow_image.convert(get_array_color_mode(X[0]))
 
     for i in range(n_images):
         image = array2pil(X[i])
@@ -568,7 +568,7 @@ def random_transformations_for_segmentation(
         assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
         shadow_image = PIL.Image.open(shadow_file)
         # Ensure shadow is same color mode as input images
-        shaddow_image.convert(get_array_color_mode(X[0]))
+        shadow_image.convert(get_array_color_mode(X[0]))
 
     for i in range(n_images):
         image = array2pil(X[i])
