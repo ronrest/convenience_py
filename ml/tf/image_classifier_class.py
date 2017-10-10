@@ -32,6 +32,8 @@ def pretty_time(t):
 # ##############################################################################
 # Depends on load_batch_of_images()
 class ClassifierModel(object):
+    evals_dict_keys = ["train_acc", "valid_acc", "train_loss", "valid_loss", "global_epoch"]
+
     def __init__(self, name, img_shape, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
         """ Initializes a Classifier Class
             n_classes: (int)
@@ -65,9 +67,10 @@ class ClassifierModel(object):
             os.path.join(self.model_dir, "snapshots_best"),
             os.path.join(self.model_dir, "tensorboard"),
             ]
-
         self.create_directory_structure()
-        self.initialize_evals_dict(["train_acc", "valid_acc", "train_loss", "valid_loss", "global_epoch"])
+
+        # EVALS DICTIONARY
+        self.initialize_evals_dict(self.evals_dict_keys)
         self.global_epoch = self.evals["global_epoch"]
 
         self.img_shape = img_shape
