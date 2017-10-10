@@ -392,6 +392,7 @@ class ImageClassificationModel(object):
 
                     str2file(str(max(self.evals[self.best_evals_metric])), file=self.best_score_file)
                 self.update_status_file("done")
+                print("DONE in ", pretty_time(time.time()-t0))
 
             except KeyboardInterrupt as e:
                 print("Keyboard Interupt detected")
