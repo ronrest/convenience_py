@@ -84,6 +84,7 @@ class ClassifierModel(object):
             self.create_preds_op()
             self.create_loss_ops()
             self.create_optimization_ops()
+            self.create_evaluation_metric_ops()
             self.create_saver_ops()
             self.create_tensorboard_ops()
 
@@ -164,6 +165,18 @@ class ClassifierModel(object):
         with tf.name_scope("preds") as scope:
             self.preds = tf.to_int32(tf.argmax(self.logits, axis=-1), name=scope)
             # self.preds = tf.argmax(self.logits, axis=1, name="preds")
+
+    def create_evaluation_metric_ops(self):
+        # EVALUATION METRIC
+        with tf.name_scope("evaluation") as scope:
+            # Define the evaluation metric and update operations
+            self.evaluation, self.update_evaluation_vars = tf.metrics.accuracy(
+                labels=tf.reshape(self.Y, [-1]),
+                predictions=tf.reshape(self.preds, [-1]),
+                name=scope)
+            # Isolate metric's running variables & create their initializer/reset op
+            evaluation_vars = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope=scope)
+            self.reset_evaluation_vars = tf.variables_initializer(var_list=evaluation_vars)
 
     def create_loss_ops(self):
         # LOSS - Sums all losses even Regularization losses automatically
