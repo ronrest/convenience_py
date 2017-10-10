@@ -400,6 +400,8 @@ def random_transformations_for_segmentation(
         noise:              ()(default=10)
     """
     # TODO: Random warping
+    img_shape = X[0].shape
+    label_shape = Y[0].shape
     images = np.zeros_like(X)
     labels = np.zeros_like(Y)
     n_images = len(images)
@@ -409,8 +411,8 @@ def random_transformations_for_segmentation(
         shadow_image = PIL.Image.open(shadow_file)
 
     for i in range(n_images):
-        image = array2pil(X[i], mode="RGB")
-        label = array2pil(Y[i], mode="L")
+        image = array2pil(X[i])
+        label = array2pil(Y[i])
         original_dims = image.size
 
         if shadow is not None:
@@ -459,8 +461,8 @@ def random_transformations_for_segmentation(
             image = random_noise(image, sd=noise)
 
         # Put into array
-        images[i] = pil2array(image)
-        labels[i] = pil2array(label)
+        images[i] = np.asarray(image, dtype=np.uint8).reshape(img_shape)
+        labels[i] = np.asarray(label, dtype=np.uint8).reshape(label_shape)
     return images, labels
 
 
