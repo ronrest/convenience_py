@@ -5,11 +5,32 @@ import numpy as np
 import os
 
 
+# ==============================================================================
+#                                                   PLOT_SEG_LABEL_DISTRIBUTIONS
+# ==============================================================================
 # import numpy as np
 from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
 def plot_seg_label_distributions(Y, id2label, colormap, saveto=None):
+    """ Given an array of the segmentation labels in a dataset, it plots
+        the relative distribution of each class label as VIOLIN plots.
+
+        It shows the distribution of how much each class takes up as a
+        proportion of the entire image (how many pixels are taken up by
+        that class).
+
+    Dependencies:
+        seaborn, matplotlib, numpy, collections Counter
+
+    Args:
+        Y:          (np array) Array contianing the segmentation label images,
+                    with integer vals representing the class ids for each pixel
+        id2label:   (list) Map from label id to human readable string label
+        colormap:   (list) List of the (R,G,B) values for each class.
+        saveto:     (str or None)(default=None) optionally save the image
+                    instead of displaying it.
+    """
     rgb2hex = lambda x: "#"+"".join(["{:>02s}".format(hex(ch)[2:]) for ch in x])
 
     distributions = []
