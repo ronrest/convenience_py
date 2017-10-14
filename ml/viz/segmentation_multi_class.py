@@ -4,6 +4,48 @@ import PIL.ImageChops
 import numpy as np
 import os
 
+
+# import numpy as np
+from collections import Counter
+import matplotlib.pyplot as plt
+import seaborn as sns
+def plot_seg_label_distributions(Y, id2label, colormap, saveto=None):
+    rgb2hex = lambda x: "#"+"".join(["{:>02s}".format(hex(ch)[2:]) for ch in x])
+
+    distributions = []
+    n_classes = len(id2label)
+    for img in Y:
+        tally = Counter(img.flatten()) # counts for each class
+        distributions.append([tally[i]/float(img.size) for i in range(n_classes)])
+    distributions = np.array(distributions)
+
+    sns.set(style="whitegrid", palette="pastel", color_codes=True)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 20))
+    sns.violinplot(data=distributions,
+                   scale="count",
+                   ax=ax,
+                   dodge=False,
+                   fliersize=2,
+                   linewidth=0.5,
+                   inner="point",  #:“box”, “quartile”, “point”, “stick”, None
+                   orient="h",
+                   palette=[rgb2hex(code) for code in colormap],
+                   )
+    ax.set_title("Distribution of Space Taken up by Classes", fontdict={"weight": "bold", "size": 20})
+    ax.set_xlabel("Proportion of Image", fontsize=20)
+    ax.set_yticklabels(id2label)
+    plt.setp(ax.get_xticklabels(), fontsize=20)
+    plt.setp(ax.get_yticklabels(), fontsize=20)
+    ax.set_xlim([0,0.7])
+    fig.tight_layout()
+
+    if saveto:
+        plt.savefig(saveto)
+        plt.close()
+    else:
+        plt.show()
+
+
 # ==============================================================================
 #                                                         VIZ_SEGMENTATION_LABEL
 # ==============================================================================
