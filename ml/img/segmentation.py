@@ -21,6 +21,12 @@ def rgb2seglabel(img, colormap, channels_axis=False):
         maps from label id to an RGB color for that label, it returns a
         new numpy array with color chanel size of 1 where the pixel
         intensity values represent the class label id.
+
+    Args:
+        img:            (np array)
+        colormap:       (list) list of pixel values for each class label id
+        channels_axis:  (bool)(default=False) Should it return an array with a
+                        third (color channels) axis of size 1?
     """
     height, width, _ = img.shape
     if channels_axis:
