@@ -415,7 +415,7 @@ class ImageClassificationModel(object):
         if session is None:
             with tf.Session(graph=self.graph) as sess:
                 self.initialize_vars(sess, best=best)
-                return self.predict_in_session(X, session=sess, batch_size=batch_size, verbose=verbose, best=best)
+                return self.predict_in_session(X, session=sess, batch_size=batch_size, verbose=verbose)
         else:
             return self.predict_in_session(X, session=session, batch_size=batch_size, verbose=verbose)
 
