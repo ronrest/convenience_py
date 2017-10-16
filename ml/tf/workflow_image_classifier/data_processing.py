@@ -128,6 +128,7 @@ def prepare_data(data_file, valid_from_train=False, n_valid=1024, max_data=None,
         print("- Y_train: ", (data["Y_train"]).shape)
         if "X_test" in data:
             print("- X_test: ", (data["X_test"]).shape)
+        if "Y_test" in data:
             print("- Y_test: ", (data["Y_test"]).shape)
 
     return data
