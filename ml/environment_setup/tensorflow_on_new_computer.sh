@@ -14,7 +14,7 @@ set -e
 #                                                                      VARIABLES
 #-------------------------------------------------------------------------------
 TF="tensorflow-gpu"                    # Use "tensorflow" for cpu version
-PYTHON_VERSION="3.4"
+PYTHON_VERSION="3.5"
 VIRTUAL_ENV_NAME="myenv"
 VIRTUAL_ENV_ROOT="${HOME}/virtualenvs" # Where your virtual envs are stored.
                                        # NOTE: no trailing forward-slash at
