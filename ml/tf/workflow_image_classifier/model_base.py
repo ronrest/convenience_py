@@ -470,7 +470,7 @@ class ImageClassificationModel(object):
             total_loss += loss
 
         score = session.run(self.evaluation)
-        avg_loss = total_loss/float(n_samples)
+        avg_loss = total_loss/float(n_batches)
         return score, avg_loss
 
 
