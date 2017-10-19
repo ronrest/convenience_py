@@ -114,7 +114,7 @@ class ImageClassificationModel(object):
     def create_graph_from_logits_func(self, logits_func):
         """ Given a logits function with the following API:
 
-                `logits_func(X, Y, alpha, dropout, l2, is_training)`
+                `logits_func(X, Y, n_classes, alpha, dropout, l2, is_training)`
                 Returning: `logits`
 
                 NOTE: that the argument names are what is important, not the
@@ -127,7 +127,7 @@ class ImageClassificationModel(object):
         self.graph = tf.Graph()
         with self.graph.as_default():
             self.create_input_ops()
-            self.logits = logits_func(X=self.X, Y=self.Y, alpha=self.alpha, dropout=self.dropout, l2=self.l2_scale, is_training=self.is_training)
+            self.logits = logits_func(X=self.X, Y=self.Y, n_classes=self.n_classes, alpha=self.alpha, dropout=self.dropout, l2=self.l2_scale, is_training=self.is_training)
             self.create_preds_op()
             self.create_loss_ops()
             self.create_optimization_ops()
