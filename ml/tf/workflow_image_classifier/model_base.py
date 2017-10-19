@@ -188,7 +188,7 @@ class ImageClassificationModel(object):
         # PREDUCTIONS - get a class value for each sample
         with tf.name_scope("preds") as scope:
             self.preds = tf.to_int32(tf.argmax(self.logits, axis=-1), name=scope)
-            # self.preds = tf.to_int32(tf.argmax(self.logits, axis=1), name=scope)
+            self.probs = tf.nn.softmax(self.logits,name="probs") # probability distributions
 
     def create_evaluation_metric_ops(self):
         # EVALUATION METRIC
@@ -411,20 +411,24 @@ class ImageClassificationModel(object):
                 self.update_status_file("crashed")
                 raise
 
-    def predict(self, X, batch_size=32, verbose=True, best=True, session=None):
+    def predict(self, X, batch_size=32, best=True, session=None, probs=False, verbose=True):
         if session is None:
             with tf.Session(graph=self.graph) as sess:
                 self.initialize_vars(sess, best=best)
-                return self.predict_in_session(X, session=sess, batch_size=batch_size, verbose=verbose)
+                return self.predict_in_session(X, session=sess, batch_size=batch_size, verbose=verbose, probs=probs)
         else:
-            return self.predict_in_session(X, session=session, batch_size=batch_size, verbose=verbose)
+            return self.predict_in_session(X, session=session, batch_size=batch_size, verbose=verbose, probs=probs)
 
-    def predict_in_session(self, X, session, batch_size=32, verbose=True):
-        """Given input X make a forward pass of the model to get predictions"""
+    def predict_in_session(self, X, session, batch_size=32, probs=False, verbose=True):
         # Dimensions
         n_samples = X.shape[0]
         n_batches = int(np.ceil(n_samples/batch_size))
-        preds = np.zeros([n_samples, self.img_height, self.img_width], dtype=np.uint8)
+        if probs:
+            preds = np.zeros([n_samples, self.n_classes], dtype=np.float32)
+            op = self.probs
+        else:
+            preds = np.zeros(n_samples, dtype=np.uint8)
+            op = self.preds
         if verbose:
             print("MAKING PREDICTIONS")
             percent_interval=10
@@ -435,7 +439,7 @@ class ImageClassificationModel(object):
         for i in range(n_batches):
             X_batch = self.get_batch(i, batch_size=batch_size, X=X)
             feed_dict = {self.X:X_batch, self.is_training:False}
-            batch_preds = session.run(self.preds, feed_dict=feed_dict)
+            batch_preds = session.run(op, feed_dict=feed_dict)
             preds[batch_size*i: batch_size*(i+1)] = batch_preds.squeeze()
 
             if verbose and (i+1)%print_every == 0:
