@@ -412,6 +412,25 @@ class ImageClassificationModel(object):
                 raise
 
     def predict(self, X, batch_size=32, best=True, session=None, probs=False, verbose=True):
+        """ Make predictions on data `X`. Returns the most likely class id
+            for each training sample in `X`. You can optionally return the
+            probability distribution for all the classes instead by setting
+            `probs=True`
+
+        Args:
+            X:              (np array) inputs
+            batch_size:     (int)(default=32)
+            best:           (bool)(default=True) Use the best saved snapshot?
+                            If set to False, it uses the latest snapshot.
+            session:        (None or tensroflow session)(default=None)
+                            Pass a currently running session if you are already
+                            in a session. Else, it starts a new one.
+            probs:          (bool)(default=False) If set to `True` it returns
+                            the probability distribution of each class instead
+                            of the id of the most likely class.
+            verbose:        (bool)(default=True) If `True`, it prints out
+                            progress.
+        """
         if session is None:
             with tf.Session(graph=self.graph) as sess:
                 self.initialize_vars(sess, best=best)
@@ -420,6 +439,21 @@ class ImageClassificationModel(object):
             return self.predict_in_session(X, session=session, batch_size=batch_size, verbose=verbose, probs=probs)
 
     def predict_in_session(self, X, session, batch_size=32, probs=False, verbose=True):
+        """ Make predictions on data `X` within a currently running session.
+            Returns the most likely class id for each training sample in `X`.
+            You can optionally return the probability distribution for all
+            the classes instead by setting `probs=True`
+
+        Args:
+            X:              (np array) inputs
+            session:        (tensroflow session) Currently running session.
+            batch_size:     (int)(default=32)
+            probs:          (bool)(default=False) If set to `True` it returns
+                            the probability distribution of each class instead
+                            of the id of the most likely class.
+            verbose:        (bool)(default=True) If `True`, it prints out
+                            progress.
+        """
         # Dimensions
         n_samples = X.shape[0]
         n_batches = int(np.ceil(n_samples/batch_size))
