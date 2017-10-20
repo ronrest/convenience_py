@@ -87,7 +87,7 @@ def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
 def vgg16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
     with tf.variable_scope(name, name):
         # Trunk of convolutional layers
-        x = _vgg_16_trunk_ops(inputs, weight_decay=weight_decay)
+        x = _vgg16_trunk_ops(inputs, weight_decay=weight_decay)
 
         # "Fully connected" layers
         # Use conv2d instead of fully_connected layers.
