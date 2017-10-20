@@ -98,5 +98,5 @@ def vgg16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.
             x = dropout_layer(x, dropout, training=is_training, name='dropout7')
             x = conv(x, num_outputs=n_classes, kernel_size=1, activation_fn=None, normalizer_fn=None, scope='fc8')
             if spatial_squeeze:
-                x = array_ops.squeeze(x, [1, 2], name='fc8/squeezed')
+                x = tf.squeeze(x, [1, 2], name='fc8/squeezed')
         return x
