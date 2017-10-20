@@ -35,3 +35,27 @@ def get_vgg_argscope(weight_decay=0.0005):
                 return scope
 
 
+
+# ==============================================================================
+#                                                                   VGG16_TRUNK
+# ==============================================================================
+def vgg16_trunk(inputs, weight_decay=0.0005, name="vgg_16"):
+    with tf.variable_scope(name, name):
+        return _vgg16_trunk_ops(inputs, weight_decay=weight_decay)
+
+def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
+    """ VGG layers before the fully connected layers """
+    with tf.contrib.framework.arg_scope(get_vgg_argscope(weight_decay=weight_decay)):
+        x = repeat(inputs, 2, conv, num_outputs=64, kernel_size=3, scope='conv1')
+        x = maxpool(x, kernel_size=2, scope='pool1')
+        x = repeat(x, 2, conv, num_outputs=128, kernel_size=3, scope='conv2')
+        x = maxpool(x, kernel_size=2, scope='pool2')
+        x = repeat(x, 3, conv, num_outputs=256, kernel_size=3, scope='conv3')
+        x = maxpool(x, kernel_size=2, scope='pool3')
+        x = repeat(x, 3, conv, num_outputs=512, kernel_size=3, scope='conv4')
+        x = maxpool(x, kernel_size=2, scope='pool4')
+        x = repeat(x, 3, conv, num_outputs=512, kernel_size=3, scope='conv5')
+        x = maxpool(x, kernel_size=2, scope='pool5')
+        return x
+
+
