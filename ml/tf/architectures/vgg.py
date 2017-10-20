@@ -39,7 +39,7 @@ l2_regularizer = tf.contrib.layers.l2_regularizer
 
 
 # ==============================================================================
-#                                                                  GET_VGG_SCOPE
+#                                                               GET_VGG_ARGSCOPE
 # ==============================================================================
 def get_vgg_argscope(weight_decay=0.0005):
     """ Gets the arg scope needed for VGG.
