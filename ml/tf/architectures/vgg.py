@@ -59,3 +59,22 @@ def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
         return x
 
 
+# ==============================================================================
+#                                                                         VGG_16
+# ==============================================================================
+def vgg_16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
+    with tf.variable_scope(name, name):
+        # Trunk of convolutional layers
+        x = _vgg_16_trunk_ops(inputs, weight_decay=weight_decay)
+
+        # "Fully connected" layers
+        # Use conv2d instead of fully_connected layers.
+        with tf.contrib.framework.arg_scope(get_vgg_argscope(weight_decay=weight_decay)):
+            x = conv(x, num_outputs=4096, kernel_size=7, padding='VALID', scope='fc6')
+            x = dropout_layer(x, dropout, is_training=is_training, scope='dropout6')
+            x = conv(x, num_outputs=4096, kernel_size=1, scope='fc7')
+            x = dropout_layer(x, dropout, is_training=is_training, scope='dropout7')
+            x = conv(x, num_outputs=n_classes, kernel_size=1, activation_fn=None, normalizer_fn=None, scope='fc8')
+            if spatial_squeeze:
+                x = array_ops.squeeze(x, [1, 2], name='fc8/squeezed')
+        return x
