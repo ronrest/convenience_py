@@ -1,3 +1,25 @@
+""" ############################################################################
+            CODE FOR CREATING VGG 16 ARCHITECTURES
+################################################################################
+compatible with tensorflow's pretrained snapshots
+
+Based on this code:
+    https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/slim/python/slim/nets/vgg.py
+
+
+USAGE:
+    # Note there is no need for specifying arg scopes outside teh functions. The
+    # functions create the necessary arg scopes internally.
+
+    # To use just the trunk of VGG
+    x = vgg_16_trunk(X, weight_decay=0.0005, name="vgg_16")
+
+    # To use all of the VGG model
+    vgg_16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16")
+
+NOTE:
+    To use with pretrainied weingts, pass inputs that are 224x224x3
+"""
 import tensorflow as tf
 
 # USEFUL LAYERS
