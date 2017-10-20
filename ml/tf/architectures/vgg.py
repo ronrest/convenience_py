@@ -82,9 +82,9 @@ def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
 
 
 # ==============================================================================
-#                                                                         VGG_16
+#                                                                          VGG16
 # ==============================================================================
-def vgg_16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
+def vgg16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
     with tf.variable_scope(name, name):
         # Trunk of convolutional layers
         x = _vgg_16_trunk_ops(inputs, weight_decay=weight_decay)
