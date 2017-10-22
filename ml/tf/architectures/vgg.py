@@ -5,10 +5,10 @@ compatible with tensorflow's pretrained snapshots
 
 Based on this code:
     https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/slim/python/slim/nets/vgg.py
-
+But allows for the inclusion of batchnorm for each convolution layer.
 
 USAGE:
-    # Note there is no need for specifying arg scopes outside teh functions. The
+    # Note there is no need for specifying arg scopes outside the functions. The
     # functions create the necessary arg scopes internally.
 
     # To use just the trunk of VGG
@@ -17,8 +17,49 @@ USAGE:
     # To use all of the VGG model
     vgg_16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16")
 
-NOTE:
-    To use with pretrainied weingts, pass inputs that are 224x224x3
+NOTES FOR WHEN USING PRETRAINED WEIGHTS:
+    # TODO: Add link to tensorflows pretrained weights
+    - If running the entire VGG model up to fully connected layers, eg for
+      classification, then pass inputs that are 224x224x3.
+    - If only using the convolution trunk layers, then the inputs should
+      be a minimum size of 32x32 to accomodate 5 downsamples that get
+      halved each time.
+
+    WEIGHTS TO INCLUDE/EXCLUDE FROM PRETRAINED SNAPSHOT
+    For full VGG:
+        pretrained_include = ["vgg_16"]
+        pretrained_exclude = None
+
+    For full VGG with batchnorm:
+        pretrained_include = ["vgg_16"]
+        pretrained_exclude = [".*BatchNorm"]
+
+    For VGG trunk:
+        pretrained_include = ["vgg_16"]
+        pretrained_exclude = ["vgg_16/fc6", "vgg_16/fc7", "vgg_16/fc8"]
+
+    For VGG trunk with batchnorm:
+        pretrained_include = ["vgg_16"]
+        pretrained_exclude = ["vgg_16/fc6", "vgg_16/fc7", "vgg_16/fc8", ".*BatchNorm"]
+
+
+PRETRAINED WEIGHTS
+                   ACCURACY
+    MODEL       TOP 1   TOP 5
+    VGG 16	    71.5	89.8
+    VGG 19	    71.1	89.8
+
+    VGG 16
+    PAPER: http://arxiv.org/abs/1409.1556.pdf
+    CODE: https://github.com/tensorflow/models/blob/master/slim/nets/vgg.py
+    WEIGHTS: http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
+    FROZEN GRAPH:
+
+    # VGG 19
+    # PAPER: http://arxiv.org/abs/1409.1556.pdf
+    # CODE: https://github.com/tensorflow/models/blob/master/slim/nets/vgg.py
+    # WEIGHTS: http://download.tensorflow.org/models/mobilenet_v1_1.0_224_2017_06_14.tar.gz
+    # FROZEN GRAPH:
 """
 import tensorflow as tf
 
