@@ -24,6 +24,10 @@ NOTES FOR WHEN USING PRETRAINED WEIGHTS:
     - If only using the convolution trunk layers, then the inputs should
       be a minimum size of 32x32 to accomodate 5 downsamples that get
       halved each time.
+    - NOTE: that the original model, and the pretrained weights, do not include
+      batchnorm layers. But it can be useful to have them included when
+      performing transfer learning. It just means that the parameters in the
+      batchnorm layers will be trained from scratch.
 
     WEIGHTS TO INCLUDE/EXCLUDE FROM PRETRAINED SNAPSHOT
     For full VGG:
@@ -51,15 +55,14 @@ PRETRAINED WEIGHTS
 
     VGG 16
     PAPER: http://arxiv.org/abs/1409.1556.pdf
-    CODE: https://github.com/tensorflow/models/blob/master/slim/nets/vgg.py
     WEIGHTS: http://download.tensorflow.org/models/vgg_16_2016_08_28.tar.gz
-    FROZEN GRAPH:
+    FROZEN :
 
+    # TODO: Add VGG 19 model to code
     # VGG 19
     # PAPER: http://arxiv.org/abs/1409.1556.pdf
-    # CODE: https://github.com/tensorflow/models/blob/master/slim/nets/vgg.py
     # WEIGHTS: http://download.tensorflow.org/models/mobilenet_v1_1.0_224_2017_06_14.tar.gz
-    # FROZEN GRAPH:
+    # FROZEN :
 """
 import tensorflow as tf
 
