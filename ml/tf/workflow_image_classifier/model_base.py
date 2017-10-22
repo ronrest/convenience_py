@@ -20,6 +20,18 @@ __credits__ = ["Ronny Restrepo"]
 __license__ = "Apache License"
 __version__ = "2.0"
 
+# Convenient layer operation shortcuts
+fc = tf.contrib.layers.fully_connected
+conv = tf.contrib.layers.conv2d
+# convsep = tf.contrib.layers.separable_conv2d
+deconv = tf.contrib.layers.conv2d_transpose
+relu = tf.nn.relu
+maxpool = tf.contrib.layers.max_pool2d
+dropout_layer = tf.layers.dropout
+batchnorm = tf.contrib.layers.batch_norm
+# bn_params = {"is_training": is_training}
+winit = tf.contrib.layers.xavier_initializer()
+
 
 # TODO: URGENT:  load_batch_of_images has not been implemented
 
@@ -168,18 +180,6 @@ class ImageClassificationModel(object):
                self.l2
                self.n_classes
         """
-        # Convenient layer operation shortcuts
-        fc = tf.contrib.layers.fully_connected
-        conv = tf.contrib.layers.conv2d
-        # convsep = tf.contrib.layers.separable_conv2d
-        deconv = tf.contrib.layers.conv2d_transpose
-        relu = tf.nn.relu
-        maxpool = tf.contrib.layers.max_pool2d
-        dropout_layer = tf.layers.dropout
-        batchnorm = tf.contrib.layers.batch_norm
-        bn_params = {"is_training": self.is_training}
-        winit = tf.contrib.layers.xavier_initializer()
-
         # default body graph. Override this in your inherited class
         with tf.name_scope("preprocess") as scope:
             x = tf.div(self.X, 255, name="rescaled_inputs")
