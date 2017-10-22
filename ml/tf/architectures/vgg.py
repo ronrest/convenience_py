@@ -30,18 +30,17 @@ deconv = tf.contrib.layers.conv2d_transpose
 relu = tf.nn.relu
 maxpool = tf.contrib.layers.max_pool2d
 dropout_layer = tf.layers.dropout
-# bn = tf.contrib.layers.batch_norm
-# bn_params = {"is_training": self.is_training}
+batchnorm = tf.contrib.layers.batch_norm
+# bn_params = {"is_training": is_training}
 winit = tf.contrib.layers.xavier_initializer()
+l2_regularizer = tf.contrib.layers.l2_regularizer
 repeat = tf.contrib.layers.repeat
 arg_scope = tf.contrib.framework.arg_scope
-l2_regularizer = tf.contrib.layers.l2_regularizer
-
 
 # ==============================================================================
 #                                                               GET_VGG_ARGSCOPE
 # ==============================================================================
-def get_vgg_argscope(weight_decay=0.0005):
+def get_vgg_argscope(weight_decay=0.0005, use_batch_norm=False, is_training=False):
     """ Gets the arg scope needed for VGG.
     Args:
         weight_decay: The l2 regularization coefficient.
@@ -51,23 +50,28 @@ def get_vgg_argscope(weight_decay=0.0005):
     with tf.contrib.framework.arg_scope(
         [conv],
         activation_fn=tf.nn.relu,
+        normalizer_fn = batchnorm if use_batch_norm else None,
+        normalizer_params = {"is_training": is_training},
         weights_regularizer=l2_regularizer(weight_decay),
-        biases_initializer=tf.zeros_initializer()):
+        biases_initializer=tf.zeros_initializer(),
+        trainable = True):
         with tf.contrib.framework.arg_scope([conv], padding='SAME') as scope:
                 return scope
-
 
 
 # ==============================================================================
 #                                                                   VGG16_TRUNK
 # ==============================================================================
-def vgg16_trunk(inputs, weight_decay=0.0005, name="vgg_16"):
+def vgg16_trunk(inputs, weight_decay=0.0005, use_batch_norm=False, is_training=False, name="vgg_16"):
     with tf.variable_scope(name, name):
-        return _vgg16_trunk_ops(inputs, weight_decay=weight_decay)
+        return _vgg16_trunk_ops(inputs, weight_decay=weight_decay, use_batch_norm=use_batch_norm, is_training=is_training)
 
-def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
+def _vgg16_trunk_ops(inputs, weight_decay=0.0005, use_batch_norm=False, is_training=False):
     """ VGG layers before the fully connected layers """
-    with tf.contrib.framework.arg_scope(get_vgg_argscope(weight_decay=weight_decay)):
+    with tf.contrib.framework.arg_scope(get_vgg_argscope(
+            weight_decay=weight_decay,
+            use_batch_norm=use_batch_norm,
+            is_training=is_training)):
         x = repeat(inputs, 2, conv, num_outputs=64, kernel_size=3, scope='conv1')
         x = maxpool(x, kernel_size=2, scope='pool1')
         x = repeat(x, 2, conv, num_outputs=128, kernel_size=3, scope='conv2')
@@ -84,14 +88,17 @@ def _vgg16_trunk_ops(inputs, weight_decay=0.0005):
 # ==============================================================================
 #                                                                          VGG16
 # ==============================================================================
-def vgg16(inputs, n_classes=1000, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
+def vgg16(inputs, n_classes=1000, use_batch_norm=False, is_training=True, dropout=0.5, weight_decay=0.0005, spatial_squeeze=True, name="vgg_16"):
     with tf.variable_scope(name, name):
         # Trunk of convolutional layers
-        x = _vgg16_trunk_ops(inputs, weight_decay=weight_decay)
+        x = _vgg16_trunk_ops(inputs, weight_decay=weight_decay, use_batch_norm=use_batch_norm, is_training=is_training)
 
         # "Fully connected" layers
         # Use conv2d instead of fully_connected layers.
-        with tf.contrib.framework.arg_scope(get_vgg_argscope(weight_decay=weight_decay)):
+        with tf.contrib.framework.arg_scope(get_vgg_argscope(
+                weight_decay=weight_decay,
+                use_batch_norm=use_batch_norm,
+                is_training=is_training)):
             x = conv(x, num_outputs=4096, kernel_size=7, padding='VALID', scope='fc6')
             x = dropout_layer(x, dropout, training=is_training, name='dropout6')
             x = conv(x, num_outputs=4096, kernel_size=1, scope='fc7')
