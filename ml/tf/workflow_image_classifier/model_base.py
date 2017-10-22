@@ -604,6 +604,240 @@ class ImageClassificationModel(object):
 
 
 # ==============================================================================
+#                                                             SEGMENTATION MODEL
+# ==============================================================================
+class SegmentationModel(ImageClassificationModel):
+    evals_dict_keys = ["train_iou", "valid_iou", "train_loss", "valid_loss", "global_epoch"]
+    def __init__(self,
+                name,
+                img_shape=[299, 299],
+                n_channels=3,
+                n_classes=10,
+                dynamic=False,
+                l2=None,
+                best_evals_metric="valid_iou",
+                pretrained_snapshot=None,
+                pretrained_include=None,
+                pretrained_exclude=None):
+        """ """
+        # PASS THE ARGUMENTS TO THE PARENT CLASS
+        kwargs = locals()
+        kwargs.pop("self")
+        kwargs.pop("__class__")
+        super().__init__(**kwargs)
+
+        # SETTINGS SPECIFIC TO SEGMENTATION
+        # TODO: Have an option to ignore void class irrespective of
+        # number of total classes.
+        if n_classes == 1:
+            # technically 1 class is actually two classes (A or not A)
+            # But IoU will get calculated differently, so set to single
+            # class mode.
+            self.n_classes = 2
+            self.single_class_mode = True
+        else:
+            self.n_classes = n_classes
+            self.single_class_mode = False
+
+    def create_input_ops(self):
+        # TODO: This handling of L2 is ugly, fix it.
+        if self.l2 is None:
+            l2_scale = 0.0
+        else:
+            l2_scale = self.l2
+
+        with tf.variable_scope("inputs"):
+            self.X = tf.placeholder(tf.float32, shape=(None, self.img_height, self.img_width, self.n_channels), name="X") # [batch, rows, cols, chanels]
+            self.Y = tf.placeholder(tf.int32, shape=(None, self.img_height, self.img_width), name="Y")   # [batch]
+            self.alpha = tf.placeholder_with_default(0.001, shape=None, name="alpha")
+            self.is_training = tf.placeholder_with_default(False, shape=(), name="is_training")
+            self.l2_scale = tf.placeholder_with_default(l2_scale, shape=(), name="l2_scale")
+            self.dropout = tf.placeholder_with_default(0.0, shape=None, name="dropout")
+
+    def create_evaluation_metric_ops(self):
+        # EVALUATION METRIC - IoU
+        with tf.name_scope("evaluation") as scope:
+            # Define the evaluation metric and update operations
+            self.evaluation, self.update_evaluation_vars = tf.metrics.mean_iou(
+                tf.reshape(self.Y, [-1]),
+                tf.reshape(self.preds, [-1]),
+                num_classes=self.n_classes,
+                name=scope)
+            # Isolate metric's running variables & create their initializer/reset op
+            evaluation_vars = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope=scope)
+            self.reset_evaluation_vars = tf.variables_initializer(var_list=evaluation_vars)
+
+    def create_body_ops(self):
+        """Override this method in child classes.
+           must return pre-activation logits of the output layer
+
+           Ops to make use of:
+               self.is_training
+               self.X
+               self.Y
+               self.alpha
+               self.dropout
+               self.l2_scale
+               self.l2
+               self.n_classes
+        """
+        n_classes = self.n_classes
+
+        # default body graph. Override this in your inherited class
+        with tf.name_scope("preprocess") as scope:
+            x = tf.div(self.X, 255, name="rescaled_inputs")
+
+        # DOWNSAMPLING
+        with tf.contrib.framework.arg_scope(\
+            [conv],
+            padding = "SAME",
+            stride = 2,
+            activation_fn = relu,
+            normalizer_fn=batchnorm,
+            normalizer_params = {"is_training": self.is_training},
+            weights_initializer = winit,
+            weights_regularizer =None,
+            variables_collections =None,
+            trainable =True):
+            d1 = conv(x, num_outputs=8, kernel_size=3, scope="d1")
+            d2 = conv(d1, num_outputs=32, kernel_size=3, scope="d2")
+            d3 = conv(d2, num_outputs=64, kernel_size=3, scope="d3")
+            d4 = conv(d3, num_outputs=64, kernel_size=3, scope="d4")
+
+        # UPSAMPLING
+        with tf.contrib.framework.arg_scope([deconv, conv], \
+            padding = "SAME",
+            stride = 2,
+            activation_fn = None,
+            normalizer_fn = None,
+            normalizer_params = {"is_training": self.is_training},
+            weights_initializer = winit,
+            weights_regularizer = None,
+            variables_collections = None,
+            trainable = True):
+
+            with tf.variable_scope('u3') as scope:
+                previous, residual = d4, d3
+                u = deconv(previous, num_outputs=n_classes, kernel_size=4, stride=2)
+                s = conv(residual, num_outputs=n_classes, kernel_size=1, stride=1, activation_fn=relu, scope="skip")
+                u3 = tf.add(u, s, name="up")
+
+            with tf.variable_scope('u2') as scope:
+                previous, residual = u3, d2
+                u = deconv(previous, num_outputs=n_classes, kernel_size=4, stride=2)
+                s = conv(residual, num_outputs=n_classes, kernel_size=1, stride=1, activation_fn=relu, scope="skip")
+                u2 = tf.add(u, s, name="up")
+
+            with tf.variable_scope('u1') as scope:
+                previous, residual = u2, d1
+                u = deconv(previous, num_outputs=n_classes, kernel_size=4, stride=2)
+                s = conv(residual, num_outputs=n_classes, kernel_size=1, stride=1, activation_fn=relu, scope="skip")
+                u1 = tf.add(u, s, name="up")
+
+            self.logits = deconv(u1, num_outputs=n_classes, kernel_size=4, stride=2, activation_fn=None, scope="logits")
+
+    def train(self, data, n_epochs, alpha=0.001, dropout=0.0, batch_size=32, print_every=10, l2=None, aug_func=None, viz_every=10):
+        """Trains the model, for n_epochs given a dictionary of data"""
+        # TODO: The only difference between this code and the code in
+        # ImageClassification.train() is some mentions to IOU. Find a more
+        # generic way to recycle the same code.
+        n_samples = len(data["X_train"])               # Num training samples
+        n_batches = int(np.ceil(n_samples/batch_size)) # Num batches per epoch
+        print("- ", "using aug func" if aug_func is not None else "NOT using aug func")
+        with tf.Session(graph=self.graph) as sess:
+            self.initialize_vars(sess)
+            t0 = time.time()
+
+            try:
+                self.update_status_file("training")
+                for epoch in range(1, n_epochs+1):
+                    self.global_epoch += 1
+                    print("="*70, "\nEPOCH {}/{} (GLOBAL_EPOCH: {})        ELAPSED TIME: {}".format(epoch, n_epochs, self.global_epoch, pretty_time(time.time()-t0)),"\n"+("="*70))
+
+                    # Shuffle the data
+                    data = self.shuffle_train_data(data)
+
+                    # Iterate through each mini-batch
+                    for i in range(n_batches):
+                        X_batch, Y_batch = self.get_batch(i, X=data["X_train"], Y=data["Y_train"], batch_size=batch_size)
+                        if aug_func is not None:
+                            X_batch, Y_batch = aug_func(X_batch, Y_batch)
+
+                        # TRAIN
+                        feed_dict = {self.X:X_batch, self.Y:Y_batch, self.alpha:alpha, self.is_training:True, self.dropout: dropout}
+                        loss, _ = sess.run([self.loss, self.train_op], feed_dict=feed_dict)
+
+                        # Print feedback every so often
+                        if print_every is not None and (i+1)%print_every==0:
+                            print("{} {: 5d} Batch_loss: {}".format(pretty_time(time.time()-t0), i, loss))
+
+                    # Save parameters after each epoch
+                    self.save_snapshot_in_session(sess, self.snapshot_file)
+
+                    # Evaluate on full train and validation sets after each epoch
+                    train_iou, train_loss = self.evaluate_in_session(data["X_train"][:1000], data["Y_train"][:1000], sess, batch_size=batch_size)
+                    valid_iou, valid_loss = self.evaluate_in_session(data["X_valid"], data["Y_valid"], sess, batch_size=batch_size)
+                    self.update_evals_dict(train_iou=train_iou, train_loss=train_loss, valid_iou=valid_iou, valid_loss=valid_loss)
+                    self.save_evals_dict()
+
+                    # If its the best model so far, save best snapshot
+                    is_best_so_far = self.evals[self.best_evals_metric][-1] >= max(self.evals[self.best_evals_metric])
+                    if is_best_so_far:
+                        self.save_snapshot_in_session(sess, self.best_snapshot_file)
+
+                    # Print evaluations (with asterix at end if it is best model so far)
+                    s = "TR IOU: {: 3.3f} VA IOU: {: 3.3f} TR LOSS: {: 3.5f} VA LOSS: {: 3.5f} {}\n"
+                    print(s.format(train_iou, valid_iou, train_loss, valid_loss, "*" if is_best_so_far else ""))
+
+                    # # TRAIN CURVES
+                    train_curves(train=self.evals["train_iou"], valid=self.evals["valid_iou"], saveto=os.path.join(self.model_dir, "iou.png"), title="IoU over time", ylab="IoU", legend_pos="lower right")
+                    train_curves(train=self.evals["train_loss"], valid=self.evals["valid_loss"], saveto=os.path.join(self.model_dir, "loss.png"), title="Loss over time", ylab="loss", legend_pos="upper right")
+
+                    # VISUALIZE PREDICTIONS - once every so many epochs
+                    if self.global_epoch%viz_every==0:
+                        self.visualise_semgmentations(data=data, session=sess)
+
+                    str2file(str(max(self.evals[self.best_evals_metric])), file=self.best_score_file)
+                self.update_status_file("done")
+                print("DONE in ", pretty_time(time.time()-t0))
+
+            except KeyboardInterrupt as e:
+                print("Keyboard Interupt detected")
+                # TODO: Finish up gracefully. Maybe create recovery snapshots of model
+                self.update_status_file("interupted")
+                raise e
+            except:
+                self.update_status_file("crashed")
+                raise
+
+    def visualise_semgmentations(self, data, session, shape=[5,5]):
+        # TODO: URGENT: Make this function dynamic data loading friendly
+        viz_rows, viz_cols = shape
+        n_viz = viz_rows * viz_cols
+        viz_img_template = os.path.join(self.model_dir, "samples", "{}", "epoch_{:07d}.jpg")
+
+        # On train data
+        preds = self.predict_in_session(data["X_train_viz"][:n_viz], session=session, batch_size=self.batch_size, verbose=False)
+        vizseg(
+            img=batch2grid(data["X_train_viz"][:n_viz], viz_rows, viz_cols),
+            label=batch2grid(data["Y_train_viz"][:n_viz], viz_rows, viz_cols),
+            pred=batch2grid(preds[:n_viz], viz_rows, viz_cols),
+            colormap=data.get("colormap", None),
+            saveto=viz_img_template.format("train", self.global_epoch)
+            )
+
+        # On validation Data
+        preds = self.predict_in_session(data["X_valid"][:n_viz], session=session, batch_size=self.batch_size, verbose=False)
+        vizseg(
+            img=batch2grid(data["X_valid"][:n_viz], viz_rows, viz_cols),
+            label=batch2grid(data["Y_valid"][:n_viz], viz_rows, viz_cols),
+            pred=batch2grid(preds[:n_viz], viz_rows, viz_cols),
+            colormap=data.get("colormap", None),
+            saveto=viz_img_template.format("valid", self.global_epoch)
+            )
+
+
+# ==============================================================================
 #                                                       GRAPH_FROM_GRAPHDEF_FILE
 # ==============================================================================
 def graph_from_graphdef_file(graph_file, access_these, remap_input=None):
