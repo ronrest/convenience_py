@@ -65,7 +65,22 @@ class ImageClassificationModel(object):
     """
     evals_dict_keys = ["train_acc", "valid_acc", "train_loss", "valid_loss", "global_epoch"]
 
-    def __init__(self, name, img_shape, n_channels=3, n_classes=10, dynamic=False, l2=None, best_evals_metric="valid_acc"):
+    # Lists of scopes of weights to include/exclude from main snapshot
+    main_include = None # None includes all variables
+    main_exclude = None
+
+
+    def __init__(self,
+                 name,
+                 img_shape,
+                 n_channels=3,
+                 n_classes=10,
+                 dynamic=False,
+                 l2=None,
+                 best_evals_metric="valid_acc",
+                 pretrained_snapshot=None,
+                 pretrained_include=None,
+                 pretrained_exclude=None):
         """ Initializes a Classifier Class
             n_classes: (int)
             dynamic: (bool)(default=False)
@@ -91,6 +106,13 @@ class ImageClassificationModel(object):
         self.n_classes = n_classes
         self.dynamic = dynamic
         self.global_epoch = 0
+
+        # PRETRAINED MODEL SETTINGS
+        self.pretrained_model = False if pretrained_snapshot is None else True
+        self.pretrained_snapshot = pretrained_snapshot
+        # Lists of scopes of weights to include/exclude from pretrained snapshot
+        self.pretrained_include = pretrained_include
+        self.pretrained_exclude = pretrained_exclude
 
         # IMPORTANT FILES
         self.model_dir = os.path.join("models", name)
@@ -246,10 +268,25 @@ class ImageClassificationModel(object):
 
     def create_saver_ops(self):
         """ Create operations to save/restore model weights """
+        if self.pretrained_model:
+            self.pretrained_saver_ops()
+
         with tf.device('/cpu:0'): # prevent more than one thread doing file I/O
             # Main Saver
-            main_vars = tf.contrib.framework.get_variables_to_restore(exclude=None)
+            self.main_exclude = None
+            main_vars = tf.contrib.framework.get_variables_to_restore(exclude=self.main_exclude)
             self.saver = tf.train.Saver(main_vars, name="saver")
+
+    def pretrained_saver_ops(self):
+        """ Create operations to save/restore model weights """
+        with tf.device('/cpu:0'): # prevent more than one thread doing file I/O
+            # PRETRAINED SAVER
+            self.pretrained_vars = tf.contrib.framework.get_variables_to_restore(include=self.pretrained_include, exclude=self.pretrained_exclude)
+            self.pretrained_saver = tf.train.Saver(self.pretrained_vars, name="pretrained_saver")
+
+            # REMAINDER INITIALIZER - all others not handled by pretrained snapshot
+            self.remainder_vars = tf.contrib.framework.get_variables_to_restore(exclude=[var.name for var in self.pretrained_vars])
+            self.remainder_initializer = tf.variables_initializer(var_list=self.remainder_vars)
 
     def create_directory_structure(self):
         """ Ensure the necessary directory structure exists for saving this model """
@@ -274,36 +311,71 @@ class ImageClassificationModel(object):
             self.evals["global_epoch"] = self.global_epoch
             pickle.dump(self.evals, fileObj, protocol=2) #py2.7 & 3.x compatible
 
+    def snapshot_exists(self, snapshot_file):
+        """ Check if a snapshot file exists.
+            Designed to overcome a bug/limitation of tensroflows function
+            for checking if snapshot exists. In the case where even the
+            directory does not exist, here it gracefully returns False,
+            instead of throwing an error.
+        """
+        return os.path.exists(os.path.dirname(snapshot_file)) \
+            and tf.train.checkpoint_exists(snapshot_file)
+
     def initialize_vars(self, session, best=False):
         """ Override this if you set up custom savers """
+        # Determine if to use best, or latest snapshot
         if best:
             snapshot_file = self.best_snapshot_file
         else:
             snapshot_file = self.snapshot_file
-        if tf.train.checkpoint_exists(snapshot_file):
-            try:
-                print("Restoring parameters from snapshot")
+
+        try:
+            # Determine if it can continue training from a previous run,
+            # or if it needs to be intialized from the begining.
+            if self.snapshot_exists(snapshot_file):
+                print("- Restoring parameters from saved snapshot")
+                print("  -", snapshot_file)
                 self.saver.restore(session, snapshot_file)
-            except (tf.errors.InvalidArgumentError, tf.errors.NotFoundError) as e:
-                msg = "============================================================\n"\
-                      "ERROR IN INITIALIZING VARIABLES FROM SNAPSHOTS FILE\n"\
-                      "============================================================\n"\
-                      "Something went wrong in  loading  the  parameters  from  the\n"\
-                      "snapshot. This is most likely due to changes being  made  to\n"\
-                      "the  model,  but  not  changing   the  snapshots  file  path.\n\n"\
-                      "Loading from a snapshot requires that  the  model  is  still\n"\
-                      "exaclty the same since the last time it was saved.\n\n"\
-                      "Either: \n"\
-                      "- Use a different snapshots filepath to create new snapshots\n"\
-                      "  for this model. \n"\
-                      "- or, Delete the old snapshots manually  from  the  computer.\n\n"\
-                      "Once you have done that, try again.\n\n"\
-                      "See the full printout and traceback above  if  this  did  not\n"\
-                      "resolve the issue."
-                raise ValueError(str(e) + "\n\n\n" + msg)
-        else:
-            print("Initializing to new parameter values")
-            session.run(tf.global_variables_initializer())
+            elif self.pretrained_model:
+                snapshot_file = self.pretrained_snapshot
+                print("- Initializing from Pretrained Weights")
+                print("  -", snapshot_file)
+                assert self.snapshot_exists(snapshot_file),\
+                    "The pretrained weights file does not exist: \n- "\
+                    + str(snapshot_file)
+                self.pretrained_saver.restore(session, snapshot_file)
+
+                print("- And initializing the remaining variables from scratch")
+                session.run(self.remainder_initializer)
+            else:
+                print("- Initializing to new parameter values")
+                session.run(tf.global_variables_initializer())
+        except (tf.errors.InvalidArgumentError, tf.errors.NotFoundError) as e:
+            msg = "===================================================\n"\
+                  "ERROR IN INITIALIZING VARIABLES FROM SNAPSHOTS FILE\n"\
+                  "===================================================\n"\
+                  "Something went wrong  in  loading   the  parameters\n"\
+                  "from  the snapshot. This  is  most  likely  due  to\n"\
+                  "changes  being  made   to  the   model,   but   not\n"\
+                  "changing   the   snapshots   file   path.   Loading\n"\
+                  "from a  snapshot  requires  that   the   model   is\n"\
+                  "still exaclty the same since the last  time it  was\n"\
+                  "saved.\n"\
+                  "However, it could also be that the path to the\n"\
+                  "snapshot file is incorect.\n"\
+                  "\n"\
+                  "Either:\n"\
+                  "- Check the filepath to the snapshot is correct.\n"\
+                  "- Use a different snapshots filepath to create\n"\
+                    "new snapshots for this model. \n"\
+                  "- or, Delete the old snapshots manually from the \n"\
+                    "computer.\n"\
+                  "Once you have done that, try again.  See the full\n"\
+                  "printout and traceback above  if  this  did  not\n"\
+                  "resolve the issue.\n"\
+                  "===================================================\n"\
+                  "SNAPSHOT FILE: \n" + str(snapshot_file)
+            raise ValueError(str(e) + "\n\n\n" + msg)
 
     def save_snapshot_in_session(self, session, file):
         """Given an open session, it saves a snapshot of the weights to file"""
