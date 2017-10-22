@@ -298,7 +298,7 @@ class ImageClassificationModel(object):
         """ If evals file exists, load it, otherwise create one from scratch.
             You should specify the keys you want to use in the dict."""
         if os.path.exists(self.evals_file):
-            print("Loading previosuly saved evals file from: \n- ", self.evals_file)
+            print("- Loading previosuly saved evals file from: \n- ", self.evals_file)
             with open(self.evals_file, mode = "rb") as fileObj:
                 self.evals = pickle.load(fileObj)
         else:
