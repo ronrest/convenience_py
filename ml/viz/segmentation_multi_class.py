@@ -99,6 +99,10 @@ def viz_segmentation_label(label, colormap=None, saveto=None):
     if colormap is None:
         colormap = [[0,0,0], [255,79,64], [115,173,33],[48,126,199]]
 
+    # TODO: use the `x = np.array(colormap)[x].astype(np.uint8)` technique
+    #       instead of all these following few lines, and update to
+    #       convenience.
+    #       See the segmentation tutorial repo
     # Map each pixel label to a color
     label_viz = np.zeros((label.shape[0],label.shape[1],3), dtype=np.uint8)
     uids = np.unique(label)
