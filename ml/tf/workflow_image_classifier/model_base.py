@@ -136,7 +136,7 @@ class ImageClassificationModel(object):
         self.initialize_evals_dict(self.evals_dict_keys)
         self.global_epoch = self.evals["global_epoch"]
 
-    def create_graph(self):
+    def create_graph(self, verbose=True):
         self.graph = tf.Graph()
         with self.graph.as_default():
             self.create_input_ops()
@@ -148,7 +148,10 @@ class ImageClassificationModel(object):
             self.create_saver_ops()
             self.create_tensorboard_ops()
 
-    def create_graph_from_logits_func(self, logits_func):
+        if verbose:
+            self.print_model_summary()
+
+    def create_graph_from_logits_func(self, logits_func, verbose=True):
         """ Given a logits function with the following API:
 
                 `logits_func(X, Y, n_classes, alpha, dropout, l2, is_training)`
@@ -171,6 +174,9 @@ class ImageClassificationModel(object):
             self.create_evaluation_metric_ops()
             self.create_saver_ops()
             self.create_tensorboard_ops()
+
+        if verbose:
+            self.print_model_summary()
 
 
     def create_input_ops(self):
@@ -287,6 +293,19 @@ class ImageClassificationModel(object):
             # REMAINDER INITIALIZER - all others not handled by pretrained snapshot
             self.remainder_vars = tf.contrib.framework.get_variables_to_restore(exclude=[var.name for var in self.pretrained_vars])
             self.remainder_initializer = tf.variables_initializer(var_list=self.remainder_vars)
+
+    def print_model_summary(self):
+        print("MODEL PARAMETERS")
+        template = "- {name:<30}:  {params: 8d} parameters. {shape}"
+        total_params = 0
+        with self.graph.as_default():
+            vars = tf.trainable_variables()
+            for var in vars:
+                shape = var.shape.as_list()
+                n_params = np.prod(shape)
+                total_params += n_params
+                print(template.format(name=var.name, params=n_params, shape=shape))
+        print("- TOTAL PARAMETERS:", total_params)
 
     def create_directory_structure(self):
         """ Ensure the necessary directory structure exists for saving this model """
