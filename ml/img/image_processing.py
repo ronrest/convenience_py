@@ -10,6 +10,7 @@ __credits__ = ["Ronny Restrepo"]
 __license__ = "Apache License"
 __version__ = "2.0"
 
+# TODO: Color Shifting. Maybe look at PCA color augmentation.
 
 # ==============================================================================
 #                                                           GET_ARRAY_COLOR_MODE
