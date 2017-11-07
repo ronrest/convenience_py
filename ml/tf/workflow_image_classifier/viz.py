@@ -259,3 +259,5 @@ def viz_segmentation_pairs(X, Y, Y2=None, colormap=None, gridshape=(2,8), saveto
     return output
 
 
+def vizseg(img, label, pred, saveto, colormap=None, gridshape=(2,8)):
+    viz_segmentation_pairs(img, Y=label, Y2=pred, colormap=colormap, gridshape=gridshape, saveto=saveto)
