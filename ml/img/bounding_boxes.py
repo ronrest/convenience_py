@@ -1,5 +1,7 @@
 from __future__ import print_function, division
 import numpy as np
+
+
 # ==============================================================================
 #                                                                     CW2CORNERS
 # ==============================================================================
@@ -54,3 +56,17 @@ def corners2cw(boxes):
     return out
 
 
+
+# # TESTS
+# boxes = np.array([
+#     [0.5,0.5, 0.8, 0.6],
+#     [0.4, 0.3, 0.8, 0.6],
+#     ])
+#
+# boxes = np.array([
+#     [5,5, 7, 6],
+#     [4, 3, 8, 6],
+#     ])
+#
+# x = cw2corners(boxes)
+# corners2cw(x)
