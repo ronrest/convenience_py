@@ -253,9 +253,9 @@ def batch2grid(imgs, rows, cols):
 
 
 # ==============================================================================
-#                                                   VIZ_SAMPLE_SEG_AUGMENTATIONS
+#                                         VIZ_SAMPLE_OVERLAYED_SEG_AUGMENTATIONS
 # ==============================================================================
-def viz_sample_seg_augmentations(X, Y, aug_func, n_images=5, n_per_image=5, saveto=None):
+def viz_sample_overlayed_seg_augmentations(X, Y, aug_func, colormap, n_images=5, n_per_image=5, saveto=None):
     """ Given a batch of data X, and Y,  it takes n_images samples, and performs
         `n_per_image` random transformations for segmentation data on each of
         those images. It then puts them in a grid to visualize. Grid size is:
@@ -267,6 +267,7 @@ def viz_sample_seg_augmentations(X, Y, aug_func, n_images=5, n_per_image=5, save
         aug_func:   (func) function with API `aug_func(X, Y)` that performs
                     random transformations on the images for segmentation
                     purposes.
+        colormap:   (list of 3-tuples) representing RGB code for each label class
         n_images:   (int)
         n_per_image:(int)
         saveto:     (str or None)
@@ -298,7 +299,8 @@ def viz_sample_seg_augmentations(X, Y, aug_func, n_images=5, n_per_image=5, save
     gy = batch2grid(gy, n_per_image, n_images)
 
     # Overlay labels on top of image
-    return viz_overlayed_segmentation_label(img=gx, label=gy, saveto=saveto)
+    return viz_overlayed_segmentation_label(img=gx, label=gy, colormap=colormap, saveto=saveto)
+
 
 
 # ==============================================================================
