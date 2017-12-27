@@ -57,3 +57,37 @@ def viz_sample_augmentations(X, aug_func, n_images=5, n_per_image=5, saveto=None
         grid.save(saveto, "JPEG")
 
     return grid
+
+
+# ==============================================================================
+def viz_sample_segmentation_augmentations(X, Y, aug_func, colormap, n_images=5, n_per_image=5, saveto=None):
+    X = X[:n_images]
+    Y = Y[:n_images]
+    grid = []
+    colormap = np.array(colormap).astype(np.uint8)
+
+    # Perform Augmentations
+    for col in range(n_per_image):
+        x,y = aug_func(X, Y)
+        y = colormap[y]
+        z = np.append(x, y, axis=2) # append the label to the right
+        grid.append(z)
+
+    # Put into a grid
+    _, height, width, n_channels = X.shape
+    grid = np.array(grid, dtype=np.uint8).reshape(n_images*n_per_image, height, 2*width, n_channels)
+    grid = batch2grid(grid, n_per_image, n_images)
+
+    # Convert to PIL image
+    grid = array2pil(grid)
+
+    # Optionally save image
+    if saveto is not None:
+        # Create necessary file structure
+        pardir = os.path.dirname(saveto)
+        if pardir.strip() != "": # ensure pardir is not an empty string
+            if not os.path.exists(pardir):
+                os.makedirs(pardir)
+        grid.save(saveto, "JPEG")
+
+    return grid
