@@ -94,6 +94,34 @@ def random_90_rotation(im):
 
 
 # ==============================================================================
+#                                                                RANDOM_ROTATION
+# ==============================================================================
+def random_rotation(im, max=10):
+    """ Creates a new image which is rotated by a random amount between
+        [-max, +max] inclusive.
+
+    Args:
+        im:              (numpy array) Input Image
+        max:             (int) Max angle (in degrees in either direction).
+    Returns:
+        (numpy array) Image with random rotation applied.
+
+    NOTE:
+        The Current implementation clips the corners that lie outside of
+        the original image container dimensions when rotated.
+    """
+    # TODO: give option to preserve corners by calculating the `scale` factor
+    #       that would be needed to preserve them.
+    angle = randint(-max, max+1)
+    if angle == 0:
+        return im
+    else:
+        pivot = np.array(im.shape[:2])//2
+        m = cv2.getRotationMatrix2D(center=tuple(pivot), angle=-angle, scale=1)
+        return cv2.warpAffine(im, m, im.shape[:2])
+
+
+# ==============================================================================
 #                                                                 RANDOM_LR_FLIP
 # ==============================================================================
 def random_lr_flip(im):
