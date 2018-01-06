@@ -20,6 +20,14 @@ __version__ = "2.0"
 #                                                                  BATCH_PROCESS
 # ==============================================================================
 def batch_process(X, shape=None, mode=None):
+    """ Given a batch of images as a numpy array, it does batch processing steps
+        like resizing and color mode conversion.
+
+        Shape should be a 2-tuple (width, height) of the new desired
+        dimensions.
+
+        mode should be one of {"RGB", "GREY"}
+    """
     # TODO: currently does nothing
     return X
 
