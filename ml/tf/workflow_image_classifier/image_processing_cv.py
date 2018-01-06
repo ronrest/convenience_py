@@ -74,3 +74,17 @@ def crop_and_preserve_size(im, crop_dims, offset):
              x_offset:x_offset+crop_width]
     im2 = cv2.resize(im2, tuple(im.shape[:2]))
     return im2
+
+
+# ==============================================================================
+#                                                             RANDOM_90_ROTATION
+# ==============================================================================
+def random_90_rotation(im):
+    """ Randomly rotates image in 90 degree increments
+        (90, -90, or 180 degrees) """
+    angles = [90, -90, 180]
+    angle = np.random.choice(angles)
+
+    pivot = np.array(im.shape[:2])//2
+    m = cv2.getRotationMatrix2D(center=tuple(pivot), angle=-angle, scale=1)
+    return cv2.warpAffine(im, m, im.shape[:2])
