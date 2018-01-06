@@ -170,3 +170,100 @@ def shift_image(im, shift):
     """
     m = np.float32([ [1,0,shift[0]], [0,1,shift[1]]])
     return cv2.warpAffine(im, m, im.shape[:2])
+
+
+# ==============================================================================
+#                                                         RANDOM_TRANSFORMATIONS
+# ==============================================================================
+def random_transformations(
+    X,
+    shadow=(0.6, 0.9),
+    shadow_file="shadow_pattern.jpg",
+    shadow_crop_range=(0.02, 0.5),
+    rotate=180,
+    crop=0.5,
+    lr_flip=True,
+    tb_flip=True,
+    brightness=(0.5, 0.4, 4),
+    contrast=(0.5, 0.3, 5),
+    blur=3,
+    noise=10
+    ):
+    """ Takes a batch of input images `X` as a numpy array, and does random
+        image transormations on them.
+
+        NOTE:  Assumes the pixels for input images are in the range of 0-255.
+
+    Args:
+        X:                  (numpy array) batch of imput images
+        Y:                  (numpy array) batch of segmentation labels
+        shadow:             (tuple of two floats) (min, max) shadow intensity
+        shadow_file:        (str) Path fo image file containing shadow pattern
+        shadow_crop_range:  (tuple of two floats) min and max proportion of
+                            shadow image to take crop from.
+        shadow_crop_range:  ()(default=(0.02, 0.25))
+        rotate:             (int)(default=180)
+                            Max angle to rotate in each direction
+        crop:               (float)(default=0.5)
+        lr_flip:            (bool)(default=True)
+        tb_flip:            (bool)(default=True)
+        brightness:         ()(default=) (std, min, max)
+        contrast:           ()(default=) (std, min, max)
+        blur:               ()(default=3)
+        noise:              ()(default=10)
+
+    NOTE:
+
+    """
+    # TODO: Random warping
+    # TODO: shadow
+    # TODO: brightness, contrast, blur, noise
+    img_shape = X[0].shape[:2]
+    images = np.zeros_like(X)
+    n_images = len(images)
+
+    # if shadow is not None:
+    #     assert shadow[0] < shadow[1], "shadow max should be greater than shadow min"
+    #     shadow_image = PIL.Image.open(shadow_file)
+    #     # Ensure shadow is same color mode as input images
+    #     shadow_image = shadow_image.convert(get_array_color_mode(X[0]))
+
+    for i in range(n_images):
+        image = X[i]
+        original_dims = image.shape[:2]
+
+        # if shadow is not None:
+        #     image = random_shadow(image, shadow=shadow_image, intensity=shadow, crop_range=shadow_crop_range)
+
+        if rotate:
+            # image = random_90_rotation(image)
+            image = random_rotation(image, max=rotate)
+
+        if crop is not None:
+            image = random_crop(image, min_scale=crop, max_scale=1.0, preserve_size=True)
+
+        # Scale back after crop and rotate are done
+        if rotate or crop:
+            image = cv2.resize(image, tuple(original_dims))
+
+        if lr_flip:
+            image = random_lr_flip(image)
+
+        if tb_flip:
+            image=  random_tb_flip(image)
+
+        # if brightness is not None:
+        #     image = random_brightness(image, sd=brightness[0], min=brightness[1], max=brightness[2])
+        # if contrast is not None:
+        #     image = random_contrast(image, sd=contrast[0], min=contrast[1], max=contrast[2])
+        # if blur is not None:
+        #     image = random_blur(image, 0, blur)
+
+        # if noise:
+        #     image = random_noise(image, sd=noise)
+
+        # Put into array
+        images[i] = image
+    return images
+
+
