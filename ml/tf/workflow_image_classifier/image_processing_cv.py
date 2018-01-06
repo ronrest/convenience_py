@@ -91,3 +91,14 @@ def random_90_rotation(im):
         pivot = np.array(im.shape[:2])//2
         m = cv2.getRotationMatrix2D(center=tuple(pivot), angle=-angle, scale=1)
         return cv2.warpAffine(im, m, im.shape[:2])
+
+
+# ==============================================================================
+#                                                                 RANDOM_LR_FLIP
+# ==============================================================================
+def random_lr_flip(im):
+    """ Randomly flips the image left-right with 0.5 probablility """
+    if np.random.choice([0,1]) == 1:
+        return cv2.flip(im, flipCode=1)
+    else:
+        return im
