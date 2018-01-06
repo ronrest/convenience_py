@@ -129,3 +129,16 @@ def random_shift(im, max=(5,5)):
     y_offset = np.random.randint(-max[0], max[1])
     m = np.float32([ [1,0,x_offset], [0,1,y_offset]])
     return cv2.warpAffine(im, m, im.shape[:2])
+
+
+# ==============================================================================
+#                                                                    SHIFT_IMAGE
+# ==============================================================================
+def shift_image(im, shift):
+    """ Returns a shifted copy of a PIL image.
+    Args:
+        im:     (numpy array) Input image
+        shift:  (2-tuple of ints) How much to shift along each axis (x, y)
+    """
+    m = np.float32([ [1,0,shift[0]], [0,1,shift[1]]])
+    return cv2.warpAffine(im, m, im.shape[:2])
