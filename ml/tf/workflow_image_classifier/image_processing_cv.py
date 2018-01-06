@@ -163,7 +163,7 @@ def random_shift(im, max=(5,5)):
 #                                                                    SHIFT_IMAGE
 # ==============================================================================
 def shift_image(im, shift):
-    """ Returns a shifted copy of a PIL image.
+    """ Returns a shifted copy of an image.
     Args:
         im:     (numpy array) Input image
         shift:  (2-tuple of ints) How much to shift along each axis (x, y)
