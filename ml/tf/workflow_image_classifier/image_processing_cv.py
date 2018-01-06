@@ -267,3 +267,49 @@ def random_transformations(
     return images
 
 
+# ==============================================================================
+#                                                       CREATE_AUGMENTATION_FUNC
+# ==============================================================================
+def create_augmentation_func(**kwargs):
+    """ Creates a function that performs random transformations on a
+        X, Y pair of images for segmentation.
+
+    Args:
+        shadow:             (tuple of two floats) (min, max) shadow intensity
+        shadow_file:        (str) Path fo image file containing shadow pattern
+        shadow_crop_range:  (tuple of two floats) min and max proportion of
+                            shadow image to take crop from.
+        shadow_crop_range:  ()(default=(0.02, 0.25))
+        rotate:             (int)(default=180)
+                            Max angle to rotate in each direction
+        crop:               (float)(default=0.5)
+        lr_flip:            (bool)(default=True)
+        tb_flip:            (bool)(default=True)
+        brightness:         ()(default=) (std, min, max)
+        contrast:           ()(default=) (std, min, max)
+        blur:               ()(default=3)
+        noise:              ()(default=10)
+
+    Returns: (func)
+        `augmentation_func` With the following API:
+        `augmentation_func(X, Y)`
+
+    Example:
+        aug_func = create_augmentation_func(
+            shadow=(0.01, 0.8),
+            shadow_file="shadow_pattern.jpg",
+            shadow_crop_range=(0.02, 0.5),
+            rotate=30,
+            crop=0.66,
+            lr_flip=True,
+            tb_flip=False,
+            brightness=(0.5, 0.4, 4),
+            contrast=(0.5, 0.3, 5),
+            blur=2,
+            noise=10
+            )
+        X_transformed = aug_func(X)
+    """
+    def augmentation_func(X):
+        return random_transformations(X=X, **kwargs)
+    return augmentation_func
