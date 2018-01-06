@@ -50,3 +50,27 @@ def random_crop(im, min_scale=0.5, max_scale=1.0, preserve_size=False):
     if preserve_size:
         im2 = cv2.resize(im2, tuple(im.shape[:2]))
     return im2
+
+
+# ==============================================================================
+#                                                         CROP_AND_PRESERVE_SIZE
+# ==============================================================================
+def crop_and_preserve_size(im, crop_dims, offset):
+    """ Given a image, the dimensions of the crop, and the offset of
+        the crop, it crops the image, and resizes it back to the original
+        dimensions.
+
+    Args:
+        im:         (numpy array) Input image
+        crop_dims:  Dimensions of the crop region [width, height]
+        offset:     Position of the crop box from Top Left corner [x, y]
+    Returns:
+        (numpy array) cropped image, rescaled to original input image
+        dimensions.
+    """
+    crop_width, crop_height = crop_dims
+    x_offset, y_offset = offset
+    im2 = im[y_offset:y_offset+crop_height,
+             x_offset:x_offset+crop_width]
+    im2 = cv2.resize(im2, tuple(im.shape[:2]))
+    return im2
