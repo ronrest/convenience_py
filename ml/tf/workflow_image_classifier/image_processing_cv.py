@@ -102,3 +102,14 @@ def random_lr_flip(im):
         return cv2.flip(im, flipCode=1)
     else:
         return im
+
+
+# ==============================================================================
+#                                                                 RANDOM_TB_FLIP
+# ==============================================================================
+def random_tb_flip(im):
+    """ Randomly flips the image top-bottom with 0.5 probablility """
+    if np.random.choice([0,1]) == 1:
+        return cv2.flip(im, flipCode=0)
+    else:
+        return im
