@@ -16,3 +16,9 @@ __version__ = "2.0"
 # PIL.Image.fromarray(y).show()
 # PIL.Image.fromarray(y).show()
 
+# ==============================================================================
+#                                                                  BATCH_PROCESS
+# ==============================================================================
+def batch_process(X, shape=None, mode=None):
+    # TODO: currently does nothing
+    return X
