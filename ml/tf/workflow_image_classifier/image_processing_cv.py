@@ -113,3 +113,19 @@ def random_tb_flip(im):
         return cv2.flip(im, flipCode=0)
     else:
         return im
+
+
+# ==============================================================================
+#                                                                   RANDOM_SHIFT
+# ==============================================================================
+def random_shift(im, max=(5,5)):
+    """ Randomly shifts an image.
+
+    Args:
+        im: (numpy array) Input image
+        max: (2-tuple of ints) max amount in each x y direction.
+    """
+    x_offset = np.random.randint(-max[0], max[0])
+    y_offset = np.random.randint(-max[0], max[1])
+    m = np.float32([ [1,0,x_offset], [0,1,y_offset]])
+    return cv2.warpAffine(im, m, im.shape[:2])
