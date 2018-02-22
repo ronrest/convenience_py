@@ -97,12 +97,17 @@ with open(embeddings_file, encoding="utf-8", "r") as fileobj:
             embeddings[id] = np.array(line[1:], dtype=np.float32)
 
 # Show a message if there are words that do not have embeddings
+# Show a message if there are words that do not have embeddings
 if count < n_vocab:
     print("NOTE: {} words in vocab could NOT be located in embeddings file".format(n_vocab-count))
     missing_ids = np.argwhere((embeddings==0).all(axis=1)).flatten()
     missing_words = [id2word[id] for id in missing_ids]
     print(missing_words)
 
+    # Fix missing values, by assigning random values
+    sd = 1/np.sqrt(embedding_size)
+    for id in missing_ids[1:]: #skip the first zero vector
+        embeddings[id] = np.random.normal(0, scale=sd, size=embedding_size)
 ```
 
 ## NOTES
