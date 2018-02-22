@@ -40,7 +40,6 @@ mv aclImdb imdb_raw
             ...
 ```
 
-
 ## Loading in Python
 ```py
 import os
@@ -89,5 +88,36 @@ data["X_test", "Y_test"] = get_text_data_from_category_dirs(test_dir, id2label, 
 ```
 
 ## Tokenizing Text
+```py
+################################################################################
+#                                                    TOKENIZE AND VECTORIZE TEXT
+################################################################################
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+import numpy as np
 
-**TODO:**
+# SETTINGS
+sequence_length = 100 # Fix the lenght of sequences
+n_train = None        # Limit how much data to use for training
+n_valid = 10000       # How many samples to set aside for validation
+n_vocab = 10000       # set limit to maximum vocab size
+
+# Create Vocabulary from corpus
+tokenizer = Tokenizer(num_words=n_vocab)
+tokenizer.fit_on_texts(data["X_train"])
+
+# Convert corpus to sequences of word ids
+data["X_train"] = tokenizer.texts_to_sequences(data["X_train"])
+data["X_test"] = tokenizer.texts_to_sequences(data["X_test"])
+
+# Restrict sequences to a max length
+data["X_train"] = pad_sequences(data["X_train"], maxlen=sequence_length)
+data["X_test"] = pad_sequences(data["X_test"], maxlen=sequence_length)
+
+
+# Word and WOrd ID mappings
+word2id = tokenizer.word_index
+id2word = [""]*(len(word2id)+1) # keras tokenizer starts from 1, not 0
+for word, id in word2id.items():
+    id2word[id] = word
+
