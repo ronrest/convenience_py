@@ -121,3 +121,40 @@ id2word = [""]*(len(word2id)+1) # keras tokenizer starts from 1, not 0
 for word, id in word2id.items():
     id2word[id] = word
 
+
+################################################################################
+#                                    SHUFFLE DATA - And Create Validation Splits
+################################################################################
+# Shuffle Training data
+np.random.seed(seed=345)
+shuffled_indices = np.random.permutation(data["Y_train"].shape[0])
+data["X_train"] = data["X_train"][shuffled_indices]
+data["Y_train"] = data["Y_train"][shuffled_indices]
+
+# Shuffle test data
+np.random.seed(seed=345)
+shuffled_indices = np.random.permutation(data["Y_test"].shape[0])
+data["X_test"] = data["X_test"][shuffled_indices]
+data["Y_test"] = data["Y_test"][shuffled_indices]
+
+# Create Validation subset
+if n_valid is not None:
+    data["X_valid"] = data["X_train"][:n_valid]
+    data["Y_valid"] = data["Y_train"][:n_valid]
+    data["X_train"] = data["X_train"][n_valid:]
+    data["Y_train"] = data["Y_train"][n_valid:]
+
+# Limit train dataset
+if n_train is not None:
+    data["X_train"] = data["X_train"][:n_train]
+    data["Y_train"] = data["Y_train"][:n_train]
+
+# Print Summaries
+print("Number of unique tokens in corpus =", len(word2id))
+print("X_train: ", data["X_train"].shape)
+print("Y_train: ", data["Y_train"].shape)
+print("X_valid: ", data["X_valid"].shape)
+print("Y_valid: ", data["Y_valid"].shape)
+print("X_test: ", data["X_test"].shape)
+print("Y_test: ", data["Y_test"].shape)
+```
