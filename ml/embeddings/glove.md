@@ -88,7 +88,7 @@ with open(embeddings_file, "r") as fileobj:
     for line in fileobj:
         line = line.split()
         word, vector = line[0], np.array(line[1:], dtype=np.float32)
-        if word in word2id:
+        if (word in word2id) and (word2id[word] < n_vocab):
             count += 1
             embeddings[word2id[word]] = vector
 
