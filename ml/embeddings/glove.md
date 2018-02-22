@@ -84,13 +84,17 @@ n_vocab = 10000          # manually set max vocab size
 
 embeddings = np.zeros([n_vocab, embedding_size], dtype=np.float32)
 count = 0
-with open(embeddings_file, "r") as fileobj:
+with open(embeddings_file, encoding="utf-8", "r") as fileobj:
     for line in fileobj:
+        # Separate the vector values from the word
         line = line.split()
-        word, vector = line[0], np.array(line[1:], dtype=np.float32)
-        if (word in word2id) and (word2id[word] < n_vocab):
+        word = line[0]
+
+        # If word is in our vocab, then update the corresponding weights
+        id = word2id.get(word, None)
+        if (id is not None) and (id < n_vocab):
             count += 1
-            embeddings[word2id[word]] = vector
+            embeddings[id] = np.array(line[1:], dtype=np.float32)
 
 # Show a message if there are words that do not have embeddings
 if count < n_vocab:
