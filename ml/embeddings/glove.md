@@ -98,7 +98,11 @@ with open(embeddings_file, encoding="utf-8", "r") as fileobj:
 
 # Show a message if there are words that do not have embeddings
 if count < n_vocab:
-    print("Not all words in vocab could be located in embeddings file")
+    print("NOTE: {} words in vocab could NOT be located in embeddings file".format(n_vocab-count))
+    missing_ids = np.argwhere((embeddings==0).all(axis=1)).flatten()
+    missing_words = [id2word[id] for id in missing_ids]
+    print(missing_words)
+
 ```
 
 ## NOTES
