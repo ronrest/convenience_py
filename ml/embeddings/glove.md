@@ -101,6 +101,17 @@ if count < n_vocab:
     print("Not all words in vocab could be located in embeddings file")
 ```
 
+## NOTES
+Words containing apostrophes, such as
+
+- `can't`
+- `don't`
+- `couldn't`
+
+Appear in the vocabulary **without** the apostrophe. Be aware of this when performing tokenization of words.
+
+Keras' built in tokenization object preserves the apostrophe. So be careful about using text tokenized with keras and using GloVe embeddings.
+
 
 ## Playing around with word vectors
 

@@ -88,6 +88,17 @@ data["X_test", "Y_test"] = get_text_data_from_category_dirs(test_dir, id2label, 
 ```
 
 ## Tokenizing Text
+
+**NOTE: ** Keras' built in tokenization object preserves the apostrophe of Words containing apostrophes, such as:
+
+
+- `can't`
+- `don't`
+- `couldn't`
+
+So be careful about using text tokenized with keras and using GloVe embeddings. Because the GloVe vocabulary stores them **without** the apostrophe.
+
+
 ```py
 ################################################################################
 #                                                    TOKENIZE AND VECTORIZE TEXT
