@@ -48,6 +48,14 @@ unzip ${EMBEDDING_NAME}.zip -d ${EMBEDDING_NAME}
 
 ## Process in Python
 
+The embeddings are stored in text file. Each line contains a single word followed by the embedding values, each separated by a space. A simplified example is as follows:
+
+```
+the -0.038194 -0.24487 0.72812 -0.39961 0.083172
+and -0.071953 0.23127 0.023731 -0.50638 0.33923
+....
+```
+
 ### METHOD 1. Use the same ordering as GloVe embeddings file
 
 ```py
