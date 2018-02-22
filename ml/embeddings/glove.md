@@ -79,8 +79,9 @@ Only extract embeddings for words that exist in your existing vocabulary.
 ```py
 embeddings_file = '/home/ronny/TEMP/gloVe/glove.6B/glove.6B.100d.txt'
 embedding_size = 100
+n_vocab = 10000          # manually set max vocab size
+# n_vocab = len(id2word) # vocab size based on word id mappings
 
-n_vocab = len(id2word)
 embeddings = np.zeros([n_vocab, embedding_size], dtype=np.float32)
 count = 0
 with open(embeddings_file, "r") as fileobj:
