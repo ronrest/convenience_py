@@ -11,6 +11,6 @@ sequence_length = 100
 word2id = imdb.get_word_index(path="/home/ronny/TEMP/imdb/keras/word2id.json")
 
 # Clip sequences and pad
-X_train = preprocessing.sequence.pad_sequences(x_train, maxlen=sequence_length)
-X_test = preprocessing.sequence.pad_sequences(x_test, maxlen=sequence_length)
+X_train = preprocessing.sequence.pad_sequences(X_train, maxlen=sequence_length)
+X_test = preprocessing.sequence.pad_sequences(X_test, maxlen=sequence_length)
 ```
