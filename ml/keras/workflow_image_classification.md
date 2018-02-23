@@ -45,3 +45,36 @@ plot_history(history, metrics=["loss", "acc"], use_valid=True, savedir=None, sho
 loss, accuracy = model.evaluate(data["X_test"], data["Y_test"], batch_size=32)
 ```
 
+### Common Losses
+
+[Losses Docs](https://keras.io/losses/)
+
+- `"binary_crossentropy"` (requires integer 1 or 0 labels)
+- `"sparse_categorical_crossentropy"` (requires integer category id labels)
+- `"categorical_crossentropy"` (required one hot vector labels)
+
+
+
+### Common Optimizers
+
+[Optimizers Docs](https://keras.io/optimizers/)
+
+**As string**
+
+- `"rmsprop"`
+- `"adam"`
+
+**As object**
+
+```py
+from keras import optimizers
+
+# SGD
+optimizers.SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False)
+
+# RMSProp optimizer. Usually a good choice for RNNs.
+optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
+
+# Adam. Default parameters based on the original paper.
+optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+```
