@@ -78,3 +78,23 @@ optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
 # Adam. Default parameters based on the original paper.
 optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 ```
+
+### Evaluation Metrics
+[Evaluation Metrics Docs](https://keras.io/metrics/)
+
+```py
+from keras import metrics
+
+binary_accuracy(y_true, y_pred)
+categorical_accuracy(y_true, y_pred)
+sparse_categorical_accuracy(y_true, y_pred)
+top_k_categorical_accuracy(y_true, y_pred, k=5)
+sparse_top_k_categorical_accuracy(y_true, y_pred, k=5)
+```
+
+#### Custom Metrics
+
+[Custom Metrics](https://keras.io/metrics/#custom-metrics)
+
+
+
