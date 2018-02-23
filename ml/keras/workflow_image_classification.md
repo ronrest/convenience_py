@@ -98,3 +98,88 @@ sparse_top_k_categorical_accuracy(y_true, y_pred, k=5)
 
 
 
+## Train Using Generator
+
+[Data Generator Docs](https://keras.io/preprocessing/image/)
+
+```py
+from keras.preprocessing.image import ImageDataGenerator
+
+# SETTINGS
+train_dir = "data/train"
+valid_dir = "data/valid"
+test_dir = "data/test"
+
+n_data = SOMETHING
+n_valid = SOMETHING
+batch_size = 32
+steps_per_epoch = n_data // batch_size
+steps_per_valid = n_valid // batch_size
+
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    rotation_range=40,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.3,
+    channel_shift_range=0.0,
+    fill_mode='nearest', # "constant", "nearest", "reflect" or "wrap"
+    horizontal_flip=True,
+    vertical_flip=True,
+    zca_whitening=False,
+    preprocessing_function=None,
+    )
+
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+train_generator = train_datagen.flow_from_directory(
+        train_dir,
+        target_size=img_shape[:2],
+        batch_size=batch_size,
+        classes=id2class, # actually mapping class id to dir name
+        class_mode='sparse')
+
+validation_generator = test_datagen.flow_from_directory(
+        valid_dir,
+        target_size=img_shape[:2],
+        batch_size=batch_size,
+        classes=id2class, # actually mapping class id to dir name
+        class_mode='sparse')
+
+
+history = model.fit_generator(
+      train_generator,
+      steps_per_epoch=steps_per_epoch,
+      epochs=10,
+      validation_data=validation_generator,
+      validation_steps=steps_per_valid,
+      verbose=2, # Verbosity mode, 0, 1, or 2.
+      callbacks=None,
+      validation_data=None, # A generator or a tuple (x, y)
+      class_weight=None,
+      max_q_size=10,  # Maximum size for the generator queue
+      workers=1,      # Maximum number of processes to spin up
+      )
+
+plot_history(history, metrics=["loss", "acc"], use_valid=True, savedir=None, show=True)
+
+
+# Evaluate
+# loss, acc = model.evaluate_generator(test_generator, test_steps, max_q_size=10, workers=1)
+
+# Predict
+# model.predict_generator(pred_generator, steps, max_q_size=10, workers=1, verbose=0)
+
+
+```
+
+- **Class Mode**
+    - Determines the type of label arrays that are returned
+    - `"categorical"` (default)  One-hot vector labels
+    - `"binary"` integer binary labels (0,1)
+    - `"sparse"` Integer class id labels
+    - `"input"` images identical to input images (for use with autoencoders)
+    - `None` no labels are returned
+
+
