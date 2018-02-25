@@ -150,3 +150,55 @@ DREW
 ```
 
 
+## Loading data Using sklearn
+
+The problem of using the Sklearn method is that it completely reorders the class labels.
+
+```py
+id2class = ["alt.atheism", "rec.autos", "sci.space", "comp.graphics", "rec.motorcycles", "soc.religion.christian", "comp.os.ms-windows.misc", "rec.sport.baseball", "talk.politics.guns", "comp.sys.ibm.pc.hardware", "rec.sport.hockey", "talk.politics.mideast", "comp.sys.mac.hardware", "sci.crypt", "talk.politics.misc", "comp.windows.x", "sci.electronics", "talk.religion.misc", "misc.forsale", "sci.med"]
+
+import sklearn
+data = sklearn.datasets.load_files("/home/ronny/TEMP/twenty_newsgroups/raw/train",
+        categories=id2class,
+        shuffle=True,
+        random_state=42
+        )
+
+test_data = sklearn.datasets.load_files("/home/ronny/TEMP/twenty_newsgroups/raw/test",
+        categories=id2class,
+        shuffle=True,
+        random_state=42
+        )
+
+
+# Rename the key names
+data["X_train"] = data.pop("data")
+data["Y_train"] = data.pop("target")
+data["id2class"] = data.pop("target_names")
+data.pop("filenames")
+data.pop("DESCR")
+data.keys()
+
+
+test_data["X_test"] = test_data.pop("data")
+test_data["Y_test"] = test_data.pop("target")
+test_data["id2class"] = test_data.pop("target_names")
+test_data.pop("filenames")
+test_data.pop("DESCR")
+
+# Ensure the class id maps match up between train and test
+assert data["id2class"] == test_data["id2class"], "The id2class for train and test set are different"
+
+# Merge the data dictionaries
+data.update(test_data)
+del test_data
+
+# Update the id2class
+id2class = data["id2class"]
+```
+
+## Tokenization
+**TODO**
+
+## Vectorization
+**TODO**
