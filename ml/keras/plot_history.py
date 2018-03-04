@@ -23,9 +23,10 @@ def plot_history(history, metrics=["loss", "acc"], slice=None, use_valid=True, s
     titles = {"acc": "Accuracy", "loss": "Loss"}
 
     # Range of epochs to use
+    n_epochs=len(history.history[metrics[0]])
     if slice is None:
-        slice = (0, len(history.history[metrics[0]])-1)
-    lower, upper = slice
+        slice = (0, n_epochs-1)
+    lower, upper = slice[0], min(slice[1], n_epochs-1)
 
     for metric in metrics:
         fig, ax = plt.subplots(figsize=(11, 6))
