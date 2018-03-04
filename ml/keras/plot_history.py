@@ -1,13 +1,16 @@
 import matplotlib.pyplot as plt
 # %matplotlib inline
 
-def plot_history(history, metrics=["loss", "acc"], use_valid=True, savedir=None, show=True):
+def plot_history(history, metrics=["loss", "acc"], slice=None, use_valid=True, savedir=None, show=True):
     """ Given a training history from a keras model, it plots the learning
         curves for the given evaluation `metrics`.
-
     Args:
         history:    (dict) a keras training history dictionary that is returned
                     by model.fit()
+        slice:      (2-tuple or None) Only show a slice of the learning curves
+                    between [lower_epoch, upper_epoch]
+                    - Note, it is inclusive and zero indexed.
+                    - If `None`, then shows plot for all epochs.
         metrics:    (list of str) The metric names you want to use from the
                     history dictionary, eg default is ["loss", "acc"]
         use_valid:  (bool) Should it plot the validation versions of the metric
@@ -18,12 +21,19 @@ def plot_history(history, metrics=["loss", "acc"], use_valid=True, savedir=None,
         show:       (bool)(default=True) Should it show the plots on screen?
     """
     titles = {"acc": "Accuracy", "loss": "Loss"}
+
+    # Range of epochs to use
+    if slice is None:
+        slice = (0, len(history.history[metrics[0]])-1)
+    lower, upper = slice
+
     for metric in metrics:
         fig, ax = plt.subplots(figsize=(11, 6))
         fig.suptitle(titles.get(metric, metric.title()))
-        ax.plot(history.history[metric], linewidth=2.0, color='red', linestyle='-', alpha=0.9, label="train")
+        x = np.arange(lower, upper+1)
+        ax.plot(x, history.history[metric][lower:upper+1], linewidth=2.0, color='red', linestyle='-', alpha=0.9, label="train")
         if use_valid:
-            ax.plot(history.history["val_"+metric], linewidth=2.0, color='blue', linestyle='-', alpha=0.9, label="valid")
+            ax.plot(x, history.history["val_"+metric][lower:upper+1], linewidth=2.0, color='blue', linestyle='-', alpha=0.9, label="valid")
         ax.legend(loc="lower right", frameon=False)
         if savedir is not None:
             filepath = os.path.join(savedir, metric+".jpg")
