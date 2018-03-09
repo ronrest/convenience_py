@@ -21,6 +21,10 @@ def str2datetime(s, f="%Y_%m_%d %H:%M:%S", tzone=None):
         Optionally also set the timezone of the date by passing a timezone
         string. If no timezone is provided, it defailts to using the loceal
         timezone.
+
+        Examples of `tzone`
+        - "UTC"
+        - "Australia/Melbourne"
     """
     t = datetime.datetime.strptime(s, f)
     if tz is not None:
