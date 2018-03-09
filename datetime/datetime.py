@@ -8,6 +8,25 @@ def timestamp2str(t, pattern="%Y-%m-%d  %H:%M:%S"):
         based on the date `pattern` specified """
     return datetime.datetime.fromtimestamp(t).strftime(pattern)
 
+
+# ==============================================================================
+#                                                                   STR2DATETIME
+# ==============================================================================
+def str2datetime(s, f="%Y_%m_%d %H:%M:%S", tzone=None):
+    """ Takes a string and converts to a datetime object given that it is
+        formatted based on the pattern passed in as `f`.
+
+        Optionally also set the timezone of the date by passing a timezone
+        string. If no timezone is provided, it defailts to using the loceal
+        timezone.
+    """
+    t = datetime.datetime.strptime(s, f)
+    if tz is not None:
+        tza = tz.gettz(tzone)     # Timezone object
+        t = t.replace(tzinfo=tza) # Set the timezone
+    return t
+
+
 # ==============================================================================
 #                                                               CONVERT_TIMEZONE
 # ==============================================================================
