@@ -12,6 +12,8 @@ def timestamp2str(t, pattern="%Y-%m-%d  %H:%M:%S"):
 # ==============================================================================
 #                                                                   STR2DATETIME
 # ==============================================================================
+# import datetime
+from dateutil import tz
 def str2datetime(s, f="%Y_%m_%d %H:%M:%S", tzone=None):
     """ Takes a string and converts to a datetime object given that it is
         formatted based on the pattern passed in as `f`.
