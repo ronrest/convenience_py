@@ -47,3 +47,39 @@ def text_file_line_generator(path, skip_first_line=False):
                     yield line
 
 
+# import numpy as np
+import pandas as pd
+import StringIO
+def csv_generator(path, x_vars, y_vars,  batch_size=32, x_dtype=np.float32, y_dtype=np.uint8):
+    """ Memory efficient way to load data from a csv file, `batch_size` rows
+        at a time.
+
+    Args:
+        path:   (str) path to the csv file.
+        x_vars: (list of str) the column names to use as input variables
+        y_vars: (list of str) the columns name(s) to use as output variables.
+                NOTE: it must be in a list, even if it is only one output
+                variable.
+        batch_size: (int) size of each batch.
+        x_dtype: datatype to use for input variables.
+        y_dtype: datatype to use for output variables.
+
+    NOTE:
+        loads the data as float32 from the csv file before typecasting to
+        the specified datatypes.
+
+    Returns:
+        X:  (2d numpy array) the batch of inputs
+        Y:  (nd numpy array) the class labels
+    """
+    g = text_file_line_generator(path)
+    while True:
+        lines = []
+        for i in range(batch_size):
+            lines.append(next(g))
+        batch = "\n".join(lines)
+        batch = pd.read_csv(StringIO(batch), header=None, names=x_vars+y_vars, dtype="float32")
+        X = batch[x_vars]
+        Y = batch[y_vars]
+        batch = None # free up some memory
+        yield (np.asarray(X, dtype=x_dtype), np.asarray(Y, dtype=y_dtype))
