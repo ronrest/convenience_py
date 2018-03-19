@@ -21,3 +21,29 @@ def np_generator(x, y, batch_size=32, shuffle=False):
             yield x_batch, y_batch
 
 
+def text_file_line_generator(path, skip_first_line=False):
+    """ A generator that loads one line of a file at a time, and loops
+        the file infinitely.
+
+        Optionally allows you to skip the first line, eg in the case of a
+        csv file that contains the csv header of column names.
+
+    NOTE:
+        It also skips any lines with only whitespaces.
+
+    TODO: Find if there is a way to randomise the order of line reads.
+    """
+    while True:
+        with open(path, "r") as fileobj:
+            firstline = True
+            for line in fileobj:
+                if firstline and skip_first_line:
+                    firstline=False
+                    continue
+                line = line.strip()
+                if line == "":
+                    continue
+                else:
+                    yield line
+
+
