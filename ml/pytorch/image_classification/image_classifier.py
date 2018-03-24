@@ -34,3 +34,14 @@ class ImageClassifier(object):
         # OPTIMIZER
         self.optimizer = None
 
+    def set_optimizer(self, opt_func=torch.optim.Adam, **kwargs):
+        """
+        Args:
+            opt_func:   (function class) the optimization function creator to use
+            **kwargs:   The keyword arguments to pass to opt_func
+                        eg: lr=1e-3, weight_decay=0
+        """
+        self.opt_func = opt_func
+        self.opt_args = kwargs
+        self.optimizer = opt_func(self.net.parameters(), **kwargs)
+
