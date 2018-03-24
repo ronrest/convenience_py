@@ -61,6 +61,18 @@ class ImageClassifier(object):
             _, preds = torch.max(logits, dim=1)
             return preds.data.numpy().astype(np.int32)
 
+    def predict(self, x, batch_size=32, probs=False):
+        """ Make predictions on a numpy array in batches."""
+        n_steps = int(np.ceil(x.shape[0]/float(batch_size)))
+        shape = (x.shape[0], self.n_classes)if probs else (x.shape[0],)
+        dtype = np.float32 if probs else np.int32
+        out = np.zeros(shape, dtype=dtype)
+
+        for i in range(n_steps):
+            X_batch = x[i*batch_size:(i+1)*batch_size]
+            out[i*batch_size:(i+1)*batch_size] = self.predict_step(X_batch, probs=probs)
+        return out
+
     def fit(self, train_gen, valid_gen, n_epochs, steps_per_epoch, valid_steps=100, print_every=100):
         for epoch in range(n_epochs):
             running_loss = 0.0
