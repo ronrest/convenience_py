@@ -99,7 +99,7 @@ class ImageClassifier(object):
             _, preds = torch.max(logits, dim=1)
             loss = self.loss_func(logits, Y_batch)
 
-            running_loss += loss
+            running_loss += loss.data[0]
             running_correct += n_correct(preds=preds.data.numpy(), labels=Y_batch.data.numpy())
             running_samples += len(Y_batch)
 
