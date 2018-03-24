@@ -50,6 +50,17 @@ class ImageClassifier(object):
         self.opt_args["lr"] = lr
         self.optimizer = self.opt_func(self.net.parameters(), **self.opt_args)
 
+    def predict_step(self, x, probs=False):
+        """ Make predictions on input data in one go.
+            Optionally return probabilities
+        """
+        logits = self.net(Variable(torch.Tensor(x)))
+        if probs:
+            return torch.nn.functional.softmax(logits, dim=1).data.numpy().astype(np.float32)
+        else:
+            _, preds = torch.max(logits, dim=1)
+            return preds.data.numpy().astype(np.int32)
+
     def fit(self, train_gen, valid_gen, n_epochs, steps_per_epoch, valid_steps=100, print_every=100):
         for epoch in range(n_epochs):
             running_loss = 0.0
