@@ -45,3 +45,8 @@ class ImageClassifier(object):
         self.opt_args = kwargs
         self.optimizer = opt_func(self.net.parameters(), **kwargs)
 
+    def update_lr(self, lr):
+        self.opt_args = self.optimizer.defaults
+        self.opt_args["lr"] = lr
+        self.optimizer = self.opt_func(self.net.parameters(), **self.opt_args)
+
