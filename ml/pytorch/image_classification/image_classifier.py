@@ -81,6 +81,35 @@ class ImageClassifier(object):
             out.append(self.predict_step(X_batch, probs=probs))
         return np.concatenate(out)
 
+    def evaluate_gen(self, datagen, n_steps):
+        """ Evaluate by returning (loss, accuracy) """
+        original_train_mode = self.net.training
+        self.net.eval()
+        running_loss = 0.0
+        running_correct = 0.0
+        running_samples = 0.0
+        for i in range(n_steps):
+            X_batch, Y_batch = next(datagen)
+            # X_batch, Y_batch = preprocess_func(X_batch, Y_batch)
+            X_batch, Y_batch = Variable(torch.Tensor(X_batch)), Variable(torch.LongTensor(Y_batch))
+
+            # Run a forward pass of the network
+            self.optimizer.zero_grad() # zero the parameter gradients
+            logits = self.net(X_batch)
+            _, preds = torch.max(logits, dim=1)
+            loss = self.loss_func(logits, Y_batch)
+
+            running_loss += loss
+            running_correct += n_correct(preds=preds.data.numpy(), labels=Y_batch.data.numpy())
+            running_samples += len(Y_batch)
+
+        # Set trining mode back to original setting
+        self.net.train(original_train_mode)
+
+        avg_loss = running_loss / (running_samples)
+        avg_acc = running_correct / (running_samples)
+        return avg_loss, avg_acc
+
     def fit(self, train_gen, valid_gen, n_epochs, steps_per_epoch, valid_steps=100, print_every=100):
         for epoch in range(n_epochs):
             running_loss = 0.0
