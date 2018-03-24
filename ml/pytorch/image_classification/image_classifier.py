@@ -136,8 +136,10 @@ class ImageClassifier(object):
                 if i>0 and i % print_every == 0:
                     avg_loss = running_loss / print_every
                     avg_acc = running_correct / (running_samples)
+
                     val_loss, val_acc = self.evaluate_gen(valid_gen, n_steps=valid_steps)
-                    msg = "{e} - {s} LOSS: {l} ACC: {a} --- VAL LOSS: {vl} VAL_ACC: {va}"
+
+                    msg = "{e: 3d} - {s: 5d} LOSS: {l: 2.5f} ACC: {a:0.3f} --- VAL LOSS: {vl: 2.5f} VAL_ACC: {va:0.3f}"
                     print(msg.format(e=epoch,s=i,l=avg_loss, a=avg_acc, vl=val_loss, va=val_acc))
 
                     running_loss = 0.0
