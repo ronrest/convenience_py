@@ -73,6 +73,14 @@ class ImageClassifier(object):
             out[i*batch_size:(i+1)*batch_size] = self.predict_step(X_batch, probs=probs)
         return out
 
+    def predict_gen(self, datagen, n_steps, probs=False):
+        """ Make predictions on a data generator."""
+        out = []
+        for i in range(n_steps):
+            X_batch = next(datagen)
+            out.append(self.predict_step(X_batch, probs=probs))
+        return np.concatenate(out)
+
     def fit(self, train_gen, valid_gen, n_epochs, steps_per_epoch, valid_steps=100, print_every=100):
         for epoch in range(n_epochs):
             running_loss = 0.0
