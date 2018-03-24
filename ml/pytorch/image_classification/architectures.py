@@ -41,3 +41,19 @@ def conv(fin, out, k=3, s=1, d=1, bn=True, bias=False, dropout=None, activation=
     return sq
 
 
+def fc(fin, out, bn=True, bias=False, dropout=None, activation=nn.ReLU):
+    """ Fully connected module
+        FC > BatchNorm > Activation > Dropout
+    """
+    sq = nn.Sequential()
+    sq.add_module("fc", nn.Linear(fin, out, bias=bias))
+
+    if bn is not None:
+        sq.add_module("bn", nn.BatchNorm1d(out))
+    if activation is not None:
+        sq.add_module("activation", activation())
+    if dropout is not None:
+        sq.add_module("dropout", nn.Dropout(p=dropout))
+    return sq
+
+
