@@ -80,7 +80,7 @@ class BasicNet(nn.Module):
 
         # CONV LAYERS
         trunk = nn.Sequential()
-        trunk.add_module("conv1", conv(3, 16, k=3, s=1, d=1, bn=True, bias=False, dropout=conv_dropout, activation=conv_activation))
+        trunk.add_module("conv1", conv(C, 16, k=3, s=1, d=1, bn=True, bias=False, dropout=conv_dropout, activation=conv_activation))
         trunk.add_module("mp1", nn.MaxPool2d(kernel_size=2, stride=2, padding=0))
         trunk.add_module("conv2", conv(16, final_conv_filters, k=3, s=1, d=1, bn=True, bias=False, dropout=conv_dropout, activation=conv_activation))
         trunk.add_module("mp2", nn.MaxPool2d(kernel_size=2, stride=2, padding=0))
