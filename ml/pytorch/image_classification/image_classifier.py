@@ -3,6 +3,7 @@
 import torch
 from torch import nn
 from torch.autograd import Variable
+import numpy as np
 
 def accuracy(preds, labels):
     return (preds==labels).mean()
@@ -80,6 +81,12 @@ class ImageClassifier(object):
             X_batch = next(datagen)
             out.append(self.predict_step(X_batch, probs=probs))
         return np.concatenate(out)
+
+    def save_model(self, f):
+        torch.save(self.net.state_dict(), f)
+
+    def load_weights(self, f):
+        self.net.load_state_dict(torch.load(f))
 
     def evaluate_gen(self, datagen, n_steps):
         """ Evaluate by returning (loss, accuracy) """
