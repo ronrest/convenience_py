@@ -58,11 +58,6 @@ sudo apt-get install -y python-tk  # Needed by Pandas
 pip install pytz                   # Needed by pandas
 pip install pandas
 
-# Libraries for image processing
-echo "INSTALLING PILLOW IMAGE PROCESSING LIBRARY"
-sudo apt-get install -y libjpeg-dev libpng12-dev    # Needed by pillow
-pip install Pillow
-
 echo "INSTALLING VISUALIZATION LIBRARIES"
 pip install pydot
 pip install graphviz
@@ -76,8 +71,24 @@ echo 'INSTALL JUPYTER'
 # the virtualenv as containing a viable python kernel to run
 pip install -U --force-reinstall jupyter
 
+# Install and setup a nice notebook theme
+pip install --upgrade jupyterthemes
+jt -t grade3 -N
+
 echo 'INSTALLING DATA LOADING LIBRARIES'
 pip install h5py
+
+
+echo "==========================================================="
+echo "                         INSTALL IMAGE PROCESSING lIBRARIES"
+echo "==========================================================="
+# Libraries for image processing
+echo "INSTALLING PILLOW IMAGE PROCESSING LIBRARY"
+sudo apt-get install -y libjpeg-dev libpng12-dev    # Needed by pillow
+pip install Pillow
+
+echo "INSTALLING SKIMAGE"
+pip install scikit-image
 
 
 echo "==========================================================="
@@ -86,6 +97,13 @@ echo "==========================================================="
 # Ensure this version of tensorflow is separate from anything that
 # might already be installed on the system
 pip install --upgrade --force-reinstall ${TF}
+
+
+echo "==========================================================="
+echo "                                               INSTALL MISC"
+echo "==========================================================="
+echo "INSTALLING PROGRESS BAR LIBRARY"
+pip install tqdm
 
 
 echo "==========================================================="

@@ -72,13 +72,6 @@ sudo apt-get install -y python-tk  # Needed by Pandas
 pip install pytz                   # Needed by pandas
 pip install pandas
 
-# Libraries for image processing
-echo "\n==========================================================="
-echo "INSTALLING PILLOW IMAGE PROCESSING LIBRARY"
-echo "===========================================================\n"
-sudo apt-get install -y libjpeg-dev libpng12-dev    # Needed by pillow
-pip install Pillow
-
 echo "\n==========================================================="
 echo "INSTALLING VISUALIZATION LIBRARIES"
 echo "===========================================================\n"
@@ -105,12 +98,35 @@ echo "===========================================================\n"
 # the virtualenv as containing a viable python kernel to run
 pip install -U --force-reinstall jupyter
 
+# Install and setup a nice notebook theme
+pip install --upgrade jupyterthemes
+jt -t grade3 -N
+
+
+echo "==========================================================="
+echo "                         INSTALL IMAGE PROCESSING lIBRARIES"
+echo "==========================================================="
+# Libraries for image processing
+echo "INSTALLING PILLOW IMAGE PROCESSING LIBRARY"
+sudo apt-get install -y libjpeg-dev libpng12-dev    # Needed by pillow
+pip install Pillow
+
+echo "INSTALLING SKIMAGE"
+pip install scikit-image
+
+
 
 echo "\n==========================================================="
 echo "                                         INSTALL TENSORFLOW"
 echo "===========================================================\n"
 pip install --upgrade ${TF}
 
+
+echo "==========================================================="
+echo "                                               INSTALL MISC"
+echo "==========================================================="
+echo "INSTALLING PROGRESS BAR LIBRARY"
+pip install tqdm
 
 echo "\n==========================================================="
 echo "                                               FINISHING UP"
