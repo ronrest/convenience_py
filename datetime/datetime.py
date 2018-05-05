@@ -3,11 +3,11 @@ import datetime
 # ==============================================================================
 #                                                                TIMESTAMP 2 STR
 # ==============================================================================
-def timestamp2str(t, pattern="%Y-%m-%d  %H:%M:%S"):
+def timestamp2str(t, format="%Y-%m-%d %H:%M:%S.%f %Z", tz="Australia/Melbourne"):
     """ Given a float timestamp it returns the date as a formatted string,
         based on the date `pattern` specified """
-    return datetime.datetime.fromtimestamp(t).strftime(pattern)
-
+    tzinfo = dateutil.tz.gettz(tz)
+    return datetime.datetime.fromtimestamp(t, tz=tzinfo).strftime(format)
 
 # ==============================================================================
 #                                                                   STR2DATETIME
