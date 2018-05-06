@@ -1,36 +1,39 @@
 import datetime
+import dateutil
+import dateutil.tz
 
-# ==============================================================================
-#                                                                TIMESTAMP 2 STR
-# ==============================================================================
-def timestamp2str(t, format="%Y-%m-%d %H:%M:%S.%f %Z", tz="Australia/Melbourne"):
-    """ Given a float timestamp it returns the date as a formatted string,
-        based on the date `pattern` specified """
+def timestamp2str(t, tz="Australia/Melbourne", format="%Y-%m-%d %H:%M:%S.f %Z"):
     tzinfo = dateutil.tz.gettz(tz)
+    assert tzinfo is not None, "Could not get timezone data"
     return datetime.datetime.fromtimestamp(t, tz=tzinfo).strftime(format)
 
-# ==============================================================================
-#                                                                   STR2DATETIME
-# ==============================================================================
-# import datetime
-from dateutil import tz
-def str2datetime(s, f="%Y_%m_%d %H:%M:%S", tzone=None):
-    """ Takes a string and converts to a datetime object given that it is
-        formatted based on the pattern passed in as `f`.
+def str2datetime(t, format="%Y-%m-%d %H:%M:%S", tz="Australia/Melbourne"):
+    tzinfo = dateutil.tz.gettz(tz)
+    assert tzinfo is not None, "Could not get timezone data"
+    dt = datetime.datetime.strptime(t, format).replace(tzinfo=tzinfo)
+    return dt
 
-        Optionally also set the timezone of the date by passing a timezone
-        string. If no timezone is provided, it defailts to using the loceal
-        timezone.
+def str2timestamp(t, format="%Y-%m-%d %H:%M:%S", tz="Australia/Melbourne"):
+    tzinfo = dateutil.tz.gettz(tz)
+    assert tzinfo is not None, "Could not get timezone data"
+    dt = datetime.datetime.strptime(t, format).replace(tzinfo=tzinfo)
+    return dt.timestamp()
 
-        Examples of `tzone`
-        - "UTC"
-        - "Australia/Melbourne"
-    """
-    t = datetime.datetime.strptime(s, f)
-    if tz is not None:
-        tza = tz.gettz(tzone)     # Timezone object
-        t = t.replace(tzinfo=tza) # Set the timezone
-    return t
+def now_datetime(tz="Australia/Melbourne"):
+    tzinfo = dateutil.tz.gettz(tz)
+    assert tzinfo is not None, "Could not get timezone data"
+    return datetime.datetime.now(tz=tzinfo)
+
+def now_timestamp():
+    tzinfo = dateutil.tz.gettz("UTC")
+    assert tzinfo is not None, "Could not get timezone data"
+    return datetime.datetime.now(tz=tzinfo).timestamp()
+
+def now_string(format="%Y-%m-%d %H:%M:%S", tz="Australia/Melbourne"):
+    tzinfo = dateutil.tz.gettz(tz)
+    assert tzinfo is not None, "Could not get timezone data"
+    return datetime.datetime.now(tz=tzinfo).strftime(format)
+
 
 
 # ==============================================================================
