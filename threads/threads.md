@@ -20,6 +20,22 @@ def create_thread(worker_func, as_daemon=True, start=True, name="Thread1", **kwa
         t.start()
     return t
 
+def create_threads(worker_func, output=None, n=1, as_daemon=True, prefix="Thread", **kwargs):
+    """ `kwargs` is keyword args to be passed on to worker_func
+        `output` =  a list, whose values you want to overide with new threads.
+                    This will ignore `n`.
+                    In this case, it modifies the output list **in place**.
+    """
+    # put each worker to work to process items in queue
+    if output is None:
+        output = [None]*n
+    for i in range(len(output)):
+        t = create_thread(worker_func, as_daemon=True, start=True, name=prefix+str(i), **kwargs)
+        output[i] = t
+    return output
+```
+
+
 ```
 
 
