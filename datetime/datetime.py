@@ -2,6 +2,22 @@ import datetime
 import dateutil
 import dateutil.tz
 
+def gettz(tz):
+    """ Return a timezone object to be used by dateutul given a timezone as a
+        string such as "UTC" or "Australia/Melbourne" """
+    return dateutil.tz.gettz(tz)
+
+def datetime2str(dt, format="%Y-%m-%d %H:%M:%S", tz="Australia/Melbourne"):
+    """ """
+    # Set timezone information
+    tzinfo = dateutil.tz.gettz(tz)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=tzinfo)
+    else:
+        dt = dt.astimezone(tzinfo)
+    # format as string
+    return dt.strftime(format)
+
 def timestamp2str(t, tz="Australia/Melbourne", format="%Y-%m-%d %H:%M:%S.f %Z"):
     tzinfo = dateutil.tz.gettz(tz)
     assert tzinfo is not None, "Could not get timezone data"
@@ -34,33 +50,24 @@ def now_string(format="%Y-%m-%d %H:%M:%S", tz="Australia/Melbourne"):
     assert tzinfo is not None, "Could not get timezone data"
     return datetime.datetime.now(tz=tzinfo).strftime(format)
 
+def set_timezone(dt, tz="UTC"):
+    """ overwrites the timezone information of a datetime and returns a copy """
+    tzinfo = dateutil.tz.gettz(tz)
+    return dt.replace(tzinfo=tzinfo)
 
-
-# ==============================================================================
-#                                                               CONVERT_TIMEZONE
-# ==============================================================================
-# import datetime
-from dateutil import tz
-def convert_timezone(time, a="UTC", b="local"):
-    """ Given a datetime object, in timezone a, it changes it to timezone b.
-
-    Args:
-        time:   (datetime object)
-        a:      (str) timezone code to set the from time as.
-                eg:
-                "UTC"
-                "Australia/Melbourne"
-                or..
-                "local"
-        b:      (str) timezone to set the to time as.
+def convert_timezone(dt, tz, tzin=None):
+    """ Returns a copy of a datetime objet with time converted to new timezoneself.
+        WARNING: it might be problematic to use tz="local" for output timezone.
+        It is better to explicitly specify an actual output timezone.
     """
-    # TIMEZONE OBJECTS
-    tza = tz.tzlocal(a) if (a=="local") else tz.gettz(a)
-    tzb = tz.tzlocal(b) if (b=="local") else tz.gettz(b)
+    # Ensure datetime object is timesone aware
+    if dt.tzinfo is None:
+        assert isinstance(tzin, str), \
+            "\n    datetime object must either be timezone aware, OR, you should"\
+            "\n    provide original timezone as a string in the `tzin` argument"
+        tzinfo_in = dateutil.tz.tzlocal() if (tzin=="local") else dateutil.tz.gettz(tzin)
+        dt = dt.replace(tzinfo=tzinfo_in)
 
-    # FORMAT TIME WITH FROM TIMEZONE
-    time = time.replace(tzinfo=tza)
-
-    # CHANGE TIME ZONE
-    newtime = time.astimezone(tzb)
-    return newtime
+    # Convert to new timesone
+    tzinfo_out = dateutil.tz.tzlocal() if (tz=="local") else dateutil.tz.gettz(tz)
+    return dt.astimezone(tzinfo_out)
