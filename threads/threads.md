@@ -6,6 +6,10 @@
 import threading
 QUEUE_TERMINATING_VALUE = "zzz this is a killer"
 
+def get_thread_name():
+    return threading.current_thread().name
+
+
 def create_thread(worker_func, as_daemon=True, start=True, name="Thread1", **kwargs):
     """ `kwargs` is keyword args to be passed on to worker_func """
     # put each worker to work to process items in queue
