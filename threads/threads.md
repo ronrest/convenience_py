@@ -73,3 +73,28 @@ def terminate_q_threads(q, threads):
 
 ```
 
+## Thread Safe Iterators/Generators
+
+Allow items from iterators/generators to iterated/popped safely from multiple thread workers.
+
+```py
+class LockedIterator(object):
+    """ A thread safe iterator that wraps around an existing iterator """
+    def __init__(self, it):
+        print("Creating MY iterator")
+        self.lock = threading.Lock()
+        self.it = iter(it)
+
+    def __iter__(self):
+        return  self
+
+    def next(self):
+        with self.lock:
+            print("nexttt")
+            return self.it.next()
+
+    def __next__(self):
+        with self.lock:
+            print("__next__")
+            return self.it.__next__()
+```
