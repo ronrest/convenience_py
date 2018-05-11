@@ -53,4 +53,23 @@ def get_threads_health(threads):
     return summaries
 ```
 
+## Queue Threads
+
+```py
+def terminate_q_threads(q, threads):
+    # stop workers
+    logger.info("Terminating q threads")
+    # TODO: number of terminating messages should be based on the number of
+    #       threads STILL alive, NOT the total number of threads
+    for i in range(len(threads)):
+        logger.info("Sending Queue termination message #{}".format(i))
+        q.put(QUEUE_TERMINATING_VALUE)
+
+    logger.info("Waiting for threads to finish up")
+    for t in threads:
+        logger.debug("Waiting for {} to finish up".format(get_thread_name()))
+        t.join()
+    logger.debug("Queue threads terminated")
+
+```
 
