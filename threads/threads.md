@@ -36,6 +36,21 @@ def create_threads(worker_func, output=None, n=1, as_daemon=True, prefix="Thread
 ```
 
 
+## Thread health
+
+```py
+def print_threads_health(threads):
+    with threading.Lock():
+        for thread in threads:
+            print("{}: {}".format(thread.getName(), "alive" if thread.is_alive() else "dead"))
+
+def get_threads_health(threads):
+    summaries = []
+    with threading.Lock():
+        for thread in threads:
+            status = "alive" if thread.is_alive() else "dead"
+            summaries.append({"name":thread.getName(), "status":status})
+    return summaries
 ```
 
 
