@@ -75,3 +75,46 @@ def plot_lines(lines, xvals=None, labels=None, title="plot", axtitle="", xlabel=
         plt.close()
     return ax
 
+def plot_line_rows(lines, xvals=None, labels=None, title="plot",  xlabels=None, ylabels=None, show=True, colors=None,  figsize=(10, 6), majorgrid=True, minorgrid=False):
+    """
+        Plots each of the lines in separate axes, one below each other
+        title:   title of the figure
+        axtitle: title of the axis subplot
+    """
+    nplots = len(lines)
+    color_offset = 0
+    fig, axes = plt.subplots(nplots, 1, figsize=figsize)
+    axes = np.array(axes).flatten()
+    fig.suptitle(title, fontsize=15)
+
+    if colors is None:
+        colors=["#307EC7", "#E65C00", "#73AD21", "#9621E2", "#2BB17C", "#FF4F40", "#A2C4DA", "#F9E2AC", "#ECB9FF", "#AED7AC"]
+
+    labels = labels if labels is not None else [chr(97+i) for i in range(len(lines))]
+
+    xlabels = xlabels if xlabels is not None else ["x"]*nplots
+    ylabels = ylabels if ylabels is not None else ["y"]*nplots
+
+    for i in range(nplots):
+        ax = axes[i]
+        if xvals is not None:
+            ax.plot(xvals, lines[i], color=colors[i+color_offset],  label=labels[i])
+        else:
+            ax.plot(lines[i], color=colors[i+color_offset])
+        ax.set_title(labels[i], fontdict={"style": "italic", "size": 10})
+        ax.set_xlabel(xlabels[i])
+        ax.set_ylabel(ylabels[i])
+        setgrid(ax, major=majorgrid, minor=minorgrid)
+        plt.setp(ax.get_xticklabels(), rotation=-30, ha="left")
+        # ax.legend(loc=legend_pos, title="", frameon=False,  fontsize=8)
+
+    # Give enough spacing between subplots x-axes and titles of plots
+    fig.tight_layout(pad=1.10,  rect=[0, 0.03, 1, 0.95])
+
+    if show:
+        plt.show()
+    else:
+        plt.close()
+    return fig
+
+
