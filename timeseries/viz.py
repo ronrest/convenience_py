@@ -45,3 +45,33 @@ def plot_densities(datas, labels=None, resolution=0.1, title="Density plot", axt
     return ax
 
 
+def plot_lines(lines, xvals=None, labels=None, title="plot", axtitle="", xlabel="x", ylabel="y", show=True, ax=None, colors=None, color_offset=0, legend_pos="lower right", figsize=(10, 6), majorgrid=True, minorgrid=False):
+    """
+        title:   title of the figure
+        axtitle: title of the axis subplot
+    """
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+        fig.suptitle(title, fontsize=15)
+
+    if colors is None:
+        colors=["#307EC7", "#E65C00", "#73AD21", "#9621E2", "#2BB17C", "#FF4F40", "#A2C4DA", "#F9E2AC", "#ECB9FF", "#AED7AC"]
+
+    labels = labels if labels is not None else [chr(97+i) for i in range(len(lines))]
+    for i in range(len(lines)):
+        if xvals is not None:
+            ax.plot(xvals, lines[i], color=colors[i+color_offset],  label=labels[i])
+        else:
+            ax.plot(lines[i], color=colors[i+color_offset],  label=labels[i])
+        ax.set_title(axtitle, fontdict={"style": "italic", "size": 10})
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    setgrid(ax, major=majorgrid, minor=minorgrid)
+    plt.setp(ax.get_xticklabels(), rotation=-30, ha="left")
+    ax.legend(loc=legend_pos, title="", frameon=False,  fontsize=8)
+    if show:
+        plt.show()
+    else:
+        plt.close()
+    return ax
+
