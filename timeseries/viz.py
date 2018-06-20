@@ -3,6 +3,17 @@ import matplotlib.gridspec as gridspec
 import seaborn as sns
 import numpy as np
 import pandas as pd
+# Plot comparison lines
+def compare_lines(lines, labels=None, title="plot"):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    fig.suptitle(title, fontsize=15)
+    colors=["#307EC7", "#E65C00", "#73AD21", "#9621E2", "#2BB17C", "#FF4F40"]
+    labels = labels if labels is not None else [chr(97+i) for i in range(len(lines))]
+    for i in range(len(lines)):
+        ax.plot(lines[i], color=colors[i],  label=labels[i])
+    ax.legend(loc="lower right", title="", frameon=False,  fontsize=8)
+    plt.show()
+
 def setgrid(ax, major=True, minor=False):
     """ Given an axis object, it sets the grids on """
     if major or minor:
