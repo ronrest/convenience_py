@@ -3,6 +3,7 @@ import matplotlib.gridspec as gridspec
 import seaborn as sns
 import numpy as np
 import pandas as pd
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 deom sliding_windows import sliding_window_corelations
 
 
@@ -246,3 +247,120 @@ def lag_sliding_correlation_plot(df, target, column, lag=1, window=60, startdate
     return fig
 
 
+
+
+def timeseries_exploratory_plots(x, title="Plots", raw=True, change=True, change_type="adj",
+                                 lag=1, autocorr=True, autocorr_changes=True,
+                                 density=True, density_resolution=0.1,
+                                 density_change=True, density_change_resolution=0.1,
+                                 pacf=True, pacf_change=True,
+                                 figsize=(10,20)):
+    """ Given a pandas series, it plots up to three plots below each other.
+        - the raw data
+        - the percent changes
+        - the autocorrelation plots
+
+        NOTE: that currently it REQUIRES the data to NOT have any missing/NAN
+        values, otherwise it will plot things incorrectly, so make sure data
+        being fed in is cleaned up.
+
+    Args:
+        change_type:    (str)
+            The type of changes to use. One of:
+            - "diff" for raw differences in subsequent numbers
+            - "pct"  to use pandas x.diff() function
+            - "adj"  to use my adjusted percentage change function
+        lag:    (int)(default = 1)
+            How many timesteps to offset the change/diff by.
+        density:    (bool) create plot of density?
+        density_resolution: (float)(default=0.1)
+            Resolution of the density estimation.
+
+        density_change:    (bool) create plot of density for changes?
+        density_change_resolution: (float)(default=0.1)
+            Resolution of the density estimation.
+
+        pacf: (bool) create partial auto correlation funciton plot on the raw data?
+        pacf_change: (bool) create partial auto correlation funciton plot on the changes data?
+
+    """
+    nplots = sum([raw, change, autocorr, autocorr_changes, density, density_change, pacf, pacf_change])
+    fig, axes = plt.subplots(nplots,1, figsize=figsize)
+    axes = axes.flatten()
+    fig.suptitle(title, fontsize=15)
+    i = 0
+    if raw:
+        ax = plot_lines([x], axtitle="raw data",  xlabel="x", ylabel="raw value", ax=axes[i], show=False, minorgrid=True)
+        i += 1
+
+    if change or autocorr_changes:
+        # percent_changes = pd.Series(x).pct_change()
+        if change_type == "adj":
+            percent_changes = adjusted_percent_change(x, lag=lag, epsilon=0.1)
+        elif change_type == "pct":
+            percent_changes = pd.Series(x).pct_change(lag)
+        elif change_type == "diff":
+            percent_changes = pd.Series(x).diff(lag)
+
+
+    if change:
+        ax = plot_lines([percent_changes], axtitle="Percent Change",
+                        color_offset=1, ax=axes[i], xlabel="x",
+            ylabel="percent change", minorgrid=True)
+        i += 1
+
+    if density:
+        ax = plot_densities([x], ax=axes[i], labels=["Distribution of raw data"],
+                            resolution=density_resolution, minorgrid=True)
+        i += 1
+
+    if density_change:
+        ax = plot_densities([percent_changes], ax=axes[i], labels=["Distribution of changes"],
+                            resolution=density_change_resolution, minorgrid=True)
+        i += 1
+
+    # Autocorrelation function plot
+    if autocorr:
+        ax = axes[i]
+        fig = plot_acf(x, lags=50,
+                       alpha=0.05, title="Autocorrelation plot", ax=ax)
+        setgrid(axes[i], minor=True)
+        ax.set_xlabel("lag amount")
+        ax.set_ylabel("Correlation")
+        i += 1
+
+    # Autocorrelation function plot of the changes
+    if autocorr_changes:
+        ax = axes[i]
+        fig = plot_acf(percent_changes[1:].fillna(method="backfill"), lags=50,
+                       alpha=0.05, title="Autocorrelation of Percent Changes plot", ax=ax)
+        setgrid(axes[i], minor=True)
+        ax.set_xlabel("lag amount")
+        ax.set_ylabel("Correlation")
+        i += 1
+
+    # partial Autocorrelation function plot
+    if pacf:
+        ax = axes[i]
+        fig = plot_pacf(x, lags=50,
+                       alpha=0.05, title="Partial Autocorrelation Function plot", ax=ax)
+        setgrid(axes[i], minor=True)
+        ax.set_xlabel("lag amount")
+        ax.set_ylabel("Correlation")
+        i += 1
+
+    # partial Autocorrelation function plot on changes data
+    if pacf_change:
+        ax = axes[i]
+        fig = plot_pacf(percent_changes, lags=50,
+                       alpha=0.05, title="Partial Autocorrelation Function plot on changes", ax=ax)
+        setgrid(axes[i], minor=True)
+        ax.set_xlabel("lag amount")
+        ax.set_ylabel("Correlation")
+        i += 1
+
+
+    # Give enough spacing between subplots x-axes and titles of plots
+    fig.tight_layout(pad=1.10,  rect=[0, 0.03, 1, 0.95])
+
+    return fig
