@@ -3,6 +3,9 @@ import matplotlib.gridspec as gridspec
 import seaborn as sns
 import numpy as np
 import pandas as pd
+deom sliding_windows import sliding_window_corelations
+
+
 # Plot comparison lines
 def compare_lines(lines, labels=None, title="plot"):
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -197,4 +200,49 @@ def column_correlate_heat_and_scatter(df, targetcol, title="Correlations", savet
         plt.close()
     else:
         plt.show()
+
+
+def multi_sliding_correlation_window_plots(df, target, columns, window=60, resolution="d", startdate=None, enddate=None, show=True, ax=None, colors=None, show_missing=True):
+    # Missing data plot
+    if show_missing:
+        df2 = df[startdate:enddate].copy()
+        missing = df2.isnull().any(axis=1).astype(np.int32)
+        if ax is None:
+            ax = plot_lines([missing], colors=["#978084"], labels=["missing"], title="Sliding Window ({w} {r}) Correlation".format(w=window, r=resolution), ylabel="correlation", xlabel="time", show=False)
+        else:
+            ax = plot_lines([missing], colors=["#978084"], labels=["missing"], ylabel="correlation", xlabel="time", show=False, ax=ax)
+
+    for i, column in enumerate(columns):
+        corrs = sliding_window_corelations(df[target], df[column], window=window, startdate=startdate, enddate=enddate, resolution=resolution)
+        if (ax is None) and (i == 0) and not show_missing:
+            ax = plot_lines([corrs], title="Sliding Window ({w} {r}) Correlation".format(w=window, r=resolution), labels=[column], ylabel="correlation", xlabel="time", show=False, colors=colors, color_offset=i)
+        else:
+            ax = plot_lines([corrs], labels=[column], show=False, ax=ax, color_offset=i, colors=colors)
+
+        # ax.grid(True)
+        ax.minorticks_on()
+        ax.grid(b=True, which='major', color='#999999', linestyle='-', linewidth=1)
+        ax.grid(b=True, which='minor', color='#999999', linestyle='-', alpha=0.7, linewidth=0.5)
+
+    fig = ax.get_figure()
+    if show:
+        fig.show()
+    return fig
+
+
+def lag_sliding_correlation_plot(df, target, column, lag=1, window=60, startdate=None, enddate=None):
+    """ Given a dataframe and the name of two columns, and an amount to lag,
+        it plots the correlation lineplot of a given sliding `window` of correaltions,
+        so you can compare how the sliding window correlations change as one of
+        the timeseries is lagged by a different ammount.
+    """
+    fig, ax = plt.subplots(figsize=(10, 6), sharex=True, sharey=True)
+    fig.suptitle('Time Shifted Correlations (Window={w} Lag={lag})'.format(w=window, lag=lag), fontsize=15, fontdict={"fontweight": "extra bold"})
+    fig = multi_sliding_correlation_window_plots(df=df, target=target, window=window, columns=[column], startdate=startdate, enddate=enddate, show=False, ax=ax)
+
+    df2 = df.copy()
+    df2["num_comments"] = df2["num_comments"].shift(lag)
+    fig = multi_sliding_correlation_window_plots(df=df2, target=target, window=window, columns=[column], startdate=startdate, enddate=enddate, show=False, ax=ax, colors=["#FF0000", "#00FF00"])
+    return fig
+
 
