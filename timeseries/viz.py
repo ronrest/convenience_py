@@ -248,7 +248,6 @@ def lag_sliding_correlation_plot(df, target, column, lag=1, window=60, startdate
 
 
 
-
 def timeseries_exploratory_plots(x, title="Plots", raw=True, change=True, change_type="adj",
                                  lag=1, autocorr=True, autocorr_changes=True,
                                  density=True, density_resolution=0.1,
@@ -310,12 +309,12 @@ def timeseries_exploratory_plots(x, title="Plots", raw=True, change=True, change
         i += 1
 
     if density:
-        ax = plot_densities([x], ax=axes[i], labels=["Distribution of raw data"],
+        ax = plot_densities([x], ax=axes[i], axtitle="Distribution of raw data",
                             resolution=density_resolution, minorgrid=True)
         i += 1
 
     if density_change:
-        ax = plot_densities([percent_changes], ax=axes[i], labels=["Distribution of changes"],
+        ax = plot_densities([percent_changes], ax=axes[i], axtitle="Distribution of changes",
                             resolution=density_change_resolution, minorgrid=True)
         i += 1
 
