@@ -140,3 +140,14 @@ def plot_line_rows(lines, xvals=None, labels=None, title="plot",  xlabels=None, 
     return fig
 
 
+def scatterplot(x,y, title="Scatter plot", xlabel="x", ylabel="y"):
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.suptitle(title, fontsize=15)
+    # ax.plot(, color="#307EC7",  label="")
+    ax.scatter(x, y, c="#307EC7", s=100, alpha=0.7, linewidths=0, label="")
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    # ax.legend(loc="lower right", title="", frameon=False,  fontsize=8)
+    plt.show()
+
+
