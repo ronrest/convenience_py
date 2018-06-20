@@ -14,6 +14,17 @@ def compare_lines(lines, labels=None, title="plot"):
     ax.legend(loc="lower right", title="", frameon=False,  fontsize=8)
     plt.show()
 
+def lag_plot(a,b,lag=0):
+    """ given two time series, and a lag value, it olots the two lines
+        with the second one lagged by lag amount
+    """
+    b_shifted = b.shift(lag)
+    compare_lines(
+        [a,b_shifted],
+        labels=["a", "b (lag {})".format(lag)],
+        title="LAG {}  DOT: {:0.3f}".format(lag, (a * b_shifted).sum()))
+
+
 def setgrid(ax, major=True, minor=False):
     """ Given an axis object, it sets the grids on """
     if major or minor:
