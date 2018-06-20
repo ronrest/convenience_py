@@ -151,3 +151,50 @@ def scatterplot(x,y, title="Scatter plot", xlabel="x", ylabel="y"):
     plt.show()
 
 
+def column_correlate_heat_and_scatter(df, targetcol, title="Correlations", saveto=None):
+    """ given a dataframe,  and a target column name, it shows the heatmap and
+        scatter plots of that column against all the other variables in the
+        dataframe.
+    """
+    fig = plt.figure(figsize=(8, 8))
+    fig.suptitle(title, fontsize=15)
+    # gridspec inside gridspec
+    outer_grid = gridspec.GridSpec(1, 2, wspace=0.0, hspace=0.0, width_ratios=[1,3], height_ratios=[3])
+    cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+    # LEFT PLOT
+    ax = plt.Subplot(fig, outer_grid[0])
+    df2 = df.copy()
+    corr = df2.corr()[[targetcol]]
+    # ax.set_title("left plot", fontdict={"style": "italic", "size": 10})
+    ax = sns.heatmap(corr, annot=True, linewidths=2, square=False, center=0, vmax=1, vmin=-1, cmap=cmap, ax=ax, cbar=False)
+    ax.axis("equal")
+    plt.setp(ax.get_yticklabels(), rotation=0, ha="right")
+    fig.add_subplot(ax)
+
+    # RIGHT INNER GRID
+    ncols = df.shape[1]
+    width = int(np.ceil(np.sqrt(ncols)))
+    inner_grid = gridspec.GridSpecFromSubplotSpec(width, width,
+        subplot_spec=outer_grid[1], wspace=0.0, hspace=0.0,
+        width_ratios=[1]*width, height_ratios=[1]*width)
+
+    for i, colname in enumerate(df.columns):
+        cmap = plt.get_cmap('viridis')
+        indices = np.linspace(0, cmap.N, len(df))
+        my_colors = [cmap(int(i)) for i in indices]
+
+        ax = plt.Subplot(fig, inner_grid[i], adjustable='box') # , aspect='equal',
+        # ax.axis("equal")
+        ax.set_title(colname, fontdict={"style": "italic", "size": 10}, y=-0.0000005) # "y": -0.1
+        ax.scatter(df[colname], df[targetcol],  label=colname, color=my_colors) # color="#307EC7"
+        ax.set_xticks([])
+        ax.set_yticks([])
+        fig.add_subplot(ax)
+
+    if saveto is not None:
+        fig.savefig(saveto)
+        plt.close()
+    else:
+        plt.show()
+
