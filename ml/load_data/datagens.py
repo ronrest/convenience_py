@@ -73,6 +73,34 @@ def csv_file_line_generator(file, skip=1, packaged=None):
         for row in reader:
             yield row
 
+# import csv
+def csv2df_line_generator(file, columns=None, skip=1, packaged=None):
+    """ Given a path to a csv file, it yields a single line of data as a
+        pandas dataframe.
+
+    Args:
+        file:  (str) path to file
+        columns: (list of strs) column names
+        skip:   (int)(default=1)
+            lines to skip at begining (by default assumes there is a header
+            line that can be skipped)
+        packaged: (str| None)
+            - `None` assumes it is a text file.
+            - `gz` opens the text file wrapped in a `gz` package.
+    """
+    if packaged is None:
+        fileobj = open(file,'rt')
+    if packaged == "gz":
+        fileobj = gzip.open(file,'rt')
+
+    with fileobj:
+        reader = csv.reader(fileobj)
+        for i in range(skip):
+            _ = next(reader)
+        for row in reader:
+            yield pd.DataFrame([row], columns=columns)
+
+
 # import numpy as np
 import pandas as pd
 import StringIO
