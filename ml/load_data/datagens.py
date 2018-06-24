@@ -47,12 +47,37 @@ def text_file_line_generator(path, skip_first_line=False):
                     yield line
 
 
+import csv
+def csv_file_line_generator(file, packaged=None):
+    """ Yields a single line of a csv file. Allows you to open directly from
+        a packaged/compressed file.
+
+        NOTE: This DOES handle csv files that contain newlines in the fields.
+
+    Args:
+        file:  (str) path to file
+        packaged: (str| None)
+            - `None` assumes it is a text file.
+            - `gz` opens the text file wrapped in a `gz` package.
+    """
+    if packaged is None:
+        fileobj = open(file,'rt')
+    if packaged == "gz":
+        fileobj = gzip.open(file,'rt')
+
+    with fileobj:
+        reader = csv.reader(fileobj)
+        for row in reader:
+            yield row
+
 # import numpy as np
 import pandas as pd
 import StringIO
 def csv_generator(path, x_vars, y_vars,  batch_size=32, x_dtype=np.float32, y_dtype=np.uint8):
     """ Memory efficient way to load data from a csv file, `batch_size` rows
         at a time.
+
+        NOTE: This version will probably not work if the data itself contains newlines.
 
     Args:
         path:   (str) path to the csv file.
