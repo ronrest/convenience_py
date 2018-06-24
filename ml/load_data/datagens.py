@@ -48,14 +48,15 @@ def text_file_line_generator(path, skip_first_line=False):
 
 
 import csv
-def csv_file_line_generator(file, packaged=None):
+def csv_file_line_generator(file, skip=1, packaged=None):
     """ Yields a single line of a csv file. Allows you to open directly from
         a packaged/compressed file.
 
-        NOTE: This DOES handle csv files that contain newlines in the fields.
-
     Args:
         file:  (str) path to file
+        skip:   (int)(default=1)
+            lines to skip at begining (by default assumes there is a header
+            line that can be skipped)
         packaged: (str| None)
             - `None` assumes it is a text file.
             - `gz` opens the text file wrapped in a `gz` package.
@@ -67,6 +68,8 @@ def csv_file_line_generator(file, packaged=None):
 
     with fileobj:
         reader = csv.reader(fileobj)
+        for i in range(skip):
+            _ = next(reader)
         for row in reader:
             yield row
 
