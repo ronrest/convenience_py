@@ -59,7 +59,7 @@ class ImageClassifier(object):
         if probs:
             return torch.nn.functional.softmax(logits, dim=1).data.numpy().astype(np.float32)
         else:
-            _, preds = torch.max(logits, dim=1)
+            _, preds = torch.argmax(logits, dim=1)
             return preds.data.numpy().astype(np.int32)
 
     def predict(self, x, batch_size=32, probs=False):
@@ -103,7 +103,7 @@ class ImageClassifier(object):
             # Run a forward pass of the network
             self.optimizer.zero_grad() # zero the parameter gradients
             logits = self.net(X_batch)
-            _, preds = torch.max(logits, dim=1)
+            _, preds = torch.argmax(logits, dim=1)
             loss = self.loss_func(logits, Y_batch)
 
             running_loss += loss.data[0]
@@ -131,7 +131,7 @@ class ImageClassifier(object):
                 # Training steps
                 self.optimizer.zero_grad() # zero the parameter gradients
                 logits = self.net(X_batch)
-                _, preds = torch.max(logits, dim=1)
+                _, preds = torch.argmax(logits, dim=1)
                 loss = self.loss_func(logits, Y_batch)
                 loss.backward()
                 self.optimizer.step()
@@ -144,7 +144,10 @@ class ImageClassifier(object):
                     avg_loss = running_loss / print_every
                     avg_acc = running_correct / (running_samples)
 
+                    # TODO: evaluate on validation data
                     val_loss, val_acc = self.evaluate_gen(valid_gen, n_steps=valid_steps)
+                    # valid_gen
+                    # self.predict_gen(valid_gen, n_steps=SOMETHING, probs=False)
 
                     msg = "{e: 3d} - {s: 5d} LOSS: {l: 2.5f} ACC: {a:0.3f} --- VAL LOSS: {vl: 2.5f} VAL_ACC: {va:0.3f}"
                     print(msg.format(e=epoch,s=i,l=avg_loss, a=avg_acc, vl=val_loss, va=val_acc))
