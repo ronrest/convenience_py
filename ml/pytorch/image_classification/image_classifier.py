@@ -59,7 +59,7 @@ class ImageClassifier(object):
         if probs:
             return torch.nn.functional.softmax(logits, dim=1).data.numpy().astype(np.float32)
         else:
-            _, preds = torch.argmax(logits, dim=1)
+            preds = torch.argmax(logits, dim=1)
             return preds.data.numpy().astype(np.int32)
 
     def predict(self, x, batch_size=32, probs=False):
@@ -103,7 +103,7 @@ class ImageClassifier(object):
             # Run a forward pass of the network
             self.optimizer.zero_grad() # zero the parameter gradients
             logits = self.net(X_batch)
-            _, preds = torch.argmax(logits, dim=1)
+            preds = torch.argmax(logits, dim=1)
             loss = self.loss_func(logits, Y_batch)
 
             running_loss += loss.data[0]
@@ -131,7 +131,7 @@ class ImageClassifier(object):
                 # Training steps
                 self.optimizer.zero_grad() # zero the parameter gradients
                 logits = self.net(X_batch)
-                _, preds = torch.argmax(logits, dim=1)
+                preds = torch.argmax(logits, dim=1)
                 loss = self.loss_func(logits, Y_batch)
                 loss.backward()
                 self.optimizer.step()

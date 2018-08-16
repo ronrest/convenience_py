@@ -104,7 +104,7 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
         # Training steps
         optimizer.zero_grad() # zero the parameter gradients
         probs = model(X_batch)
-        _, preds = torch.argmax(probs, dim=1)
+        preds = torch.argmax(probs, dim=1)
         loss = loss_func(probs, Y_batch)
         loss.backward()
         optimizer.step()
@@ -125,12 +125,7 @@ print('Finished Training')
 
 
 
-(preds == Y_batch).data.numpy().mean()
-
-
-_, argmax = torch.max(v, dim=1)
-
-Y_batch
+# (preds == Y_batch).data.numpy().mean()
 
 
 

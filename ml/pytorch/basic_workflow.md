@@ -98,7 +98,7 @@ for epoch in range(n_epochs):
         # Training steps
         optimizer.zero_grad() # zero the parameter gradients
         logits = net(X_batch)
-        _, preds = torch.argmax(logits, dim=1)
+        preds = torch.argmax(logits, dim=1)
         loss = loss_func(logits, Y_batch)
         loss.backward()
         optimizer.step()
