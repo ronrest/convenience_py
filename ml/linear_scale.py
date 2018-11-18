@@ -42,7 +42,7 @@ def linear_scale(x, new_range=(0.0, 1.0), old_range="auto"):
     new_max = new_range[1]
 
     # The scaling ratio
-    ratio = float(new_max - new_min) / old_max - old_min
+    ratio = float(new_max - new_min) / (old_max - old_min)
 
     # Scale values to the new range of values
     return new_min + ratio*(np.array(x) - old_min)
